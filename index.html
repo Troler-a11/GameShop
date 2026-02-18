@@ -26,13 +26,11 @@
             --gold: #f59e0b;
         }
 
-        /* КРУТІ АНІМАЦІЇ ДЛЯ ОБ'ЄМУ */
         @keyframes scanline { 0% { transform: translateY(-100%); } 100% { transform: translateY(100%); } }
         @keyframes pulse-cyan { 0%, 100% { box-shadow: 0 0 10px rgba(0, 242, 255, 0.2); } 50% { box-shadow: 0 0 25px rgba(0, 242, 255, 0.5); } }
         @keyframes slide-up { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes rotate-border { 0% { border-color: var(--border-color); } 50% { border-color: var(--cyan); } 100% { border-color: var(--border-color); } }
 
-        /* НОВА АНІМАЦІЯ ДЗВОНИКА */
         @keyframes notify-ping {
             0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 242, 255, 0.7); }
             70% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(0, 242, 255, 0); }
@@ -40,10 +38,8 @@
         }
 
         .notify-active { animation: notify-ping 1.5s infinite; border-color: var(--cyan) !important; }
-
         .animate-slide-up { animation: slide-up 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards; }
-        .cyber-border-anim { animation: rotate-border 3s infinite linear; }
-
+        
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; font-variant-numeric: tabular-nums; }
 
         body {
@@ -132,64 +128,60 @@
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .hidden { display: none !important; }
+
+        /* Стиль для фото в чаті */
+        .chat-img {
+            max-width: 200px;
+            border-radius: 15px;
+            cursor: pointer;
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body class="pb-32">
 
     <div id="auth-system" class="fixed inset-0 z-[99999] bg-slate-950 flex items-center justify-center p-4 overflow-y-auto">
         <div class="w-full max-w-lg bg-slate-900 border border-slate-800 p-8 md:p-12 rounded-[3.5rem] shadow-2xl animate-slide-up my-auto">
-            
             <div id="auth-reg-box" class="space-y-8">
                 <div class="text-center">
                     <div class="inline-block px-4 py-1 rounded-full bg-cyan-500/10 text-cyan-400 text-[10px] font-black tracking-[0.4em] mb-4 uppercase">Neural Registration</div>
                     <h2 class="h-font text-3xl text-white font-black">ARTEM<span class="text-cyan-400">STORE</span></h2>
                     <p class="text-slate-500 text-xs mt-3">Створи свій цифровий відбиток у системі</p>
                 </div>
-
                 <div class="flex flex-col items-center gap-6">
                     <input type="file" id="reg-p-file" class="hidden" accept="image/*">
                     <label for="reg-p-file" class="cursor-pointer group">
                         <div id="reg-p-preview" class="w-28 h-28 rounded-[2.5rem] border-2 border-dashed border-slate-700 flex items-center justify-center bg-black overflow-hidden group-hover:border-cyan-500 transition-all duration-500">
-                            <div class="text-center">
-                                <span class="text-[9px] text-slate-600 font-black group-hover:text-cyan-400">UPLOAD PHOTO</span>
-                            </div>
+                            <span class="text-[9px] text-slate-600 font-black group-hover:text-cyan-400">UPLOAD PHOTO</span>
                         </div>
                     </label>
                 </div>
-
                 <div class="space-y-4">
                     <input type="text" id="reg-full-name" placeholder="Ваше ім'я" class="cyber-input">
                     <input type="text" id="reg-user-nick" placeholder="Username (англійською)" class="cyber-input">
                     <input type="email" id="reg-user-email" placeholder="Email Address" class="cyber-input">
                     <input type="password" id="reg-user-pass" placeholder="Придумайте пароль" class="cyber-input">
                 </div>
-
                 <button onclick="handleVerificationProcess()" class="w-full btn-neon">Зареєструватися</button>
-                
                 <div class="text-center pt-4">
                     <p class="text-slate-500 text-[11px] uppercase font-bold">Вже маєш акаунт?</p>
                     <button onclick="toggleAuthMode('login')" class="text-cyan-400 text-xs font-black mt-2 underline tracking-widest">УВІЙТИ В СИСТЕМУ</button>
                 </div>
             </div>
-
             <div id="auth-login-box" class="hidden space-y-10">
                 <div class="text-center">
                     <h2 class="h-font text-3xl text-white">LOGIN<span class="text-cyan-400">CORE</span></h2>
                     <p class="text-slate-500 text-xs mt-3 uppercase">Авторизація через пошту та пароль</p>
                 </div>
-
                 <div class="space-y-5">
                     <input type="email" id="login-email" placeholder="Ваша пошта" class="cyber-input">
                     <input type="password" id="login-pass" placeholder="Ваш пароль" class="cyber-input">
                 </div>
-
                 <button onclick="processSystemLogin()" class="w-full btn-neon">Авторизуватися</button>
-
                 <div class="text-center pt-4">
                     <button onclick="toggleAuthMode('reg')" class="text-slate-500 text-[10px] font-black uppercase tracking-widest hover:text-white">Назад до реєстрації</button>
                 </div>
             </div>
-
             <div id="reg-step-2" class="hidden space-y-10 text-center animate-slide-up">
                 <div>
                     <h2 class="h-font text-3xl text-white italic">CONFIRM</h2>
@@ -202,7 +194,7 @@
     </div>
 
     <header class="sticky top-0 z-[1000] glass-panel px-6 py-5 flex justify-between items-center border-b border-slate-800">
-        <div class="flex items-center gap-4" onclick="navigate('profile')">
+        <div class="flex items-center gap-4" onclick="navigate('shop')">
             <div class="relative">
                 <img id="user-p-avatar" class="w-12 h-12 rounded-2xl hidden object-cover border-2 border-cyan-500">
                 <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-slate-900"></div>
@@ -212,7 +204,6 @@
                 <p class="text-[8px] text-slate-600 font-bold uppercase tracking-widest">Global Marketplace 2026</p>
             </div>
         </div>
-        
         <button id="inbox-btn" onclick="openInboxSystem()" class="relative p-4 bg-slate-900/80 rounded-2xl border border-slate-800 transition-all">
             <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
@@ -250,15 +241,16 @@
                 <img id="p-view-avatar" class="w-40 h-40 rounded-[3.5rem] border-4 border-cyan-500 mx-auto object-cover mb-8 shadow-2xl">
                 <h2 id="p-view-name" class="h-font text-4xl font-black text-white italic"></h2>
                 <p id="p-view-nick" class="text-cyan-400 font-mono tracking-[0.4em] uppercase text-xs mt-3"></p>
-                
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12">
                     <div class="bg-black/40 p-6 rounded-[2rem] border border-slate-800"><p class="text-[9px] text-slate-600 font-black uppercase">ПРОДАНО</p><span class="text-2xl font-black text-white">0</span></div>
                     <div class="bg-black/40 p-6 rounded-[2rem] border border-slate-800"><p class="text-[9px] text-slate-600 font-black uppercase">КУПЛЕНО</p><span class="text-2xl font-black text-white">0</span></div>
-                    <div class="bg-black/40 p-6 rounded-[2rem] border border-slate-800"><p class="text-[9px] text-slate-600 font-black uppercase">РЕЙТИНГ</p><span class="text-2xl font-black text-gold">5.0</span></div>
+                    <div class="bg-black/40 p-6 rounded-[2rem] border border-slate-800">
+                        <p class="text-[9px] text-slate-600 font-black uppercase">РЕЙТИНГ</p>
+                        <span id="p-view-rating" class="text-xl font-black text-gold">Немає відгуків</span>
+                    </div>
                     <div class="bg-black/40 p-6 rounded-[2rem] border border-slate-800"><p class="text-[9px] text-slate-600 font-black uppercase">STATUS</p><span class="text-2xl font-black text-cyan-400">PRO</span></div>
                 </div>
             </div>
-
             <div class="max-w-xl mx-auto space-y-4">
                 <button onclick="filterMyProducts()" class="w-full flex items-center justify-between p-8 bg-slate-900/50 rounded-[2.5rem] border border-slate-800 hover:border-cyan-500 transition-all">
                     <div class="flex items-center gap-5">
@@ -273,16 +265,23 @@
     </main>
 
     <div id="system-inbox" class="hidden fixed inset-0 z-[9000] glass-panel flex items-center justify-center p-6">
-        <div class="w-full max-w-lg bg-slate-950 rounded-[4rem] h-[80vh] flex flex-col border border-slate-800 shadow-2xl overflow-hidden animate-slide-up">
+        <div class="w-full max-w-lg bg-slate-950 rounded-[4rem] h-[80vh] flex flex-col border border-slate-800 shadow-2xl overflow-hidden">
             <div class="p-10 border-b border-slate-900 flex justify-between items-center bg-slate-900/20">
-                <div>
-                    <h2 class="h-font text-2xl text-white">INBOX</h2>
-                    <p class="text-[9px] text-cyan-500 font-black uppercase tracking-widest mt-1">Active Neural Links</p>
-                </div>
+                <h2 class="h-font text-2xl text-white">INBOX</h2>
                 <button onclick="closeModal('system-inbox')" class="w-12 h-12 flex items-center justify-center bg-slate-900 rounded-2xl text-slate-500">✕</button>
             </div>
-            <div id="inbox-list" class="flex-1 overflow-y-auto p-6 space-y-4 no-scrollbar">
-                </div>
+            <div id="inbox-list" class="flex-1 overflow-y-auto p-6 space-y-4 no-scrollbar"></div>
+        </div>
+    </div>
+
+    <div id="product-details-modal" class="hidden fixed inset-0 z-[11000] glass-panel flex items-center justify-center p-6">
+        <div class="w-full max-w-2xl bg-slate-950 rounded-[3rem] border border-slate-800 p-8 space-y-6 overflow-y-auto max-h-[90vh]">
+            <h2 id="modal-p-title" class="h-font text-2xl text-white font-black"></h2>
+            <img id="modal-p-img" class="w-full rounded-3xl border border-slate-800">
+            <div class="p-6 bg-slate-900/50 rounded-2xl">
+                <p id="modal-p-desc" class="text-slate-400 text-sm whitespace-pre-wrap"></p>
+            </div>
+            <button onclick="closeModal('product-details-modal')" class="w-full btn-neon">Закрити</button>
         </div>
     </div>
 
@@ -293,23 +292,27 @@
     </nav>
 
     <div id="system-chat" class="hidden fixed inset-0 z-[10000] bg-black flex flex-col">
-        <header class="p-8 border-b border-slate-900 glass-panel flex items-center gap-6">
-            <button onclick="closeModal('system-chat')" class="text-cyan-400 text-3xl">←</button>
-            <img id="chat-partner-av" class="w-14 h-14 rounded-2xl object-cover">
-            <div>
-                <span id="chat-partner-nick" class="font-black text-white block"></span>
-                <span class="text-[9px] text-cyan-500 uppercase tracking-widest animate-pulse">Connection: Secure</span>
+        <header class="p-8 border-b border-slate-900 glass-panel flex items-center justify-between">
+            <div class="flex items-center gap-6">
+                <button onclick="closeModal('system-chat')" class="text-cyan-400 text-3xl">←</button>
+                <img id="chat-partner-av" class="w-14 h-14 rounded-2xl object-cover">
+                <div>
+                    <span id="chat-partner-nick" class="font-black text-white block"></span>
+                    <span class="text-[9px] text-cyan-500 uppercase tracking-widest animate-pulse">Online</span>
+                </div>
             </div>
+            <button onclick="document.getElementById('chat-img-input').click()" class="p-4 bg-slate-900 rounded-xl">📷</button>
+            <input type="file" id="chat-img-input" class="hidden" accept="image/*" onchange="sendChatImage(this)">
         </header>
         <div id="chat-messages-container" class="flex-1 overflow-y-auto p-8 flex flex-col gap-6 no-scrollbar"></div>
         <footer class="p-8 glass-panel flex gap-4">
-            <input type="text" id="chat-input-field" placeholder="Напишіть повідомлення..." class="flex-1 cyber-input">
+            <input type="text" id="chat-input-field" placeholder="Повідомлення..." class="flex-1 cyber-input">
             <button onclick="processMessageSend()" class="p-6 bg-cyan-500 text-black rounded-2xl font-black">➤</button>
         </footer>
     </div>
 
     <script>
-        // --- CONFIG & STATE ---
+        // --- CONFIG ---
         const FIRE_CONFIG = { databaseURL: "https://gameshop-ff113-default-rtdb.firebaseio.com/" };
         firebase.initializeApp(FIRE_CONFIG);
         const DB_LAYER = firebase.database();
@@ -322,10 +325,11 @@
             current_user: JSON.parse(localStorage.getItem('artem_user_v4')) || null,
             otp_code: null,
             temp_avatar_buffer: null,
-            active_chat_partner: null
+            active_chat_partner: null,
+            is_viewing_my_lots: false
         };
 
-        // --- AUTH LOGIC (LOGIN + REG) ---
+        // --- AUTH ---
         function toggleAuthMode(mode) {
             document.getElementById('auth-reg-box').classList.toggle('hidden', mode === 'login');
             document.getElementById('auth-login-box').classList.toggle('hidden', mode === 'reg');
@@ -334,48 +338,41 @@
         async function processSystemLogin() {
             const email = document.getElementById('login-email').value.trim();
             const pass = document.getElementById('login-pass').value.trim();
-            if(!email || !pass) return alert("Заповніть пошту та пароль!");
-            const users_snap = await DB_LAYER.ref('users').get();
-            const users_data = users_snap.val();
-            let found_user = null;
-            if(users_data) {
-                Object.values(users_data).forEach(u => {
-                    if(u.email === email && u.password === pass) found_user = u;
-                });
+            const snap = await DB_LAYER.ref('users').get();
+            const users = snap.val();
+            let found = null;
+            if(users) {
+                Object.values(users).forEach(u => { if(u.email === email && u.password === pass) found = u; });
             }
-            if(found_user) {
-                localStorage.setItem('artem_user_v4', JSON.stringify(found_user));
-                location.reload();
-            } else {
-                alert("Помилка: Невірні дані або акаунт не існує!");
-            }
+            if(found) { localStorage.setItem('artem_user_v4', JSON.stringify(found)); location.reload(); }
+            else alert("Помилка авторизації!");
         }
-
-        document.getElementById('reg-p-file').onchange = (e) => {
-            const reader = new FileReader();
-            reader.onload = () => {
-                app_state.temp_avatar_buffer = reader.result;
-                document.getElementById('reg-p-preview').innerHTML = `<img src="${reader.result}" class="w-full h-full object-cover">`;
-            };
-            reader.readAsDataURL(e.target.files[0]);
-        };
 
         async function handleVerificationProcess() {
             const name = document.getElementById('reg-full-name').value;
             const nick = document.getElementById('reg-user-nick').value.trim();
-            const email = document.getElementById('reg-user-email').value;
+            const email = document.getElementById('reg-user-email').value.trim();
             const pass = document.getElementById('reg-user-pass').value;
-            if(!name || !nick || !email || !pass) return alert("Всі поля мають бути заповнені!");
+
+            if(!name || !nick || !email || !pass) return alert("Всі поля обов'язкові!");
+            
+            // 1. ПЕРЕВІРКА ПОШТИ НА УНІКАЛЬНІСТЬ
+            const users_snap = await DB_LAYER.ref('users').get();
+            const all_users = users_snap.val();
+            if(all_users) {
+                const email_exists = Object.values(all_users).some(u => u.email === email);
+                if(email_exists) return alert("Ця пошта вже зареєстрована!");
+            }
+
             const check_nick = await DB_LAYER.ref('users/' + nick).get();
-            if(check_nick.exists()) return alert("Нікнейм вже зайнятий!");
+            if(check_nick.exists()) return alert("Нікнейм зайнятий!");
+
             app_state.otp_code = Math.floor(100000 + Math.random() * 900000).toString();
-            emailjs.send('service_dbkrnz9', 'template_n90xvc9', {
-                to_email: email,
-                otp_code: app_state.otp_code
-            }).then(() => {
-                document.getElementById('auth-reg-box').classList.add('hidden');
-                document.getElementById('reg-step-2').classList.remove('hidden');
-            });
+            emailjs.send('service_dbkrnz9', 'template_n90xvc9', { to_email: email, otp_code: app_state.otp_code })
+                .then(() => {
+                    document.getElementById('auth-reg-box').classList.add('hidden');
+                    document.getElementById('reg-step-2').classList.remove('hidden');
+                });
         }
 
         function finalizeRegistration() {
@@ -387,132 +384,108 @@
                     password: document.getElementById('reg-user-pass').value,
                     avatar: app_state.temp_avatar_buffer || "https://api.dicebear.com/7.x/bottts/svg?seed=" + Math.random(),
                     is_admin: document.getElementById('reg-user-email').value === SUPER_ADMIN,
+                    rating: null, // Початково NULL
                     created_at: Date.now()
                 };
                 DB_LAYER.ref('users/' + user_payload.nick).set(user_payload);
                 localStorage.setItem('artem_user_v4', JSON.stringify(user_payload));
                 location.reload();
-            } else {
-                alert("Код невірний!");
-            }
+            } else alert("Код невірний!");
         }
 
-        // --- NAVIGATION & UI ---
+        document.getElementById('reg-p-file').onchange = (e) => {
+            const reader = new FileReader();
+            reader.onload = () => {
+                app_state.temp_avatar_buffer = reader.result;
+                document.getElementById('reg-p-preview').innerHTML = `<img src="${reader.result}" class="w-full h-full object-cover">`;
+            };
+            reader.readAsDataURL(e.target.files[0]);
+        };
+
+        // --- NAVIGATION ---
         function navigate(target) {
+            app_state.is_viewing_my_lots = false;
             document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
             document.getElementById(`page-${target}`).classList.remove('hidden');
             if(target === 'shop') initializeMarket();
         }
-
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
         function systemSignOut() { localStorage.clear(); location.reload(); }
 
-        // --- INBOX SYSTEM (NEW) ---
-        async function openInboxSystem() {
-            document.getElementById('system-inbox').classList.remove('hidden');
-            const list = document.getElementById('inbox-list');
-            list.innerHTML = '<div class="text-center py-10 animate-pulse text-slate-500 font-black text-[10px] uppercase">Scanning Channels...</div>';
-            
-            DB_LAYER.ref('chats').once('value', async (snap) => {
-                const all_chats = snap.val();
-                list.innerHTML = '';
-                if(!all_chats) return list.innerHTML = '<div class="text-center py-10 text-slate-700 font-black text-[10px] uppercase">No active transmissions</div>';
-                
-                let found = false;
-                for(let chat_id in all_chats) {
-                    if(chat_id.includes(app_state.current_user.nick)) {
-                        found = true;
-                        const partner_nick = chat_id.replace(app_state.current_user.nick, '').replace('_', '');
-                        const p_snap = await DB_LAYER.ref('users/' + partner_nick).get();
-                        const p_data = p_snap.val();
-                        
-                        if(p_data) {
-                            list.innerHTML += `
-                                <div onclick="executeChatInitiation('${p_data.nick}', '${p_data.avatar}')" class="flex items-center gap-5 p-6 bg-slate-900/40 border border-slate-800 rounded-[2.5rem] hover:border-cyan-500/50 cursor-pointer transition-all active:scale-95">
-                                    <img src="${p_data.avatar}" class="w-14 h-14 rounded-2xl object-cover border border-slate-800">
-                                    <div class="flex-1">
-                                        <h4 class="text-white font-black text-sm uppercase tracking-tight">${p_data.name}</h4>
-                                        <p class="text-[9px] text-cyan-500 font-black tracking-widest uppercase">@${p_data.nick}</p>
-                                    </div>
-                                    <div class="w-2 h-2 bg-cyan-500 rounded-full shadow-[0_0_10px_var(--cyan)]"></div>
-                                </div>
-                            `;
-                        }
-                    }
-                }
-                if(!found) list.innerHTML = '<div class="text-center py-10 text-slate-700 font-black text-[10px] uppercase">No neural links found</div>';
-                document.getElementById('inbox-btn').classList.remove('notify-active');
-                document.getElementById('notify-indicator').classList.add('hidden');
-            });
-        }
-
-        function listenForNotifications() {
-            DB_LAYER.ref('chats').on('child_changed', (snap) => {
-                const chatID = snap.key;
-                if(chatID.includes(app_state.current_user.nick)) {
-                    const messages = snap.val();
-                    const msgsArray = Object.values(messages);
-                    const lastMsg = msgsArray[msgsArray.length - 1];
-                    if(lastMsg.sender !== app_state.current_user.nick) {
-                        document.getElementById('inbox-btn').classList.add('notify-active');
-                        document.getElementById('notify-indicator').classList.remove('hidden');
-                    }
-                }
-            });
-        }
-
-        // --- MARKET ENGINE ---
+        // --- MARKET ---
         function renderProduct(id, item) {
+            const is_my_item = app_state.current_user.nick === item.seller_nick;
             return `
                 <div class="premium-card p-8 animate-slide-up">
                     <div class="flex justify-between items-center mb-6">
                         <span class="text-[9px] bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 px-4 py-2 rounded-xl font-black uppercase">${item.game}</span>
-                        <div class="w-2 h-2 bg-green-500 rounded-full shadow-[0_0_10px_green]"></div>
+                        <button onclick="showProductDetails('${id}')" class="text-slate-500 text-xl font-black">•••</button>
                     </div>
                     <img src="${item.img}" class="w-full h-56 object-cover rounded-[2.5rem] mb-6 shadow-2xl">
                     <h3 class="font-black text-xl text-white mb-3 truncate">${item.title}</h3>
                     <div class="flex items-center gap-3 mb-8">
                         <img src="${item.seller_avatar}" class="w-6 h-6 rounded-lg object-cover">
-                        <span class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">@${item.seller_nick}</span>
+                        <span class="text-[10px] text-slate-500 font-bold uppercase">@${item.seller_nick}</span>
                     </div>
-                    <div class="flex justify-between items-center pt-6 border-t border-slate-900">
-                        <span class="text-3xl font-black text-white">$${item.price}</span>
-                        <button onclick="executeChatInitiation('${item.seller_nick}', '${item.seller_avatar}')" class="btn-neon px-8 py-4 text-[10px]">Chat</button>
+                    <div class="flex flex-col gap-4 pt-6 border-t border-slate-900">
+                        <div class="flex justify-between items-center">
+                            <span class="text-3xl font-black text-white">$${item.price}</span>
+                            <div class="flex gap-2">
+                                <button onclick="executeChatInitiation('${item.seller_nick}', '${item.seller_avatar}')" class="bg-slate-900 p-4 rounded-2xl text-cyan-400">Chat</button>
+                                ${!is_my_item ? `<button onclick="handleBuyClick('${id}', '${item.seller_nick}')" class="btn-neon px-6 text-[10px]">КУПИТИ</button>` : ''}
+                            </div>
+                        </div>
+                        ${app_state.is_viewing_my_lots ? `<button onclick="deleteLot('${id}')" class="w-full py-3 bg-red-500/10 text-red-500 rounded-xl text-[10px] font-black uppercase">Видалити товар</button>` : ''}
                     </div>
                 </div>
             `;
         }
 
-        function initializeMarket() {
-            DB_LAYER.ref('products').on('value', (snap) => {
+        async function showProductDetails(id) {
+            const snap = await DB_LAYER.ref('products/' + id).get();
+            const p = snap.val();
+            if(p) {
+                document.getElementById('modal-p-title').innerText = p.title;
+                document.getElementById('modal-p-img').src = p.img;
+                document.getElementById('modal-p-desc').innerText = p.desc || "Опис відсутній";
+                document.getElementById('product-details-modal').classList.remove('hidden');
+            }
+        }
+
+        function handleBuyClick(id, seller) {
+            alert("Запит на покупку відправлено продавцю @"+seller+"! Очікуйте повідомлення в чаті.");
+            executeChatInitiation(seller, ''); // Відкриваємо чат для деталей
+        }
+
+        function deleteLot(id) {
+            if(confirm("Видалити цей товар з ринку?")) {
+                DB_LAYER.ref('products/' + id).remove().then(() => initializeMarket());
+            }
+        }
+
+        function filterMyProducts() {
+            app_state.is_viewing_my_lots = true;
+            navigate('shop');
+            DB_LAYER.ref('products').once('value', (snap) => {
                 const grid = document.getElementById('product-grid');
                 grid.innerHTML = '';
                 const data = snap.val();
                 if(data) {
-                    Object.keys(data).reverse().forEach(id => {
-                        grid.innerHTML += renderProduct(id, data[id]);
+                    Object.keys(data).forEach(id => {
+                        if(data[id].seller_nick === app_state.current_user.nick) grid.innerHTML += renderProduct(id, data[id]);
                     });
                 }
             });
         }
 
-        function filterMyProducts() {
-            navigate('shop');
-            const my_nick = app_state.current_user.nick;
-            DB_LAYER.ref('products').once('value', (snap) => {
+        function initializeMarket() {
+            DB_LAYER.ref('products').on('value', (snap) => {
                 const grid = document.getElementById('product-grid');
-                grid.innerHTML = '';
-                const data = snap.val();
-                let has_items = false;
-                if(data) {
-                    Object.keys(data).forEach(id => {
-                        if(data[id].seller_nick === my_nick) {
-                            grid.innerHTML += renderProduct(id, data[id]);
-                            has_items = true;
-                        }
-                    });
+                if(!app_state.is_viewing_my_lots) {
+                    grid.innerHTML = '';
+                    const data = snap.val();
+                    if(data) Object.keys(data).reverse().forEach(id => grid.innerHTML += renderProduct(id, data[id]));
                 }
-                if(!has_items) grid.innerHTML = '<div class="col-span-full py-20 text-center font-black text-slate-700 uppercase tracking-widest">Ви ще не виставили жодного лоту</div>';
             });
         }
 
@@ -530,25 +503,33 @@
                     img: reader.result,
                     seller_nick: app_state.current_user.nick,
                     seller_avatar: app_state.current_user.avatar,
-                    seller_email: app_state.current_user.email,
                     timestamp: Date.now()
-                }).then(() => {
-                    alert("УСПІШНО ОПУБЛІКОВАНО!");
-                    navigate('shop');
+                }).then(() => { alert("ОПУБЛІКОВАНО!"); navigate('shop'); });
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // --- CHAT WITH IMAGES ---
+        function sendChatImage(input) {
+            const file = input.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = () => {
+                const chat_id = [app_state.current_user.nick, app_state.active_chat_partner.nick].sort().join('_');
+                DB_LAYER.ref('chats/' + chat_id).push({
+                    sender: app_state.current_user.nick,
+                    img: reader.result,
+                    time: Date.now()
                 });
             };
             reader.readAsDataURL(file);
         }
 
-        // --- CHAT SYSTEM ---
         function executeChatInitiation(nick, avatar) {
-            if(nick === app_state.current_user.nick) return alert("Ви не можете писати самому собі!");
+            if(nick === app_state.current_user.nick) return;
             app_state.active_chat_partner = { nick, avatar };
-            document.getElementById('chat-partner-av').src = avatar;
             document.getElementById('chat-partner-nick').innerText = "@" + nick;
             document.getElementById('system-chat').classList.remove('hidden');
-            if(!document.getElementById('system-inbox').classList.contains('hidden')) closeModal('system-inbox');
-            
             const chat_id = [app_state.current_user.nick, nick].sort().join('_');
             DB_LAYER.ref('chats/' + chat_id).on('value', (snap) => {
                 const container = document.getElementById('chat-messages-container');
@@ -557,10 +538,11 @@
                 if(messages) {
                     Object.values(messages).forEach(m => {
                         const is_me = m.sender === app_state.current_user.nick;
+                        const content = m.img ? `<img src="${m.img}" class="chat-img">` : m.text;
                         container.innerHTML += `
                             <div class="flex flex-col ${is_me ? 'items-end' : 'items-start'}">
-                                <div class="p-5 ${is_me ? 'bubble-me' : 'bubble-them'} max-w-[85%] text-sm font-bold shadow-lg">
-                                    ${m.text}
+                                <div class="p-5 ${is_me ? 'bubble-me' : 'bubble-them'} max-w-[85%] text-sm font-bold">
+                                    ${content}
                                 </div>
                             </div>
                         `;
@@ -575,12 +557,38 @@
             const text = input.value.trim();
             if(!text) return;
             const chat_id = [app_state.current_user.nick, app_state.active_chat_partner.nick].sort().join('_');
-            DB_LAYER.ref('chats/' + chat_id).push({
-                sender: app_state.current_user.nick,
-                text: text,
-                time: Date.now()
-            });
+            DB_LAYER.ref('chats/' + chat_id).push({ sender: app_state.current_user.nick, text: text, time: Date.now() });
             input.value = '';
+        }
+
+        async function openInboxSystem() {
+            document.getElementById('system-inbox').classList.remove('hidden');
+            const list = document.getElementById('inbox-list');
+            list.innerHTML = '';
+            const snap = await DB_LAYER.ref('chats').once('value');
+            const chats = snap.val();
+            if(chats) {
+                for(let id in chats) {
+                    if(id.includes(app_state.current_user.nick)) {
+                        const partner = id.replace(app_state.current_user.nick, '').replace('_', '');
+                        list.innerHTML += `
+                            <div onclick="executeChatInitiation('${partner}', '')" class="p-6 bg-slate-900 border border-slate-800 rounded-3xl text-white font-black">
+                                @${partner}
+                            </div>`;
+                    }
+                }
+            }
+            document.getElementById('inbox-btn').classList.remove('notify-active');
+            document.getElementById('notify-indicator').classList.add('hidden');
+        }
+
+        function listenForNotifications() {
+            DB_LAYER.ref('chats').on('child_changed', (snap) => {
+                if(snap.key.includes(app_state.current_user.nick)) {
+                    document.getElementById('inbox-btn').classList.add('notify-active');
+                    document.getElementById('notify-indicator').classList.remove('hidden');
+                }
+            });
         }
 
         // --- BOOT ---
@@ -592,21 +600,18 @@
                 document.getElementById('p-view-avatar').src = app_state.current_user.avatar;
                 document.getElementById('p-view-name').innerText = app_state.current_user.name;
                 document.getElementById('p-view-nick').innerText = "@" + app_state.current_user.nick;
+                
+                // РЕЙТИНГ
+                const rat = app_state.current_user.rating;
+                document.getElementById('p-view-rating').innerText = rat ? rat : "Немає відгуків";
+
                 if(app_state.current_user.is_admin) document.getElementById('nav-btn-admin').classList.remove('hidden');
-                DB_LAYER.ref('products').on('value', (snap) => {
-                    const data = snap.val();
-                    let count = 0;
-                    if(data) {
-                        Object.values(data).forEach(p => { if(p.seller_nick === app_state.current_user.nick) count++; });
-                    }
-                    document.getElementById('my-lots-count').innerText = count;
-                });
                 initializeMarket();
                 listenForNotifications();
             }
-            CATEGORIES_MASTER.forEach(name => {
-                document.getElementById('categories').innerHTML += `<button class="bg-slate-900 border border-slate-800 px-8 py-4 rounded-2xl text-[10px] font-black uppercase text-slate-500 hover:text-cyan-400 hover:border-cyan-500 transition-all whitespace-nowrap">${name}</button>`;
-                document.getElementById('p-new-game').innerHTML += `<option value="${name}">${name}</option>`;
+            CATEGORIES_MASTER.forEach(n => {
+                document.getElementById('categories').innerHTML += `<button class="bg-slate-900 border border-slate-800 px-8 py-4 rounded-2xl text-[10px] font-black uppercase text-slate-500">${n}</button>`;
+                document.getElementById('p-new-game').innerHTML += `<option value="${n}">${n}</option>`;
             });
         };
     </script>
