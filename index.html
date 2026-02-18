@@ -3,437 +3,306 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ARTEM STORE | PROFESSIONAL GAMING MARKETPLACE</title>
+    <title>ARTEM STORE | GLOBAL MARKETPLACE</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600;900&display=swap" rel="stylesheet">
 
     <style>
         :root {
             --cyan: #00f2ff;
             --blue: #3b82f6;
-            --dark-bg: #020617;
-            --card-bg: #0f172a;
+            --dark: #020617;
+            --card: #0f172a;
             --border: #1e293b;
-            --text-main: #f8fafc;
-            --text-dim: #94a3b8;
         }
 
         body {
             font-family: 'Inter', sans-serif;
-            background-color: var(--dark-bg);
-            color: var(--text-main);
+            background-color: var(--dark);
+            color: white;
+            margin: 0;
             overflow-x: hidden;
-            -webkit-tap-highlight-color: transparent;
         }
 
         .header-font { font-family: 'Orbitron', sans-serif; }
 
-        /* Анімації */
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .fade-in { animation: fadeIn 0.5s ease forwards; }
-
-        @keyframes pulse-border { 0% { border-color: #1e293b; } 50% { border-color: var(--cyan); } 100% { border-color: #1e293b; } }
-        .active-border { animation: pulse-border 2s infinite; }
-
-        /* Картки товарів */
+        /* Стильні картки */
         .premium-card {
             background: linear-gradient(165deg, #111827, #020617);
             border: 1px solid var(--border);
             border-radius: 24px;
-            overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
+            transition: all 0.4s ease;
         }
         .premium-card:hover {
             border-color: var(--cyan);
-            box-shadow: 0 10px 40px -10px rgba(0, 242, 255, 0.2);
-            transform: translateY(-8px);
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.15);
+            transform: translateY(-5px);
         }
 
-        /* Чат */
-        .chat-msg {
-            max-width: 85%;
-            padding: 14px 18px;
-            border-radius: 20px;
+        /* Чат-бульбашки */
+        .msg-bubble {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 18px;
             font-size: 14px;
-            line-height: 1.5;
-            margin-bottom: 12px;
-            position: relative;
+            margin-bottom: 8px;
         }
-        .msg-sent {
-            background: linear-gradient(135deg, var(--cyan), var(--blue));
-            color: #000;
+        .msg-mine {
+            background: var(--cyan);
+            color: black;
             align-self: flex-end;
             border-bottom-right-radius: 4px;
         }
-        .msg-received {
+        .msg-theirs {
             background: #1e293b;
-            color: #fff;
+            color: white;
             align-self: flex-start;
             border-bottom-left-radius: 4px;
         }
 
-        /* Скролбар */
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: var(--dark-bg); }
-        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--cyan); }
-
-        .glass-nav {
-            background: rgba(2, 6, 23, 0.8);
-            backdrop-blur: 12px;
-            border-top: 1px solid var(--border);
-        }
-
+        .hidden { display: none !important; }
+        .glass { background: rgba(2, 6, 23, 0.8); backdrop-blur: 15px; }
+        
+        /* Скролл */
         .no-scrollbar::-webkit-scrollbar { display: none; }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
     </style>
 </head>
 <body class="pb-24">
 
-    <div id="auth-screen" class="fixed inset-0 z-[9999] bg-slate-950 flex items-center justify-center p-4">
-        <div class="w-full max-w-lg bg-slate-900/50 backdrop-blur-2xl p-10 rounded-[3rem] border border-slate-800 shadow-2xl">
-            <div id="auth-step-1" class="space-y-8 fade-in">
+    <div id="auth-layer" class="fixed inset-0 z-[9999] bg-slate-950 flex items-center justify-center p-6">
+        <div class="w-full max-w-md bg-slate-900 border border-slate-800 p-8 rounded-[3rem] shadow-2xl">
+            
+            <div id="auth-step-1" class="space-y-6">
                 <div class="text-center">
-                    <h1 class="header-font text-4xl font-black text-white tracking-tighter">GATE<span class="text-cyan-400">WAY</span></h1>
-                    <p class="text-slate-500 text-xs mt-3 uppercase tracking-[0.3em]">Secure Access Protocol</p>
+                    <h2 class="header-font text-2xl text-cyan-400">IDENTITY</h2>
+                    <p class="text-[10px] text-slate-500 uppercase tracking-widest mt-2">Global Access Portal</p>
                 </div>
 
-                <div class="flex flex-col items-center gap-4">
-                    <div class="relative group">
-                        <input type="file" id="user-avatar-input" class="hidden" accept="image/*">
-                        <label for="user-avatar-input" class="cursor-pointer block">
-                            <div id="avatar-preview-box" class="w-32 h-32 rounded-full border-2 border-dashed border-slate-700 flex items-center justify-center bg-black overflow-hidden hover:border-cyan-500 transition-colors">
-                                <span class="text-[10px] text-slate-500 font-bold">UPLOAD PHOTO</span>
-                            </div>
-                        </label>
-                    </div>
-                </div>
-
-                <div class="grid gap-4">
-                    <div class="relative">
-                        <input type="text" id="reg-name" placeholder="Ваше повне ім'я" class="w-full bg-slate-950 border border-slate-800 p-5 rounded-2xl outline-none focus:border-cyan-500 transition-all text-sm">
-                    </div>
-                    <div class="relative">
-                        <input type="text" id="reg-nick" placeholder="@username" class="w-full bg-slate-950 border border-slate-800 p-5 rounded-2xl outline-none focus:border-cyan-500 transition-all text-sm">
-                    </div>
-                    <div class="relative">
-                        <input type="email" id="reg-email" placeholder="Email для верифікації" class="w-full bg-slate-950 border border-slate-800 p-5 rounded-2xl outline-none focus:border-cyan-500 transition-all text-sm">
-                    </div>
-                </div>
-
-                <button onclick="requestSecureCode()" class="w-full bg-cyan-500 text-black font-black py-5 rounded-2xl hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-cyan-500/20 uppercase tracking-widest text-sm">
-                    Отримати код доступу
-                </button>
-            </div>
-
-            <div id="auth-step-2" class="hidden space-y-8 fade-in text-center">
-                <div>
-                    <h2 class="header-font text-2xl text-white">VERIFY</h2>
-                    <p class="text-slate-400 text-sm mt-2">Ми надіслали 6-значний код на вашу пошту</p>
-                </div>
-                
-                <input type="text" id="verification-input" maxlength="6" placeholder="000 000" class="w-full bg-slate-950 border-2 border-cyan-500 p-6 rounded-2xl text-center text-3xl font-black text-cyan-400 tracking-[0.5em] outline-none">
-                
-                <div class="text-xs text-red-500 font-bold uppercase">Залишилось спроб: <span id="auth-retries">12</span></div>
-                
-                <button onclick="finalizeAuth()" class="w-full bg-white text-black font-black py-5 rounded-2xl uppercase tracking-widest text-sm">
-                    Підтвердити вхід
-                </button>
-            </div>
-        </div>
-    </div>
-    <header class="sticky top-0 z-[100] bg-slate-950/80 backdrop-blur-xl border-b border-slate-900 px-6 py-5 flex justify-between items-center">
-        <div class="flex items-center gap-4 cursor-pointer" onclick="changeSection('profile')">
-            <div class="relative">
-                <img id="header-user-av" src="" class="w-10 h-10 rounded-full object-cover border border-cyan-500 hidden">
-                <div class="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 border-2 border-slate-950 rounded-full"></div>
-            </div>
-            <div>
-                <h1 class="header-font text-xl font-black tracking-tighter italic">ARTEM<span class="text-cyan-400">STORE</span></h1>
-                <p class="text-[8px] text-slate-500 uppercase font-black tracking-widest">Global Marketplace</p>
-            </div>
-        </div>
-
-        <div class="flex items-center gap-6">
-            <button onclick="openInbox()" class="relative text-2xl hover:scale-110 transition-transform">
-                🔔
-                <span id="notification-dot" class="hidden absolute -top-1 -right-1 w-3 h-3 bg-red-600 rounded-full border-2 border-slate-950"></span>
-            </button>
-        </div>
-    </header>
-
-    <main class="max-w-6xl mx-auto px-4 py-8">
-        
-        <section id="section-shop" class="space-y-8 fade-in">
-            <div class="flex gap-3 overflow-x-auto no-scrollbar py-2" id="game-filters-container">
-                </div>
-
-            <div id="products-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                </div>
-        </section>
-
-        <section id="section-admin" class="hidden max-w-2xl mx-auto fade-in">
-            <h2 class="header-font text-3xl font-black text-cyan-400 mb-8">НОВЕ ОГОЛОШЕННЯ</h2>
-            <div class="bg-slate-900/50 border border-slate-800 p-8 rounded-[3rem] space-y-6">
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="space-y-2">
-                        <label class="text-[10px] text-slate-500 font-black ml-2">ОБЕРІТЬ ГРУ</label>
-                        <select id="new-prod-game" class="w-full bg-slate-950 p-4 rounded-2xl border border-slate-800 outline-none text-sm"></select>
-                    </div>
-                    <div class="space-y-2">
-                        <label class="text-[10px] text-slate-500 font-black ml-2">КАТЕГОРІЯ</label>
-                        <select id="new-prod-cat" class="w-full bg-slate-950 p-4 rounded-2xl border border-slate-800 outline-none text-sm">
-                            <option>Акаунти</option>
-                            <option>Валюта</option>
-                            <option>Буст</option>
-                            <option>Ключі</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="space-y-2">
-                    <label class="text-[10px] text-slate-500 font-black ml-2">НАЗВА ТОВАРУ</label>
-                    <input type="text" id="new-prod-title" placeholder="Напр: Легендарний акаунт 80 LVL" class="w-full bg-slate-950 p-4 rounded-2xl border border-slate-800 outline-none text-sm">
-                </div>
-
-                <div class="space-y-2">
-                    <label class="text-[10px] text-slate-500 font-black ml-2">ЦІНА ($)</label>
-                    <input type="number" id="new-prod-price" placeholder="99.99" class="w-full bg-slate-950 p-4 rounded-2xl border border-slate-800 outline-none text-sm">
-                </div>
-
-                <div class="space-y-2">
-                    <label class="text-[10px] text-slate-500 font-black ml-2">ОПИС</label>
-                    <textarea id="new-prod-desc" placeholder="Детально опишіть переваги..." class="w-full bg-slate-950 p-4 rounded-2xl border border-slate-800 outline-none text-sm h-32 resize-none"></textarea>
-                </div>
-
-                <div class="space-y-2">
-                    <input type="file" id="new-prod-img" class="hidden" accept="image/*">
-                    <label for="new-prod-img" class="flex flex-col items-center justify-center p-10 border-2 border-dashed border-slate-800 rounded-3xl bg-slate-950 cursor-pointer hover:border-cyan-500 transition-all group">
-                        <span class="text-3xl mb-2 group-hover:scale-110 transition-transform">📸</span>
-                        <span class="text-[10px] text-slate-500 font-black">ДОДАТИ СКРІНШОТ</span>
+                <div class="flex flex-col items-center">
+                    <input type="file" id="reg-avatar-input" class="hidden" accept="image/*">
+                    <label for="reg-avatar-input" class="cursor-pointer">
+                        <div id="avatar-preview" class="w-24 h-24 rounded-full border-2 border-dashed border-slate-700 flex items-center justify-center bg-black overflow-hidden">
+                            <span class="text-[8px] text-slate-500 font-black">ADD PHOTO</span>
+                        </div>
                     </label>
                 </div>
 
-                <button onclick="publishProduct()" class="w-full bg-cyan-500 text-black font-black py-5 rounded-2xl shadow-xl shadow-cyan-500/20 uppercase tracking-widest text-sm">
-                    Опублікувати на маркеті
+                <div class="space-y-3">
+                    <input type="text" id="reg-name" placeholder="Full Name" class="w-full bg-black border border-slate-800 p-4 rounded-xl outline-none focus:border-cyan-500 transition-all">
+                    <input type="text" id="reg-nick" placeholder="@username" class="w-full bg-black border border-slate-800 p-4 rounded-xl outline-none focus:border-cyan-500 transition-all">
+                    <input type="email" id="reg-email" placeholder="Email" class="w-full bg-black border border-slate-800 p-4 rounded-xl outline-none focus:border-cyan-500 transition-all">
+                </div>
+
+                <button onclick="sendVerificationEmail()" class="w-full bg-cyan-500 text-black font-black py-4 rounded-xl uppercase tracking-widest hover:bg-cyan-400 transition-all">
+                    Request Verification
                 </button>
+            </div>
+
+            <div id="auth-step-2" class="hidden space-y-6">
+                <div class="text-center">
+                    <h2 class="header-font text-2xl text-white">VERIFY</h2>
+                    <p class="text-slate-400 text-xs mt-2">Код надіслано на вашу пошту</p>
+                </div>
+
+                <input type="text" id="auth-code-input" placeholder="000000" maxlength="6" class="w-full bg-black border-2 border-cyan-500 p-5 rounded-xl text-center text-3xl font-black text-cyan-400 tracking-[0.3em] outline-none">
+                
+                <p class="text-center text-[10px] text-red-500 font-bold uppercase">Attempts: <span id="retry-count">12</span></p>
+
+                <button onclick="checkAuthCode()" class="w-full bg-white text-black font-black py-4 rounded-xl uppercase tracking-widest">
+                    Confirm Access
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <header class="sticky top-0 z-[100] glass border-b border-slate-800 px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-3" onclick="showSection('profile')">
+            <img id="head-avatar" src="" class="w-10 h-10 rounded-full border border-cyan-500 hidden object-cover">
+            <h1 class="header-font text-xl font-black italic">ARTEM<span class="text-cyan-400">STORE</span></h1>
+        </div>
+        <button onclick="openInbox()" class="text-2xl relative">
+            🔔
+            <div id="msg-dot" class="hidden absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full border-2 border-slate-950"></div>
+        </button>
+    </header>
+
+    <main class="p-4 max-w-4xl mx-auto">
+        
+        <section id="sec-shop" class="space-y-6">
+            <div id="filters" class="flex gap-2 overflow-x-auto no-scrollbar pb-2">
+                </div>
+            <div id="products-list" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                </div>
+        </section>
+
+        <section id="sec-admin" class="hidden space-y-6">
+            <h2 class="header-font text-2xl text-cyan-400">NEW LISTING</h2>
+            <div class="bg-slate-900 p-6 rounded-[2rem] border border-slate-800 space-y-4">
+                <select id="new-g" class="w-full bg-black p-4 rounded-xl border border-slate-800"></select>
+                <input type="text" id="new-t" placeholder="Title" class="w-full bg-black p-4 rounded-xl">
+                <input type="number" id="new-p" placeholder="Price ($)" class="w-full bg-black p-4 rounded-xl">
+                <textarea id="new-d" placeholder="Description" class="w-full bg-black p-4 rounded-xl h-24"></textarea>
+                <input type="file" id="new-img-input" class="hidden" accept="image/*">
+                <label for="new-img-input" class="block p-8 border-2 border-dashed border-slate-800 rounded-xl text-center text-slate-500 cursor-pointer">UPLOAD IMAGE</label>
+                <button onclick="createNewProduct()" class="w-full bg-cyan-500 text-black font-black py-4 rounded-xl">PUBLISH</button>
             </div>
         </section>
 
-        <section id="section-profile" class="hidden max-w-4xl mx-auto space-y-12 fade-in">
-            <div class="flex flex-col items-center text-center space-y-4">
-                <div class="relative p-1 border-2 border-cyan-500 rounded-full">
-                    <img id="prof-avatar" class="w-40 h-40 rounded-full object-cover bg-slate-800">
-                    <div id="prof-badge" class="absolute -bottom-2 left-1/2 -translate-x-1/2 px-6 py-1 bg-cyan-500 text-black text-[10px] font-black rounded-full uppercase italic shadow-lg">Verified</div>
-                </div>
-                <div>
-                    <h2 id="prof-name" class="header-font text-4xl font-black"></h2>
-                    <p id="prof-nick" class="text-cyan-400 font-mono text-lg mt-1"></p>
-                </div>
+        <section id="sec-profile" class="hidden text-center space-y-8">
+            <div class="relative inline-block">
+                <img id="p-av" class="w-32 h-32 rounded-full border-4 border-cyan-500 mx-auto object-cover">
+                <div class="absolute bottom-0 right-0 bg-cyan-500 text-black p-2 rounded-full text-xs font-black">✓</div>
             </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="bg-slate-900 p-8 rounded-[2.5rem] border border-slate-800 text-center">
-                    <p class="text-[10px] text-slate-500 font-black uppercase mb-2">Продажі</p>
-                    <p id="stat-sales" class="text-4xl font-black">0</p>
-                </div>
-                <div class="bg-slate-900 p-8 rounded-[2.5rem] border border-slate-800 text-center">
-                    <p class="text-[10px] text-slate-500 font-black uppercase mb-2">Покупки</p>
-                    <p id="stat-bought" class="text-4xl font-black">0</p>
-                </div>
-                <div class="bg-slate-900 p-8 rounded-[2.5rem] border border-slate-800 text-center">
-                    <p class="text-[10px] text-slate-500 font-black uppercase mb-2">Рейтинг</p>
-                    <div class="flex justify-center gap-1 text-xl text-yellow-500 mt-2">⭐⭐⭐⭐⭐</div>
-                </div>
+            <div>
+                <h2 id="p-name" class="header-font text-3xl font-black"></h2>
+                <p id="p-nick" class="text-cyan-400 font-mono"></p>
             </div>
-
-            <div class="flex justify-center">
-                <button onclick="logout()" class="px-10 py-4 border border-red-500/30 text-red-500 text-[10px] font-black uppercase tracking-widest rounded-2xl hover:bg-red-500/10 transition-colors">
-                    Завершити сесію
-                </button>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-slate-900 p-6 rounded-3xl"><p class="text-xs text-slate-500">SALES</p><p id="st-s" class="text-2xl font-black">0</p></div>
+                <div class="bg-slate-900 p-6 rounded-3xl"><p class="text-xs text-slate-500">BOUGHT</p><p id="st-b" class="text-2xl font-black">0</p></div>
             </div>
+            <button onclick="logout()" class="text-red-500 font-black text-xs tracking-widest">LOGOUT</button>
         </section>
+
     </main>
 
-    <div id="chat-modal" class="hidden fixed inset-0 z-[5000] bg-slate-950 flex flex-col">
-        <div class="px-6 py-5 border-b border-slate-800 bg-slate-900 flex justify-between items-center">
-            <div class="flex items-center gap-4">
-                <img id="chat-target-av" class="w-12 h-12 rounded-full border border-slate-700 object-cover">
-                <div>
-                    <h4 id="chat-target-name" class="font-black text-sm"></h4>
-                    <p id="chat-target-nick" class="text-[10px] text-cyan-400 font-mono"></p>
-                </div>
+    <div id="chat-box" class="hidden fixed inset-0 z-[5000] bg-slate-950 flex flex-col">
+        <div class="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-900">
+            <div class="flex items-center gap-3">
+                <img id="chat-av" class="w-10 h-10 rounded-full object-cover">
+                <span id="chat-nick" class="font-bold"></span>
             </div>
-            <button onclick="closeChat()" class="w-10 h-10 flex items-center justify-center bg-slate-800 rounded-full text-2xl font-light">&times;</button>
+            <button onclick="closeChat()" class="text-3xl">&times;</button>
         </div>
-
-        <div id="chat-messages-container" class="flex-1 overflow-y-auto p-6 flex flex-col no-scrollbar bg-slate-950">
-            </div>
-
-        <div class="p-6 bg-slate-900 border-t border-slate-800 flex gap-4">
-            <input type="text" id="chat-input-field" placeholder="Ваше повідомлення..." class="flex-1 bg-slate-950 border border-slate-800 px-6 py-4 rounded-2xl outline-none focus:border-cyan-500 transition-all text-sm">
-            <button onclick="sendMessage()" class="bg-cyan-500 text-black px-8 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-cyan-500/20">
-                Надіслати
-            </button>
+        <div id="chat-msgs" class="flex-1 overflow-y-auto p-4 flex flex-col"></div>
+        <div class="p-4 bg-slate-900 flex gap-2">
+            <input type="text" id="m-input" placeholder="Message..." class="flex-1 bg-black p-4 rounded-xl outline-none">
+            <button onclick="sendChatMessage()" class="bg-cyan-500 text-black px-6 rounded-xl font-black">SEND</button>
         </div>
     </div>
 
-    <div id="inbox-modal" class="hidden fixed inset-0 z-[4000] bg-slate-950/90 backdrop-blur-xl p-4 flex items-center justify-center">
-        <div class="w-full max-w-lg bg-slate-900 border border-slate-800 rounded-[3rem] h-[80vh] flex flex-col overflow-hidden">
-            <div class="p-8 border-b border-slate-800 flex justify-between items-center">
-                <h3 class="header-font text-xl text-cyan-400">ПОВІДОМЛЕННЯ</h3>
-                <button onclick="closeInbox()" class="text-slate-500 text-sm font-bold uppercase">Закрити</button>
+    <div id="inbox-box" class="hidden fixed inset-0 z-[4000] glass flex items-center justify-center p-6">
+        <div class="w-full max-w-md bg-slate-900 rounded-[3rem] h-[70vh] flex flex-col border border-slate-800">
+            <div class="p-6 border-b border-slate-800 flex justify-between items-center">
+                <span class="header-font text-cyan-400">INBOX</span>
+                <button onclick="closeInbox()" class="text-xs font-black">CLOSE</button>
             </div>
-            <div id="inbox-list-container" class="flex-1 overflow-y-auto p-4 space-y-4 no-scrollbar">
-                </div>
+            <div id="inbox-list" class="flex-1 overflow-y-auto p-4 space-y-2"></div>
         </div>
     </div>
 
-    <nav class="fixed bottom-0 inset-x-0 h-20 glass-nav px-8 flex justify-around items-center z-[500]">
-        <button onclick="changeSection('shop')" class="nav-btn flex flex-col items-center gap-1 text-cyan-400" id="nav-shop">
-            <span class="text-2xl">⚡</span>
-            <span class="text-[8px] font-black uppercase">Маркет</span>
+    <nav class="fixed bottom-0 inset-x-0 h-20 glass border-t border-slate-800 flex justify-around items-center z-[500]">
+        <button onclick="showSection('shop')" id="btn-shop" class="text-cyan-400 flex flex-col items-center">
+            <span class="text-2xl">🛒</span><span class="text-[8px] font-black uppercase">Market</span>
         </button>
-        <button onclick="changeSection('admin')" class="nav-btn flex flex-col items-center gap-1 text-slate-500 hidden" id="nav-admin">
-            <span class="text-2xl">➕</span>
-            <span class="text-[8px] font-black uppercase">Продати</span>
+        <button onclick="showSection('admin')" id="btn-admin" class="text-slate-500 flex flex-col items-center hidden">
+            <span class="text-2xl">➕</span><span class="text-[8px] font-black uppercase">Create</span>
         </button>
-        <button onclick="changeSection('profile')" class="nav-btn flex flex-col items-center gap-1 text-slate-500" id="nav-profile">
-            <span class="text-2xl">👤</span>
-            <span class="text-[8px] font-black uppercase">Профіль</span>
+        <button onclick="showSection('profile')" id="btn-profile" class="text-slate-500 flex flex-col items-center">
+            <span class="text-2xl">👤</span><span class="text-[8px] font-black uppercase">Me</span>
         </button>
     </nav>
 
     <script>
-        // --- ДАНІ ТА СТАН ---
-        const ADMIN_MAIL = "ilemberk3356@gmail.com";
-        const GAMES_DB = ["Brawl Stars", "Standoff 2", "PUBG Mobile", "Free Fire", "Roblox", "Steam", "Genshin Impact", "Minecraft", "Valorant", "CS 2"];
-        
-        let appState = {
-            currentUser: JSON.parse(localStorage.getItem('as_user')) || null,
-            products: JSON.parse(localStorage.getItem('as_products')) || [],
-            messages: JSON.parse(localStorage.getItem('as_messages')) || [],
-            activeGameFilter: "All Games",
-            currentChatPartner: null,
-            verificationCode: null,
-            tempAvatar: null
+        // Ініціалізація EmailJS (твій Public Key)
+        emailjs.init("KErbU8_xE37eaf0qi");
+
+        const ADMIN_EMAIL = "ilemberk3356@gmail.com";
+        const GAMES = ["Brawl Stars", "Standoff 2", "PUBG Mobile", "Roblox", "Steam", "Genshin", "Minecraft"];
+
+        let app = {
+            user: JSON.parse(localStorage.getItem('as_user')) || null,
+            db: JSON.parse(localStorage.getItem('as_db')) || [],
+            messages: JSON.parse(localStorage.getItem('as_ms')) || [],
+            vCode: null,
+            retries: 12,
+            tempAv: null,
+            chatPartner: null
         };
 
-        // --- ЛОГІКА АВТОРИЗАЦІЇ ---
-        document.getElementById('user-avatar-input').onchange = (e) => {
-            const file = e.target.files[0];
-            const reader = new FileReader();
-            reader.onload = () => {
-                appState.tempAvatar = reader.result;
-                document.getElementById('avatar-preview-box').innerHTML = `<img src="${reader.result}" class="w-full h-full object-cover">`;
+        // Завантаження аватара
+        document.getElementById('reg-avatar-input').onchange = (e) => {
+            const r = new FileReader();
+            r.onload = () => {
+                app.tempAv = r.result;
+                document.getElementById('avatar-preview').innerHTML = `<img src="${r.result}" class="w-full h-full object-cover">`;
             };
-            reader.readAsDataURL(file);
+            r.readAsDataURL(e.target.files[0]);
         };
 
-        function requestSecureCode() {
+        // ВІДПРАВКА КОДУ (Виправлена логіка)
+        function sendVerificationEmail() {
             const email = document.getElementById('reg-email').value;
             const name = document.getElementById('reg-name').value;
-            const nick = document.getElementById('reg-nick').value;
+            
+            if(!email.includes('@')) return alert("Введіть коректний Email!");
 
-            if(!email.includes('@') || !nick.startsWith('@')) return alert("Помилка! Нік має починатися з @, а Email бути дійсним.");
+            app.vCode = Math.floor(100000 + Math.random() * 900000).toString();
 
-            // Генерація коду
-            appState.verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
-
-            // Відправка через EmailJS (Твої ключі)
+            // Твій Service ID та Template ID
             emailjs.send('service_dbkrnz9', 'template_n90xvc9', {
                 to_email: email,
                 user_name: name,
-                otp_code: appState.verificationCode
-            }, 'KErbU8_xE37eaf0qi')
-            .then(() => {
-                alert("Код верифікації надіслано на вашу пошту!");
+                otp_code: app.vCode
+            }).then(() => {
+                alert("Код надіслано успішно!");
                 document.getElementById('auth-step-1').classList.add('hidden');
                 document.getElementById('auth-step-2').classList.remove('hidden');
-            });
+            }).catch(err => alert("Помилка відправки: " + err));
         }
 
-        function finalizeAuth() {
-            const inputCode = document.getElementById('verification-input').value;
-            if(inputCode === appState.verificationCode) {
-                appState.currentUser = {
+        // ПЕРЕВІРКА КОДУ
+        function checkAuthCode() {
+            const val = document.getElementById('auth-code-input').value;
+            if(val === app.vCode) {
+                app.user = {
                     name: document.getElementById('reg-name').value,
                     nick: document.getElementById('reg-nick').value,
                     email: document.getElementById('reg-email').value,
-                    avatar: appState.tempAvatar || "https://api.dicebear.com/7.x/bottts/svg",
-                    isAdmin: document.getElementById('reg-email').value === ADMIN_MAIL,
-                    stats: { sales: 0, bought: 0 }
+                    avatar: app.tempAv || "https://api.dicebear.com/7.x/bottts/svg",
+                    isAdmin: document.getElementById('reg-email').value === ADMIN_EMAIL,
+                    stats: { s: 0, b: 0 }
                 };
-                localStorage.setItem('as_user', JSON.stringify(appState.currentUser));
+                localStorage.setItem('as_user', JSON.stringify(app.user));
                 location.reload();
             } else {
-                alert("Невірний код!");
+                app.retries--;
+                document.getElementById('retry-count').innerText = app.retries;
+                if(app.retries <= 0) location.reload();
             }
         }
 
-        // --- ЛОГІКА МАРКЕТУ ---
-        function initApp() {
-            if(appState.currentUser) {
-                document.getElementById('auth-screen').classList.add('hidden');
-                document.getElementById('header-user-av').src = appState.currentUser.avatar;
-                document.getElementById('header-user-av').classList.remove('hidden');
-                
-                if(appState.currentUser.isAdmin) {
-                    document.getElementById('nav-admin').classList.remove('hidden');
-                }
-
-                renderFilters();
-                renderProducts();
-                updateProfile();
-            }
-        }
-
-        function renderFilters() {
-            const container = document.getElementById('game-filters-container');
-            container.innerHTML = `<button onclick="setFilter('All Games')" class="px-8 py-3 rounded-2xl text-[10px] font-black uppercase whitespace-nowrap transition-all ${appState.activeGameFilter === 'All Games' ? 'bg-cyan-500 text-black' : 'bg-slate-900 text-slate-500 border border-slate-800'}">Усі ігри</button>`;
+        // НАВІГАЦІЯ
+        function showSection(id) {
+            document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
+            document.getElementById(`sec-${id}`).classList.remove('hidden');
             
-            GAMES_DB.forEach(game => {
-                container.innerHTML += `
-                    <button onclick="setFilter('${game}')" class="px-8 py-3 rounded-2xl text-[10px] font-black uppercase whitespace-nowrap transition-all ${appState.activeGameFilter === game ? 'bg-cyan-500 text-black' : 'bg-slate-900 text-slate-500 border border-slate-800'}">
-                        ${game}
-                    </button>
-                `;
-                document.getElementById('new-prod-game').innerHTML += `<option>${game}</option>`;
-            });
+            document.querySelectorAll('nav button').forEach(b => b.classList.replace('text-cyan-400', 'text-slate-500'));
+            document.getElementById(`btn-${id}`).classList.replace('text-slate-500', 'text-cyan-400');
         }
 
-        function renderProducts() {
-            const grid = document.getElementById('products-grid');
-            grid.innerHTML = '';
-
-            const filtered = appState.products.filter(p => appState.activeGameFilter === "All Games" || p.game === appState.activeGameFilter);
-
-            filtered.forEach(p => {
-                grid.innerHTML += `
-                    <div class="premium-card fade-in">
-                        <div class="p-6">
-                            <div class="flex justify-between items-center mb-4">
-                                <div class="flex items-center gap-2">
-                                    <img src="${p.seller.avatar}" class="w-6 h-6 rounded-full">
-                                    <span class="text-[9px] font-black text-cyan-400 uppercase tracking-tighter">${p.seller.nick}</span>
-                                </div>
-                                <span class="text-[8px] text-slate-600 font-mono">#${p.id.toString().slice(-4)}</span>
-                            </div>
-                            <img src="${p.img}" class="w-full h-48 object-cover rounded-2xl mb-4 bg-slate-950">
-                            <h3 class="header-font text-lg font-black truncate">${p.title}</h3>
-                            <p class="text-slate-500 text-xs mt-2 line-clamp-2 h-8">${p.desc}</p>
-                            
-                            <div class="mt-6 flex justify-between items-center bg-slate-950 p-4 rounded-2xl border border-slate-800">
-                                <div>
-                                    <p class="text-[7px] text-slate-500 font-black uppercase">Ціна</p>
-                                    <p class="text-2xl font-black">$${p.price}</p>
-                                </div>
-                                <div class="flex gap-2">
-                                    <button onclick="openChat('${p.seller.nick}', '${p.seller.avatar}', '${p.seller.name}')" class="w-12 h-12 bg-slate-900 flex items-center justify-center rounded-xl text-xl hover:bg-slate-800">💬</button>
-                                    <button onclick="buyProduct(${p.id})" class="bg-cyan-500 text-black px-6 rounded-xl font-black text-[10px] uppercase">Купити</button>
-                                </div>
+        // РЕНДЕР ТОВАРІВ
+        function renderItems() {
+            const list = document.getElementById('products-list');
+            list.innerHTML = '';
+            app.db.forEach(p => {
+                list.innerHTML += `
+                    <div class="premium-card p-5">
+                        <div class="flex justify-between text-[10px] mb-3 text-cyan-400 font-bold uppercase">
+                            <span>${p.game}</span>
+                            <span>${p.seller.nick}</span>
+                        </div>
+                        <img src="${p.img}" class="w-full h-40 object-cover rounded-2xl mb-4 bg-black">
+                        <h3 class="font-black text-lg">${p.title}</h3>
+                        <div class="flex justify-between items-center mt-4">
+                            <span class="text-2xl font-black">$${p.price}</span>
+                            <div class="flex gap-2">
+                                <button onclick="openChat('${p.seller.nick}','${p.seller.avatar}')" class="bg-slate-800 p-3 rounded-xl">💬</button>
+                                <button onclick="buyNow()" class="bg-cyan-500 text-black px-6 py-2 rounded-xl font-black text-xs uppercase">Buy</button>
                             </div>
                         </div>
                     </div>
@@ -441,241 +310,94 @@
             });
         }
 
-        // --- АДМІНКА ---
-        function publishProduct() {
-            const file = document.getElementById('new-prod-img').files[0];
-            const reader = new FileReader();
-            
-            reader.onload = () => {
-                const newP = {
-                    id: Date.now(),
-                    game: document.getElementById('new-prod-game').value,
-                    cat: document.getElementById('new-prod-cat').value,
-                    title: document.getElementById('new-prod-title').value,
-                    price: document.getElementById('new-prod-price').value,
-                    desc: document.getElementById('new-prod-desc').value,
-                    img: reader.result,
-                    seller: { 
-                        name: appState.currentUser.name, 
-                        nick: appState.currentUser.nick, 
-                        avatar: appState.currentUser.avatar 
-                    }
-                };
-
-                appState.products.unshift(newP);
-                localStorage.setItem('as_products', JSON.stringify(appState.products));
-                alert("Товар опубліковано!");
-                location.reload();
-            };
-
-            if(file) reader.readAsDataURL(file);
-            else alert("Додайте зображення!");
-        }
-
-        // --- ЧАТ ---
-        function openChat(nick, avatar, name) {
-            if(nick === appState.currentUser.nick) return;
-            appState.currentChatPartner = { nick, avatar, name };
-            document.getElementById('chat-target-av').src = avatar;
-            document.getElementById('chat-target-name').innerText = name;
-            document.getElementById('chat-target-nick').innerText = nick;
-            document.getElementById('chat-modal').classList.remove('hidden');
+        // ЧАТ ЛОГІКА
+        function openChat(nick, av) {
+            if(nick === app.user.nick) return;
+            app.chatPartner = { nick, av };
+            document.getElementById('chat-av').src = av;
+            document.getElementById('chat-nick').innerText = nick;
+            document.getElementById('chat-box').classList.remove('hidden');
             renderMessages();
         }
 
-        function sendMessage() {
-            const val = document.getElementById('chat-input-field').value;
-            if(!val) return;
-
-            const msg = {
-                sender: appState.currentUser.nick,
-                receiver: appState.currentChatPartner.nick,
-                text: val,
-                time: Date.now()
-            };
-
-            appState.messages.push(msg);
-            localStorage.setItem('as_messages', JSON.stringify(appState.messages));
-            document.getElementById('chat-input-field').value = '';
+        function sendChatMessage() {
+            const inp = document.getElementById('m-input');
+            if(!inp.value) return;
+            app.messages.push({ f: app.user.nick, t: app.chatPartner.nick, txt: inp.value });
+            localStorage.setItem('as_ms', JSON.stringify(app.messages));
+            inp.value = '';
             renderMessages();
-            checkNotifications();
         }
 
         function renderMessages() {
-            const container = document.getElementById('chat-messages-container');
-            container.innerHTML = '';
-            
-            const thread = appState.messages.filter(m => 
-                (m.sender === appState.currentUser.nick && m.receiver === appState.currentChatPartner.nick) ||
-                (m.sender === appState.currentChatPartner.nick && m.receiver === appState.currentUser.nick)
-            );
-
-            thread.forEach(m => {
-                const isMine = m.sender === appState.currentUser.nick;
-                container.innerHTML += `
-                    <div class="chat-msg ${isMine ? 'msg-sent' : 'msg-received'}">
-                        ${m.text}
-                        <div class="text-[7px] mt-1 opacity-50 text-right">${new Date(m.time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
-                    </div>
-                `;
+            const area = document.getElementById('chat-msgs');
+            area.innerHTML = '';
+            app.messages.filter(m => 
+                (m.f === app.user.nick && m.t === app.chatPartner.nick) || 
+                (m.t === app.user.nick && m.f === app.chatPartner.nick)
+            ).forEach(m => {
+                area.innerHTML += `<div class="msg-bubble ${m.f === app.user.nick ? 'msg-mine' : 'msg-theirs'}">${m.txt}</div>`;
             });
-            container.scrollTop = container.scrollHeight;
+            area.scrollTop = area.scrollHeight;
         }
 
-        // --- УТИЛІТИ ---
-        function changeSection(sec) {
-            document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
-            document.getElementById(`section-${sec}`).classList.remove('hidden');
-            
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.replace('text-cyan-400', 'text-slate-500'));
-            document.getElementById(`nav-${sec}`).classList.replace('text-slate-500', 'text-cyan-400');
+        // АДМІНКА
+        function createNewProduct() {
+            const file = document.getElementById('new-img-input').files[0];
+            const r = new FileReader();
+            r.onload = () => {
+                app.db.unshift({
+                    game: document.getElementById('new-g').value,
+                    title: document.getElementById('new-t').value,
+                    price: document.getElementById('new-p').value,
+                    img: r.result,
+                    seller: { nick: app.user.nick, avatar: app.user.avatar }
+                });
+                localStorage.setItem('as_db', JSON.stringify(app.db));
+                location.reload();
+            };
+            r.readAsDataURL(file);
         }
 
-        function setFilter(game) {
-            appState.activeGameFilter = game;
-            renderFilters();
-            renderProducts();
-        }
-
-        function updateProfile() {
-            document.getElementById('prof-avatar').src = appState.currentUser.avatar;
-            document.getElementById('prof-name').innerText = appState.currentUser.name;
-            document.getElementById('prof-nick').innerText = appState.currentUser.nick;
-            document.getElementById('stat-bought').innerText = appState.currentUser.stats.bought;
-        }
-
-        function buyProduct(id) {
-            appState.currentUser.stats.bought++;
-            localStorage.setItem('as_user', JSON.stringify(appState.currentUser));
-            alert("Покупка успішна! Зв'яжіться з продавцем у чаті для отримання даних.");
-            updateProfile();
+        function buyNow() {
+            app.user.stats.b++;
+            localStorage.setItem('as_user', JSON.stringify(app.user));
+            alert("Покупка успішна! Зв'яжіться з продавцем у чаті.");
+            location.reload();
         }
 
         function openInbox() {
-            document.getElementById('inbox-modal').classList.remove('hidden');
-            const container = document.getElementById('inbox-list-container');
-            container.innerHTML = '';
-
-            const uniquePartners = [...new Set(appState.messages.map(m => m.sender === appState.currentUser.nick ? m.receiver : m.sender))];
-
-            uniquePartners.forEach(pNick => {
-                const lastMsg = appState.messages.filter(m => m.sender === pNick || m.receiver === pNick).pop();
-                container.innerHTML += `
-                    <div onclick="openChat('${pNick}', 'https://api.dicebear.com/7.x/bottts/svg', 'Користувач')" class="p-6 bg-slate-950 border border-slate-800 rounded-3xl flex items-center justify-between cursor-pointer hover:border-cyan-500 transition-all">
-                        <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 bg-cyan-500/10 rounded-full flex items-center justify-center text-cyan-400 font-bold">@</div>
-                            <div>
-                                <p class="font-black text-sm text-white">${pNick}</p>
-                                <p class="text-xs text-slate-500 truncate w-40">${lastMsg.text}</p>
-                            </div>
-                        </div>
-                        <span class="text-[9px] text-slate-700 font-mono">${new Date(lastMsg.time).getHours()}:${new Date(lastMsg.time).getMinutes()}</span>
-                    </div>
-                `;
+            document.getElementById('inbox-box').classList.remove('hidden');
+            const list = document.getElementById('inbox-list');
+            list.innerHTML = '';
+            const chats = [...new Set(app.messages.map(m => m.f === app.user.nick ? m.t : m.f))];
+            chats.forEach(c => {
+                list.innerHTML += `<div onclick="openChat('${c}', 'https://api.dicebear.com/7.x/bottts/svg')" class="p-4 bg-black border border-slate-800 rounded-2xl cursor-pointer">@${c}</div>`;
             });
         }
 
-        function checkNotifications() {
-            const hasMsgs = appState.messages.length > 0;
-            document.getElementById('notification-dot').classList.toggle('hidden', !hasMsgs);
-        }
-
-        function closeChat() { document.getElementById('chat-modal').classList.add('hidden'); }
-        function closeInbox() { document.getElementById('inbox-modal').classList.add('hidden'); }
+        function closeChat() { document.getElementById('chat-box').classList.add('hidden'); }
+        function closeInbox() { document.getElementById('inbox-box').classList.add('hidden'); }
         function logout() { localStorage.clear(); location.reload(); }
 
-        window.onload = initApp;
-    </script>
-</body>
-</html>
-        // --- СИСТЕМА ВІДГУКІВ ---
-        let currentRating = 5;
-
-        function buyProduct(id) {
-            const product = appState.products.find(p => p.id === id);
-            if (!product) return;
-
-            // Імітація процесу оплати
-            const btn = event.currentTarget;
-            btn.innerText = "CHECKING...";
-            btn.disabled = true;
-
-            setTimeout(() => {
-                appState.currentUser.stats.bought++;
-                localStorage.setItem('as_user', JSON.stringify(appState.currentUser));
-                
-                // Показуємо вікно рейтингу
-                document.body.insertAdjacentHTML('beforeend', `
-                    <div id="rating-overlay" class="fixed inset-0 z-[6000] glass-nav flex items-center justify-center p-6 fade-in">
-                        <div class="bg-slate-900 border border-cyan-500 p-10 rounded-[3rem] text-center w-full max-w-sm shadow-2xl shadow-cyan-500/10">
-                            <h2 class="header-font text-xl text-white mb-2">УСПІШНО!</h2>
-                            <p class="text-slate-400 text-xs mb-8">Оцініть продавця ${product.seller.nick}</p>
-                            <div class="flex justify-center gap-2 text-3xl mb-10" id="star-rank">
-                                ${[1,2,3,4,5].map(i => `<span onclick="setStars(${i})" class="cursor-pointer transition-transform hover:scale-125 star-btn" data-val="${i}">⭐</span>`).join('')}
-                            </div>
-                            <button onclick="closeRating()" class="w-full bg-cyan-500 text-black font-black py-4 rounded-2xl uppercase text-xs tracking-widest">Підтвердити</button>
-                        </div>
-                    </div>
-                `);
-            }, 1500);
-        }
-
-        function setStars(val) {
-            currentRating = val;
-            document.querySelectorAll('.star-btn').forEach(s => {
-                s.style.opacity = s.getAttribute('data-val') <= val ? '1' : '0.2';
-                s.style.filter = s.getAttribute('data-val') <= val ? 'grayscale(0)' : 'grayscale(1)';
-            });
-        }
-
-        function closeRating() {
-            document.getElementById('rating-overlay').remove();
-            updateProfile();
-            alert("Дякуємо! Ваша покупка додана в історію.");
-        }
-
-        // --- СПОВІЩЕННЯ ---
-        function showToast(text) {
-            const toast = document.createElement('div');
-            toast.className = 'fixed top-24 left-1/2 -translate-x-1/2 z-[7000] bg-cyan-500 text-black px-6 py-3 rounded-full font-black text-[10px] uppercase tracking-tighter shadow-xl fade-in';
-            toast.innerText = text;
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
-        }
-
-        // --- СТАН ЗАВАНТАЖЕННЯ (SKELETON) ---
-        function showLoaders() {
-            const grid = document.getElementById('products-grid');
-            grid.innerHTML = Array(3).fill(0).map(() => `
-                <div class="bg-slate-900/50 h-80 rounded-[2rem] animate-pulse border border-slate-800"></div>
-            `).join('');
-        }
-
-        // --- ІНІЦІАЛІЗАЦІЯ ПРИ ЗАПУСКУ ---
-        document.addEventListener('DOMContentLoaded', () => {
-            // Перевірка сесії
-            if (!appState.currentUser) {
-                document.getElementById('auth-screen').classList.remove('hidden');
-            } else {
-                initApp();
-                checkNotifications();
+        // ЗАПУСК
+        window.onload = () => {
+            if(app.user) {
+                document.getElementById('auth-layer').classList.add('hidden');
+                document.getElementById('head-avatar').src = app.user.avatar;
+                document.getElementById('head-avatar').classList.remove('hidden');
+                document.getElementById('p-av').src = app.user.avatar;
+                document.getElementById('p-name').innerText = app.user.name;
+                document.getElementById('p-nick').innerText = app.user.nick;
+                document.getElementById('st-b').innerText = app.user.stats.b;
+                if(app.user.isAdmin) document.getElementById('btn-admin').classList.remove('hidden');
             }
-
-            // Додаємо ефект наведення на всі кнопки
-            document.querySelectorAll('button').forEach(btn => {
-                btn.addEventListener('mousedown', () => btn.style.transform = 'scale(0.95)');
-                btn.addEventListener('mouseup', () => btn.style.transform = 'scale(1)');
+            GAMES.forEach(g => {
+                document.getElementById('filters').innerHTML += `<button class="bg-slate-900 px-6 py-2 rounded-full text-[10px] whitespace-nowrap font-bold">${g}</button>`;
+                document.getElementById('new-g').innerHTML += `<option>${g}</option>`;
             });
-        });
-
-        // Моніторинг нових повідомлень (імітація для демонстрації)
-        setInterval(() => {
-            if (appState.currentUser) {
-                const unread = appState.messages.length % 5 === 0 && appState.messages.length > 0;
-                document.getElementById('notification-dot').classList.toggle('hidden', !unread);
-            }
-        }, 5000);
-
+            renderItems();
+        };
     </script>
 </body>
 </html>
