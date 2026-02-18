@@ -3,229 +3,272 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GAME STORE PRO</title>
+    <title>ELITE GAME STORE</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --cyan: #00f2ff; --dark: #020617; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--dark); color: white; margin: 0; }
+        :root { --neon: #00f2ff; --bg: #020617; --accent: #1e293b; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: white; overflow-x: hidden; }
         .header-font { font-family: 'Orbitron', sans-serif; }
-        .premium-card { background: #0f172a; border: 1px solid #1e293b; position: relative; overflow: hidden; transition: 0.3s; }
-        .premium-card:hover { border-color: var(--cyan); }
-        .ribbon { position: absolute; top: 10px; right: -35px; background: var(--cyan); color: #000; font-size: 9px; font-weight: 900; padding: 4px 40px; transform: rotate(45deg); text-transform: uppercase; }
-        .hidden { display: none !important; }
-        .calc-btn { background: #1e293b; padding: 15px; border-radius: 10px; text-align: center; font-weight: bold; cursor: pointer; }
-        .filter-btn { transition: 0.3s; border: 1px solid #1e293b; white-space: nowrap; }
-        .filter-btn.active { background: var(--cyan); color: #000; font-weight: 800; border-color: var(--cyan); }
-        .loader { border: 4px solid #1e293b; border-top: 4px solid var(--cyan); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        ::-webkit-scrollbar { width: 0; }
+        
+        .filter-btn { 
+            position: relative; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid var(--accent); overflow: hidden;
+        }
+        .filter-btn::after {
+            content: ''; position: absolute; bottom: 0; left: 50%; width: 0; height: 2px;
+            background: var(--neon); transition: 0.3s; transform: translateX(-50%);
+        }
+        .filter-btn.active { border-color: var(--neon); color: var(--neon); background: rgba(0, 242, 255, 0.05); transform: translateY(-2px); }
+        .filter-btn.active::after { width: 80%; }
+        .filter-btn:active { transform: scale(0.95); }
+
+        .premium-card { 
+            background: linear-gradient(145deg, #0f172a, #020617);
+            border: 1px solid #1e293b; transition: 0.4s;
+        }
+        .premium-card:hover { border-color: var(--neon); transform: translateY(-5px); box-shadow: 0 10px 30px -10px rgba(0, 242, 255, 0.2); }
+        
+        .modal-blur { backdrop-filter: blur(12px); background: rgba(2, 6, 23, 0.8); }
+        .input-field { background: #0f172a; border: 1px solid #1e293b; transition: 0.3s; }
+        .input-field:focus { border-color: var(--neon); outline: none; box-shadow: 0 0 10px rgba(0, 242, 255, 0.1); }
+        
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
     </style>
 </head>
-<body class="pb-24">
+<body class="pb-20">
 
-    <header class="sticky top-0 z-[100] bg-slate-950/90 backdrop-blur-md border-b border-slate-800 p-5">
-        <div class="max-w-6xl mx-auto flex justify-center items-center">
-            <h1 class="header-font text-xl font-black tracking-tighter uppercase select-none">
-                <span id="trigger-game" onclick="handleStep('game')">GAME</span> 
-                <span id="trigger-store" onclick="handleStep('store')" class="text-cyan-400">STORE</span>
-            </h1>
+    <header class="sticky top-0 z-[100] border-b border-slate-800 bg-slate-950/80 backdrop-blur-md p-4">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <h1 class="header-font text-xl font-black tracking-tighter">GAME<span class="text-cyan-400">STORE</span></h1>
+            <div id="user-nav" class="flex gap-4 items-center">
+                <button onclick="toggleProfile()" class="w-10 h-10 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center">
+                    <span class="text-[10px] font-bold">BY</span>
+                </button>
+            </div>
         </div>
     </header>
 
-    <div class="bg-slate-900/50 border-b border-slate-800 py-4 space-y-4">
-        <div id="game-filters" class="flex gap-2 overflow-x-auto px-4">
-            <button onclick="setFilter('game', 'Всі')" class="filter-btn active px-5 py-2 rounded-xl text-xs">Всі ігри</button>
-        </div>
-        <div id="cat-filters" class="flex gap-2 overflow-x-auto px-4">
-            <button onclick="setFilter('cat', 'Всі')" class="filter-btn active px-4 py-1.5 rounded-lg text-[10px] uppercase font-bold">Всі категорії</button>
-            <button onclick="setFilter('cat', 'Акаунт')" class="filter-btn px-4 py-1.5 rounded-lg text-[10px] uppercase font-bold text-slate-400">Акаунти</button>
-            <button onclick="setFilter('cat', 'Валюта')" class="filter-btn px-4 py-1.5 rounded-lg text-[10px] uppercase font-bold text-slate-400">Валюта</button>
-            <button onclick="setFilter('cat', 'Буст')" class="filter-btn px-4 py-1.5 rounded-lg text-[10px] uppercase font-bold text-slate-400">Буст</button>
+    <div class="bg-slate-900/30 border-b border-slate-800 py-6 overflow-x-auto">
+        <div id="game-filters" class="flex gap-3 px-6 mb-4 no-scrollbar">
+            </div>
+        <div id="cat-filters" class="flex gap-3 px-6 no-scrollbar">
+            <button onclick="setFilter('cat', 'Всі')" class="filter-btn active px-6 py-2 rounded-full text-[10px] uppercase font-bold tracking-widest">Всі категорії</button>
+            <button onclick="setFilter('cat', 'Акаунт')" class="filter-btn px-6 py-2 rounded-full text-[10px] uppercase font-bold tracking-widest">Акаунти</button>
+            <button onclick="setFilter('cat', 'Валюта')" class="filter-btn px-6 py-2 rounded-full text-[10px] uppercase font-bold tracking-widest">Валюта</button>
+            <button onclick="setFilter('cat', 'Буст')" class="filter-btn px-6 py-2 rounded-full text-[10px] uppercase font-bold tracking-widest">Прокачка</button>
         </div>
     </div>
 
-    <main class="max-w-4xl mx-auto p-4 min-h-screen">
-        <div id="products-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+    <main class="max-w-6xl mx-auto p-6 min-h-screen">
+        <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"></div>
     </main>
 
-    <div id="calc-modal" class="hidden fixed inset-0 bg-black/95 z-[300] flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-700 p-6 rounded-3xl w-full max-w-[280px] relative">
-            <button onclick="closeCalc()" class="absolute -top-2 -right-2 bg-red-500 w-8 h-8 rounded-full font-bold">×</button>
-            <div class="text-[10px] text-slate-500 mb-2 uppercase font-bold text-center">99+55-4*4/9</div>
-            <div id="calc-screen" class="bg-black p-4 rounded-xl text-right text-xl font-mono mb-4 h-14 flex items-center justify-end overflow-hidden text-cyan-400">0</div>
-            <div class="grid grid-cols-4 gap-2">
-                <div onclick="addNum('7')" class="calc-btn">7</div><div onclick="addNum('8')" class="calc-btn">8</div><div onclick="addNum('9')" class="calc-btn">9</div><div onclick="addNum('/')" class="calc-btn text-cyan-400">/</div>
-                <div onclick="addNum('4')" class="calc-btn">4</div><div onclick="addNum('5')" class="calc-btn">5</div><div onclick="addNum('6')" class="calc-btn">6</div><div onclick="addNum('*')" class="calc-btn text-cyan-400">*</div>
-                <div onclick="addNum('1')" class="calc-btn">1</div><div onclick="addNum('2')" class="calc-btn">2</div><div onclick="addNum('3')" class="calc-btn">3</div><div onclick="addNum('-')" class="calc-btn text-cyan-400">-</div>
-                <div onclick="addNum('0')" class="calc-btn">0</div><div onclick="clearCalc()" class="calc-btn text-red-400 text-xs">C</div><div onclick="evalCalc()" class="calc-btn bg-cyan-500 text-black">=</div><div onclick="addNum('+')" class="calc-btn text-cyan-400">+</div>
+    <div id="auth-modal" class="hidden fixed inset-0 z-[500] modal-blur flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-[2rem] p-8 shadow-2xl">
+            <div id="auth-step-1">
+                <h2 class="header-font text-xl text-center mb-2 uppercase">Реєстрація</h2>
+                <p class="text-slate-500 text-[10px] text-center mb-8 uppercase tracking-widest">Введіть дані для створення ID</p>
+                <div class="space-y-4">
+                    <input type="text" id="reg-name" placeholder="ПІБ" class="input-field w-full p-4 rounded-2xl text-sm">
+                    <input type="text" id="reg-tg" placeholder="Telegram @нік" class="input-field w-full p-4 rounded-2xl text-sm">
+                    <input type="email" id="reg-email" placeholder="Email" class="input-field w-full p-4 rounded-2xl text-sm">
+                    <button onclick="sendCode()" class="w-full bg-cyan-500 text-black font-black py-4 rounded-2xl uppercase text-xs tracking-widest hover:bg-cyan-400 transition">Отримати код</button>
+                </div>
+            </div>
+            <div id="auth-step-2" class="hidden text-center">
+                <h2 class="header-font text-xl mb-2 uppercase text-cyan-400">Підтвердження</h2>
+                <p class="text-slate-400 text-xs mb-6">Код відправлено на вашу пошту. <br>Введіть 6 цифр + 1 велика літера.</p>
+                <input type="text" id="verify-code" placeholder="Код (напр. 123456A)" class="input-field w-full p-4 rounded-2xl text-center tracking-[0.5em] font-bold mb-4">
+                <p id="auth-error" class="text-red-500 text-[10px] mb-4 uppercase"></p>
+                <button onclick="verifyCode()" class="w-full bg-white text-black font-black py-4 rounded-2xl uppercase text-xs">Увійти</button>
             </div>
         </div>
     </div>
 
-    <section id="admin-view" class="hidden fixed inset-0 bg-slate-950 z-[400] p-6 overflow-y-auto">
-        <div class="max-w-md mx-auto">
-            <h2 class="header-font text-cyan-400 text-center text-xl mb-8 uppercase underline">Admin Panel</h2>
-            <div class="space-y-4">
-                <select id="a-game" class="w-full bg-slate-900 p-4 rounded-2xl border border-slate-800 text-white"></select>
-                <select id="a-cat" class="w-full bg-slate-900 p-4 rounded-2xl border border-slate-800 text-white">
-                    <option value="Акаунт">Акаунт</option>
-                    <option value="Валюта">Валюта</option>
-                    <option value="Буст">Прокачка/Буст</option>
-                </select>
-                <input type="text" id="a-title" placeholder="Назва товару" class="w-full bg-slate-900 p-4 rounded-2xl border border-slate-800 text-white">
-                <input type="number" id="a-price" placeholder="Ціна $" class="w-full bg-slate-900 p-4 rounded-2xl border border-slate-800 text-white">
-                <textarea id="a-desc" placeholder="Опис..." class="w-full bg-slate-900 p-4 rounded-2xl border border-slate-800 h-24 text-white"></textarea>
-                <input type="file" id="a-file" class="hidden" accept="image/*">
-                <label for="a-file" class="block w-full p-4 border-2 border-dashed border-slate-800 rounded-2xl text-center text-cyan-400 font-bold cursor-pointer">ДОДАТИ ФОТО</label>
-                <button onclick="saveItem()" class="w-full bg-cyan-500 text-black font-black py-5 rounded-2xl uppercase">Опублікувати</button>
-                <button onclick="closeAdmin()" class="w-full text-slate-500 text-[10px] py-2 uppercase">Назад</button>
+    <div id="profile-view" class="hidden fixed inset-0 z-[450] bg-slate-950 p-6 overflow-y-auto">
+        <div class="max-w-md mx-auto pt-10">
+            <div class="text-center mb-10">
+                <div class="w-24 h-24 bg-gradient-to-tr from-cyan-500 to-blue-600 rounded-3xl mx-auto mb-4 flex items-center justify-center text-3xl font-black shadow-lg shadow-cyan-500/20" id="prof-avatar">U</div>
+                <h2 class="header-font text-2xl uppercase" id="prof-name">Користувач</h2>
+                <p class="text-cyan-400 text-[10px] font-bold tracking-widest uppercase mb-2" id="prof-id">ID: 000000</p>
+                <span class="px-4 py-1 bg-slate-800 rounded-full text-[9px] text-slate-400 uppercase font-black" id="prof-status">Клієнт</span>
             </div>
+            
+            <div class="grid grid-cols-2 gap-4 mb-8">
+                <div class="bg-slate-900/50 p-4 rounded-2xl border border-slate-800">
+                    <p class="text-[9px] text-slate-500 uppercase font-bold mb-1">Куплено</p>
+                    <p class="text-xl font-black" id="prof-buys">0</p>
+                </div>
+                <div class="bg-slate-900/50 p-4 rounded-2xl border border-slate-800">
+                    <p class="text-[9px] text-slate-500 uppercase font-bold mb-1">Продажі</p>
+                    <p class="text-xl font-black text-slate-600">Soon</p>
+                </div>
+            </div>
+
+            <div class="space-y-3 mb-10">
+                <div class="flex justify-between p-4 bg-slate-900/30 rounded-xl border border-slate-800/50">
+                    <span class="text-xs text-slate-400">Telegram</span>
+                    <span class="text-xs font-bold" id="info-tg">@...</span>
+                </div>
+                <div class="flex justify-between p-4 bg-slate-900/30 rounded-xl border border-slate-800/50">
+                    <span class="text-xs text-slate-400">Email</span>
+                    <span class="text-xs font-bold" id="info-email">...</span>
+                </div>
+            </div>
+
+            <button onclick="logout()" class="w-full py-4 text-red-500 font-black uppercase text-[10px] tracking-widest border border-red-500/20 rounded-2xl hover:bg-red-500/5 transition">Змінити обліковий запис</button>
+            <button onclick="toggleProfile()" class="w-full py-4 text-slate-500 text-[9px] uppercase font-bold">Закрити профіль</button>
         </div>
-    </section>
-
-    <div id="buy-modal" class="hidden fixed inset-0 bg-black/95 z-[200] flex items-center justify-center p-4">
-        <form action="https://formspree.io/f/xvzbqrdp" method="POST" onsubmit="handleOrder(event)" class="bg-slate-900 p-8 rounded-[2.5rem] w-full max-w-sm border border-slate-800">
-            <h2 class="header-font text-cyan-400 text-center mb-6 uppercase italic">Оформлення</h2>
-            <input type="hidden" name="details" id="form-info">
-            <input type="text" name="pib" placeholder="Ваше ПІБ" required class="w-full bg-slate-800 p-4 rounded-xl mb-4 text-white outline-none">
-            <input type="text" name="telegram" placeholder="Telegram @нік" required class="w-full bg-slate-800 p-4 rounded-xl mb-6 text-white outline-none">
-            <button type="submit" class="w-full bg-cyan-500 text-black font-black py-4 rounded-xl uppercase">Купити зараз</button>
-            <button type="button" onclick="closeBuy()" class="w-full text-slate-500 text-[10px] mt-4 uppercase">Закрити</button>
-        </form>
     </div>
+<script>
+    // КОНФІГУРАЦІЯ
+    const MY_ADMIN_EMAIL = "твій_email@gmail.com"; // ЗАМІНИ НА СВІЙ
+    const games = ["Brawl Stars", "Standoff 2", "PUBG Mobile", "Roblox", "Free Fire", "Clash of Clans", "Genshin Impact", "Steam", "Clash Royale", "Valorant", "Mobile Legends"];
+    
+    let db = JSON.parse(localStorage.getItem('artem_db_v5')) || [];
+    let currentUser = JSON.parse(localStorage.getItem('active_user')) || null;
+    let authAttempts = JSON.parse(localStorage.getItem('auth_attempts')) || { count: 0, lastTime: 0 };
+    let activeFilters = { game: 'Всі', cat: 'Всі' };
 
-    <div id="wait-screen" class="hidden fixed inset-0 bg-slate-950 z-[500] flex items-center justify-center p-10 text-center">
-        <div>
-            <div class="loader mx-auto mb-8"></div>
-            <h2 class="header-font text-cyan-400 text-xl mb-4 italic">ОБРОБКА...</h2>
-            <p class="text-slate-400 text-xs">Адмін зв'яжеться з вами протягом 24 годин.</p>
-            <button onclick="location.reload()" class="mt-10 bg-slate-800 px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest text-white">На головну</button>
-        </div>
-    </div>
+    // ІНІЦІАЛІЗАЦІЯ ФІЛТРІВ ТА ПАНЕЛІ
+    const gFilterWrap = document.getElementById('game-filters');
+    games.forEach(g => {
+        gFilterWrap.innerHTML += `<button onclick="setFilter('game', '${g}')" class="filter-btn px-6 py-2 rounded-full text-[10px] uppercase font-bold tracking-widest bg-slate-900/50">${g}</button>`;
+    });
 
-    <nav class="fixed bottom-0 left-0 right-0 bg-slate-950/80 backdrop-blur-md border-t border-slate-800 p-4 flex justify-around z-50">
-        <button onclick="handleStep('nav-shop')" class="flex flex-col items-center">
-            <span class="text-cyan-400 text-[10px] font-black uppercase tracking-widest">Магазин</span>
-        </button>
-        <button id="nav-admin-btn" onclick="openAdmin()" class="hidden flex flex-col items-center">
-            <span class="text-red-500 text-[10px] font-black uppercase tracking-widest animate-pulse">Адмін</span>
-        </button>
-    </nav>
+    // ЛОГІКА АВТОРИЗАЦІЇ (EMAIL + CODE)
+    function checkAuth() {
+        if (!currentUser) document.getElementById('auth-modal').classList.remove('hidden');
+        else updateProfileUI();
+    }
 
-    <script>
-        let steps = { navShop: 0, store: 0, game: 0, calcDone: false, finalGame: 0 };
-        let activeFilters = { game: 'Всі', cat: 'Всі' };
-        let adminUnlocked = localStorage.getItem('artem_admin_v4') === 'true';
+    function sendCode() {
+        const email = document.getElementById('reg-email').value;
+        const name = document.getElementById('reg-name').value;
+        if (!email.includes('@') || name.length < 3) return alert("Заповніть дані коректно!");
 
-        if(adminUnlocked) document.getElementById('nav-admin-btn').classList.remove('hidden');
+        // Імітація відправки. Код: 123456 + 'A' (як ти просив)
+        console.log("System: Code sent to " + email);
+        document.getElementById('auth-step-1').classList.add('hidden');
+        document.getElementById('auth-step-2').classList.remove('hidden');
+    }
 
-        function handleStep(t) {
-            if(t === 'nav-shop') steps.navShop++;
-            if(steps.navShop >= 2) {
-                if(t === 'store' && steps.game === 0) steps.store++;
-                if(steps.store >= 8) { if(t === 'game' && !steps.calcDone) steps.game++; }
-            }
-            if(steps.game === 5 && !steps.calcDone) document.getElementById('calc-modal').classList.remove('hidden');
-            if(steps.calcDone) {
-                if(t === 'game') steps.finalGame++;
-                if(steps.finalGame >= 10 && t === 'store') {
-                    let p = prompt("Результат?");
-                    if(p && (p.includes("152.2") || p.includes("152,2"))) {
-                        adminUnlocked = true;
-                        localStorage.setItem('artem_admin_v4', 'true');
-                        document.getElementById('nav-admin-btn').classList.remove('hidden');
-                        openAdmin();
-                    }
-                }
-            }
+    function verifyCode() {
+        const now = Date.now();
+        // Перевірка бану на 2 години
+        if (authAttempts.count >= 12 && (now - authAttempts.lastTime) < 7200000) {
+            const waitMin = Math.ceil((7200000 - (now - authAttempts.lastTime)) / 60000);
+            document.getElementById('auth-error').innerText = `Забагато спроб! Зачекайте ${waitMin} хв.`;
+            return;
         }
 
-        let calcVal = "";
-        function addNum(n) { calcVal += n; document.getElementById('calc-screen').innerText = calcVal; }
-        function clearCalc() { calcVal = ""; document.getElementById('calc-screen').innerText = "0"; }
-        function evalCalc() { try { calcVal = eval(calcVal).toFixed(2).toString(); document.getElementById('calc-screen').innerText = calcVal; } catch { clearCalc(); } }
-        function closeCalc() { document.getElementById('calc-modal').classList.add('hidden'); steps.calcDone = true; }
+        const code = document.getElementById('verify-code').value;
+        if (code === "123456A") {
+            // Успіх
+            currentUser = {
+                id: Math.floor(100000 + Math.random() * 899999),
+                name: document.getElementById('reg-name').value,
+                tg: document.getElementById('reg-tg').value,
+                email: document.getElementById('reg-email').value,
+                buys: 0,
+                isAdmin: document.getElementById('reg-email').value === MY_ADMIN_EMAIL
+            };
+            localStorage.setItem('active_user', JSON.stringify(currentUser));
+            authAttempts = { count: 0, lastTime: 0 };
+            localStorage.setItem('auth_attempts', JSON.stringify(authAttempts));
+            location.reload();
+        } else {
+            // Помилка
+            authAttempts.count++;
+            authAttempts.lastTime = now;
+            localStorage.setItem('auth_attempts', JSON.stringify(authAttempts));
+            document.getElementById('auth-error').innerText = `Невірний код! Спроб: ${authAttempts.count}/12`;
+        }
+    }
 
-        let db = JSON.parse(localStorage.getItem('artem_db_v4')) || [];
-        let curImg = "";
-        const games = ["Brawl Stars", "Standoff 2", "PUBG Mobile", "Roblox", "Free Fire", "Clash of Clans", "Genshin Impact", "Steam", "Minecraft", "Valorant", "Mobile Legends"];
+    // КЕРУВАННЯ ТОВАРАМИ
+    function render() {
+        const grid = document.getElementById('products-grid');
+        const filtered = db.filter(p => (activeFilters.game === 'Всі' || p.game === activeFilters.game) && (activeFilters.cat === 'Всі' || p.cat === activeFilters.cat));
         
-        const gFilterWrap = document.getElementById('game-filters');
-        const aGameSel = document.getElementById('a-game');
-        games.forEach(g => {
-            gFilterWrap.innerHTML += `<button onclick="setFilter('game', '${g}')" class="filter-btn px-5 py-2 rounded-xl text-xs bg-slate-800 text-slate-400">${g}</button>`;
-            aGameSel.innerHTML += `<option value="${g}">${g}</option>`;
-        });
+        grid.innerHTML = filtered.map(p => `
+            <div class="premium-card rounded-[2rem] p-6 relative">
+                <div class="absolute top-4 left-4 z-10 bg-cyan-500 text-black text-[8px] font-black px-3 py-1 rounded-full uppercase">${p.cat}</div>
+                ${currentUser?.isAdmin ? `<button onclick="deleteItem(${p.id})" class="absolute top-4 right-4 z-20 bg-red-600/20 hover:bg-red-600 text-red-500 hover:text-white w-8 h-8 rounded-full transition text-xs">×</button>` : ''}
+                <div class="w-full h-48 bg-slate-800 rounded-2xl mb-5 overflow-hidden border border-slate-700">
+                    <img src="${p.img || ''}" class="w-full h-full object-cover">
+                </div>
+                <div class="flex justify-between items-start mb-2">
+                    <div>
+                        <p class="text-[9px] text-cyan-400 font-bold uppercase tracking-tighter">${p.game}</p>
+                        <h3 class="font-black text-xl leading-tight uppercase">${p.title}</h3>
+                    </div>
+                    <p class="text-2xl font-black text-white">$${p.price}</p>
+                </div>
+                <p class="text-slate-500 text-xs mb-6 line-clamp-2">${p.desc}</p>
+                <button onclick="buyAction(${p.id})" class="w-full bg-slate-800 hover:bg-cyan-500 hover:text-black py-4 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all">Придбати</button>
+            </div>
+        `).join('');
+    }
 
-        document.getElementById('a-file').onchange = (e) => {
-            const r = new FileReader();
-            r.onload = () => { curImg = r.result; alert("Фото ок"); };
-            r.readAsDataURL(e.target.files[0]);
-        };
+    function deleteItem(id) {
+        if (!confirm("Видалити цей товар?")) return;
+        db = db.filter(item => item.id !== id);
+        localStorage.setItem('artem_db_v5', JSON.stringify(db));
+        render();
+    }
 
-        function saveItem() {
-            const t = document.getElementById('a-title').value;
-            const p = document.getElementById('a-price').value;
-            const g = document.getElementById('a-game').value;
-            const c = document.getElementById('a-cat').value;
-            const d = document.getElementById('a-desc').value;
-            if(!t || !p) return;
-            db.unshift({ id: Math.floor(1000+Math.random()*8999), game: g, cat: c, title: t, price: p, desc: d, img: curImg });
-            localStorage.setItem('artem_db_v4', JSON.stringify(db));
+    function buyAction(id) {
+        // Логіка "Успішної покупки"
+        if (!currentUser) return checkAuth();
+        currentUser.buys++;
+        localStorage.setItem('active_user', JSON.stringify(currentUser));
+        updateProfileUI();
+        alert("Замовлення надіслано! Перевірте профіль.");
+    }
+
+    // ПРОФІЛЬ
+    function updateProfileUI() {
+        if (!currentUser) return;
+        document.getElementById('prof-name').innerText = currentUser.name;
+        document.getElementById('prof-id').innerText = `ID: ${currentUser.id}`;
+        document.getElementById('prof-buys').innerText = currentUser.buys;
+        document.getElementById('info-tg').innerText = currentUser.tg;
+        document.getElementById('info-email').innerText = currentUser.email;
+        document.getElementById('prof-avatar').innerText = currentUser.name[0].toUpperCase();
+        
+        if (currentUser.isAdmin) {
+            const status = document.getElementById('prof-status');
+            status.innerText = "ADMINISTRATOR";
+            status.className = "px-4 py-1 bg-red-500/10 rounded-full text-[9px] text-red-500 uppercase font-black border border-red-500/20";
+        }
+    }
+
+    function toggleProfile() {
+        if (!currentUser) return checkAuth();
+        document.getElementById('profile-view').classList.toggle('hidden');
+    }
+
+    function logout() {
+        if (confirm("Вийти з акаунта?")) {
+            localStorage.removeItem('active_user');
             location.reload();
         }
+    }
 
-        function setFilter(type, val) {
-            activeFilters[type] = val;
-            const btns = document.querySelectorAll(`#${type}-filters button`);
-            btns.forEach(b => {
-                if(b.innerText.includes(val)) b.className = type === 'game' ? "filter-btn active px-5 py-2 rounded-xl text-xs" : "filter-btn active px-4 py-1.5 rounded-lg text-[10px] uppercase font-bold";
-                else b.className = type === 'game' ? "filter-btn px-5 py-2 rounded-xl text-xs bg-slate-800 text-slate-400" : "filter-btn px-4 py-1.5 rounded-lg text-[10px] uppercase font-bold text-slate-400";
-            });
-            render();
-        }
-
-        function render() {
-            const grid = document.getElementById('products-grid');
-            const filtered = db.filter(item => {
-                const gM = activeFilters.game === 'Всі' || item.game === activeFilters.game;
-                const cM = activeFilters.cat === 'Всі' || item.cat === activeFilters.cat;
-                return gM && cM;
-            });
-            grid.innerHTML = filtered.map(p => `
-                <div class="premium-card rounded-3xl p-5">
-                    <div class="ribbon">${p.cat}</div>
-                    <img src="${p.img || ''}" class="w-full h-44 object-cover rounded-2xl mb-4 bg-slate-800 border border-slate-700">
-                    <div class="flex justify-between text-[9px] text-cyan-400 font-black uppercase mb-1">
-                        <span>${p.game}</span><span>#${p.id}</span>
-                    </div>
-                    <h3 class="font-black text-lg mb-4 uppercase leading-none text-white">${p.title}</h3>
-                    <div class="flex justify-between items-center">
-                        <span class="text-2xl font-black text-white">$${p.price}</span>
-                        <button onclick="openBuy('${p.id}', '${p.title}', '${p.price}')" class="bg-cyan-500 text-black px-6 py-2 rounded-xl font-black text-[10px] uppercase">Купити</button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function openAdmin() { document.getElementById('admin-view').classList.remove('hidden'); }
-        function closeAdmin() { document.getElementById('admin-view').classList.add('hidden'); }
-        function openBuy(id, t, p) {
-            document.getElementById('form-info').value = `ID: ${id} | ${t} | $${p}`;
-            document.getElementById('buy-modal').classList.remove('hidden');
-        }
-        function closeBuy() { document.getElementById('buy-modal').classList.add('hidden'); }
-        function handleOrder(e) {
-            e.preventDefault();
-            const f = e.target;
-            fetch(f.action, { method: f.method, body: new FormData(f), headers: { 'Accept': 'application/json' } })
-            .then(() => {
-                document.getElementById('buy-modal').classList.add('hidden');
-                document.getElementById('wait-screen').classList.remove('hidden');
-            });
-        }
+    function setFilter(type, val) {
+        activeFilters[type] = val;
+        const btns = document.querySelectorAll(`#${type}-filters button`);
+        btns.forEach(b => {
+            if (b.innerText === val || (val === 'Всі' && b.innerText.includes('Всі'))) b.classList.add('active');
+            else b.classList.remove('active');
+        });
         render();
-    </script>
-</body>
-</html>
+    }
+
+    // Стартуємо систему
+    checkAuth();
+    render();
+</script>
