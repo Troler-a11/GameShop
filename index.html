@@ -338,7 +338,7 @@
             temp_avatar_buffer: null,
             active_chat_partner: null,
             is_viewing_my_lots: false,
-            current_filter: 'all' // Додано для фільтрації
+            current_filter: 'all' 
         };
 
         // --- AUTH ---
@@ -483,13 +483,11 @@
             const s_snap = await DB_LAYER.ref('users/' + seller).get();
             const seller_data = s_snap.val();
 
-            // 1. Email сповіщення
             emailjs.send('service_dbkrnz9', 'template_n90xvc9', { 
                 to_email: seller_data.email, 
                 otp_code: `Нове замовлення на: ${product.title}` 
             });
 
-            // 2. Відкриваємо чат з підготовленим текстом
             const buy_text = `Здравствуйте, хочу купить ваш аккаунт ${product.title} (ID: ${id}) за $${product.price}`;
             document.getElementById('chat-input-field').value = buy_text;
             executeChatInitiation(seller, seller_data.avatar);
@@ -585,10 +583,14 @@
                 if(messages) {
                     Object.values(messages).forEach(m => {
                         const is_me = m.sender === app_state.current_user.nick;
+                        const sender_av = is_me ? app_state.current_user.avatar : app_state.active_chat_partner.avatar;
                         const content = m.img ? `<img src="${m.img}" class="chat-img" onclick="window.open('${m.img}')">` : m.text;
+                        
+                        // Додано відображення справжнього фото профілю в повідомленнях
                         container.innerHTML += `
-                            <div class="flex flex-col ${is_me ? 'items-end' : 'items-start'}">
-                                <div class="p-5 ${is_me ? 'bubble-me' : 'bubble-them'} max-w-[85%] text-sm font-bold">
+                            <div class="flex gap-4 ${is_me ? 'flex-row-reverse' : 'flex-row'} items-end">
+                                <img src="${sender_av}" class="w-10 h-10 rounded-xl object-cover border border-slate-800 shadow-lg">
+                                <div class="p-5 ${is_me ? 'bubble-me' : 'bubble-them'} max-w-[75%] text-sm font-bold shadow-xl">
                                     ${content}
                                 </div>
                             </div>
@@ -613,7 +615,7 @@
                 const chat_id = [app_state.current_user.nick, app_state.active_chat_partner.nick].sort().join('_');
                 await DB_LAYER.ref('chats/' + chat_id).remove();
                 closeModal('system-chat');
-                openInboxSystem(); // оновити список
+                openInboxSystem(); 
             }
         }
 
