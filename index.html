@@ -15,7 +15,7 @@
         .loader { border: 4px solid #1e293b; border-top: 4px solid var(--cyan); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .hidden { display: none !important; }
-        .calc-btn { background: #1e293b; padding: 15px; border-radius: 10px; text-align: center; font-weight: bold; cursor: pointer; }
+        .calc-btn { background: #1e293b; padding: 15px; border-radius: 10px; text-align: center; font-weight: bold; cursor: pointer; user-select: none; }
         .calc-btn:hover { background: #334155; }
     </style>
 </head>
@@ -23,7 +23,7 @@
 
     <header class="sticky top-0 z-[100] bg-slate-950/90 backdrop-blur-md border-b border-slate-800 p-5">
         <div class="max-w-6xl mx-auto flex justify-center items-center gap-2">
-            <h1 class="header-font text-xl font-black tracking-tighter uppercase">
+            <h1 class="header-font text-xl font-black tracking-tighter uppercase select-none">
                 <span id="trigger-game" onclick="handleStep('game')" class="text-white cursor-default">GAME</span> 
                 <span id="trigger-store" onclick="handleStep('store')" class="text-cyan-400 cursor-default">STORE</span>
             </h1>
@@ -37,13 +37,13 @@
     <div id="calc-modal" class="hidden fixed inset-0 bg-black/95 z-[300] flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-700 p-6 rounded-3xl w-full max-w-[280px] relative">
             <button onclick="closeCalc()" class="absolute -top-2 -right-2 bg-red-500 w-8 h-8 rounded-full font-bold">×</button>
-            <div class="text-xs text-slate-500 mb-2 uppercase font-bold">Введіть пароль: 99+7-5:9</div>
-            <div id="calc-screen" class="bg-black p-4 rounded-xl text-right text-xl font-mono mb-4 h-14 flex items-center justify-end">0</div>
+            <div class="text-[10px] text-slate-500 mb-2 uppercase font-bold text-center">Пароль: 99+55-4*4/9</div>
+            <div id="calc-screen" class="bg-black p-4 rounded-xl text-right text-xl font-mono mb-4 h-14 flex items-center justify-end overflow-hidden">0</div>
             <div class="grid grid-cols-4 gap-2">
                 <div onclick="addNum('7')" class="calc-btn">7</div><div onclick="addNum('8')" class="calc-btn">8</div><div onclick="addNum('9')" class="calc-btn">9</div><div onclick="addNum('/')" class="calc-btn text-cyan-400">/</div>
                 <div onclick="addNum('4')" class="calc-btn">4</div><div onclick="addNum('5')" class="calc-btn">5</div><div onclick="addNum('6')" class="calc-btn">6</div><div onclick="addNum('*')" class="calc-btn text-cyan-400">*</div>
                 <div onclick="addNum('1')" class="calc-btn">1</div><div onclick="addNum('2')" class="calc-btn">2</div><div onclick="addNum('3')" class="calc-btn">3</div><div onclick="addNum('-')" class="calc-btn text-cyan-400">-</div>
-                <div onclick="addNum('0')" class="calc-btn">0</div><div onclick="clearCalc()" class="calc-btn text-red-400">C</div><div onclick="evalCalc()" class="calc-btn bg-cyan-500 text-black">=</div><div onclick="addNum('+')" class="calc-btn text-cyan-400">+</div>
+                <div onclick="addNum('0')" class="calc-btn">0</div><div onclick="clearCalc()" class="calc-btn text-red-400 text-xs">C</div><div onclick="evalCalc()" class="calc-btn bg-cyan-500 text-black">=</div><div onclick="addNum('+')" class="calc-btn text-cyan-400">+</div>
             </div>
         </div>
     </div>
@@ -57,9 +57,9 @@
                 <input type="number" id="a-price" placeholder="Ціна $" class="w-full bg-slate-900 p-4 rounded-2xl border border-slate-800">
                 <textarea id="a-desc" placeholder="Опис..." class="w-full bg-slate-900 p-4 rounded-2xl border border-slate-800 h-24"></textarea>
                 <input type="file" id="a-file" class="hidden" accept="image/*">
-                <label for="a-file" class="block w-full p-4 border-2 border-dashed border-slate-800 rounded-2xl text-center text-cyan-400 font-bold cursor-pointer">Додати фото</label>
-                <button onclick="saveItem()" class="w-full bg-cyan-500 text-black font-black py-5 rounded-2xl uppercase shadow-lg">Виставити товар</button>
-                <button onclick="location.reload()" class="w-full text-slate-500 text-xs py-2 uppercase">Вийти</button>
+                <label for="a-file" class="block w-full p-4 border-2 border-dashed border-slate-800 rounded-2xl text-center text-cyan-400 font-bold cursor-pointer italic">Додати головне фото</label>
+                <button onclick="saveItem()" class="w-full bg-cyan-500 text-black font-black py-5 rounded-2xl uppercase">Виставити на продаж</button>
+                <button onclick="closeAdminView()" class="w-full text-slate-500 text-xs py-2 uppercase">Назад до магазину</button>
             </div>
         </div>
     </section>
@@ -67,20 +67,19 @@
     <div id="wait-screen" class="hidden fixed inset-0 bg-slate-950 z-[500] flex items-center justify-center p-10 text-center">
         <div>
             <div class="loader mx-auto mb-8"></div>
-            <h2 class="header-font text-cyan-400 text-xl mb-4">ЗАМОВЛЕННЯ ПРИЙНЯТО!</h2>
-            <p class="text-slate-400 text-sm">Адмін зв'яжеться з вами протягом <span class="text-white font-bold">24 годин</span>.<br>Очікуйте, ви можете ще щось обрати.</p>
-            <button onclick="location.reload()" class="mt-10 bg-slate-800 px-8 py-3 rounded-full text-xs font-bold uppercase">До магазину</button>
+            <h2 class="header-font text-cyan-400 text-xl mb-4 italic">ЗАМОВЛЕННЯ ПРИЙНЯТО!</h2>
+            <p class="text-slate-400 text-sm">Адмін зв'яжеться з вами протягом <span class="text-white font-bold tracking-widest underline">24 годин</span>.<br>Очікуйте повідомлення.</p>
+            <button onclick="location.reload()" class="mt-10 bg-slate-800 px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest">До магазину</button>
         </div>
     </div>
 
     <div id="buy-modal" class="hidden fixed inset-0 bg-black/90 z-[200] flex items-center justify-center p-4">
         <form action="https://formspree.io/f/xvzbqrdp" method="POST" onsubmit="handleOrder(event)" class="bg-slate-900 p-8 rounded-[2.5rem] w-full max-w-sm border border-slate-800">
-            <h2 class="header-font text-cyan-400 text-center mb-6">ОФОРМЛЕННЯ</h2>
-            <input type="hidden" name="product_id" id="form-id">
-            <input type="hidden" name="product_name" id="form-name">
-            <input type="text" name="pib" placeholder="Ваше ПІБ" required class="w-full bg-slate-800 p-4 rounded-xl mb-4 outline-none">
-            <input type="text" name="telegram" placeholder="Telegram @нік" required class="w-full bg-slate-800 p-4 rounded-xl mb-6 outline-none">
-            <button type="submit" class="w-full bg-cyan-500 text-black font-black py-4 rounded-xl uppercase hover:scale-95 transition">Підтвердити</button>
+            <h2 class="header-font text-cyan-400 text-center mb-6 uppercase tracking-tighter italic">Оформлення</h2>
+            <input type="hidden" name="item_info" id="form-info">
+            <input type="text" name="pib" placeholder="Ваше ПІБ" required class="w-full bg-slate-800 p-4 rounded-xl mb-4 outline-none border border-transparent focus:border-cyan-500">
+            <input type="text" name="telegram" placeholder="Telegram @нік" required class="w-full bg-slate-800 p-4 rounded-xl mb-6 outline-none border border-transparent focus:border-cyan-500">
+            <button type="submit" class="w-full bg-cyan-500 text-black font-black py-4 rounded-xl uppercase shadow-[0_0_15px_rgba(0,242,255,0.4)]">Підтвердити</button>
         </form>
     </div>
 
@@ -88,18 +87,24 @@
         <button onclick="handleStep('nav-shop')" class="flex flex-col items-center">
             <span class="text-cyan-400 text-[10px] font-black uppercase tracking-widest">Магазин</span>
         </button>
+        <button id="nav-admin-btn" onclick="openAdminView()" class="hidden flex flex-col items-center">
+            <span class="text-red-500 text-[10px] font-black uppercase tracking-widest animate-pulse">Адмін</span>
+        </button>
     </nav>
 
     <script>
-        // Секретна логіка
+        // Секретна логіка входу
         let steps = { navShop: 0, store: 0, game: 0, calcDone: false, finalGame: 0, finalStore: 0 };
-        
+        let adminUnlocked = localStorage.getItem('artem_admin_unlocked') === 'true';
+
+        if(adminUnlocked) document.getElementById('nav-admin-btn').classList.remove('hidden');
+
         function handleStep(type) {
             if(type === 'nav-shop') steps.navShop++;
             if(steps.navShop >= 2) {
                 if(type === 'store' && steps.game === 0) steps.store++;
                 if(steps.store >= 8) {
-                    if(type === 'game') steps.game++;
+                    if(type === 'game' && !steps.calcDone) steps.game++;
                 }
             }
             if(steps.game === 5 && !steps.calcDone) {
@@ -108,8 +113,13 @@
             if(steps.calcDone) {
                 if(type === 'game') steps.finalGame++;
                 if(steps.finalGame >= 10 && type === 'store') {
-                    let pass = prompt("Результат калькулятора?");
-                    if(pass.includes("11.3")) document.getElementById('admin-view').classList.remove('hidden');
+                    let pass = prompt("Введіть точне число з калькулятора (хххх):");
+                    if(pass && (pass.includes("152.2") || pass.includes("152,2"))) {
+                        adminUnlocked = true;
+                        localStorage.setItem('artem_admin_unlocked', 'true');
+                        document.getElementById('nav-admin-btn').classList.remove('hidden');
+                        openAdminView();
+                    }
                 }
             }
         }
@@ -118,27 +128,27 @@
         let calcVal = "";
         function addNum(n) { calcVal += n; document.getElementById('calc-screen').innerText = calcVal; }
         function clearCalc() { calcVal = ""; document.getElementById('calc-screen').innerText = "0"; }
-        function evalCalc() { try { calcVal = eval(calcVal).toString(); document.getElementById('calc-screen').innerText = calcVal; } catch { clearCalc(); } }
+        function evalCalc() { try { calcVal = eval(calcVal).toFixed(2).toString(); document.getElementById('calc-screen').innerText = calcVal; } catch { clearCalc(); } }
         function closeCalc() { document.getElementById('calc-modal').classList.add('hidden'); steps.calcDone = true; }
 
-        // Товари та Адмінка
-        let db = JSON.parse(localStorage.getItem('artem_db_v2')) || [];
+        // Робота з базою
+        let db = JSON.parse(localStorage.getItem('artem_db_v3')) || [];
         let curImg = "";
         const sel = document.getElementById('a-game');
         ["Brawl Stars", "Standoff 2", "PUBG Mobile", "Roblox", "Free Fire", "Clash of Clans", "Clash Royale", "Steam", "Genshin Impact", "League of Legends", "Valorant"].forEach(g => sel.innerHTML += `<option>${g}</option>`);
 
         document.getElementById('a-file').onchange = (e) => {
             const r = new FileReader();
-            r.onload = () => curImg = r.result;
+            r.onload = () => { curImg = r.result; alert("Фото успішно додано!"); };
             r.readAsDataURL(e.target.files[0]);
         };
 
         function saveItem() {
             const t = document.getElementById('a-title').value;
             const p = document.getElementById('a-price').value;
-            if(!t || !p) return;
-            db.unshift({ id: Math.floor(1000+Math.random()*8999), game: sel.value, title: t, price: p, img: curImg });
-            localStorage.setItem('artem_db_v2', JSON.stringify(db));
+            if(!t || !p) return alert("Вкажіть назву та ціну!");
+            db.unshift({ id: Math.floor(1000+Math.random()*8999), game: sel.value, title: t, price: p, img: curImg, desc: document.getElementById('a-desc').value });
+            localStorage.setItem('artem_db_v3', JSON.stringify(db));
             location.reload();
         }
 
@@ -146,24 +156,24 @@
             document.getElementById('products-grid').innerHTML = db.map(p => `
                 <div class="premium-card rounded-3xl p-5">
                     <div class="ribbon">Актив</div>
-                    <img src="${p.img || ''}" class="w-full h-40 object-cover rounded-2xl mb-4 bg-slate-800">
-                    <div class="flex justify-between text-[10px] text-cyan-400 font-bold uppercase mb-1">
-                        <span>${p.game}</span><span>#${p.id}</span>
+                    <img src="${p.img || ''}" class="w-full h-44 object-cover rounded-2xl mb-4 bg-slate-800 border border-slate-700">
+                    <div class="flex justify-between text-[9px] text-cyan-400 font-black uppercase mb-1 tracking-widest">
+                        <span>${p.game}</span><span>#ID-${p.id}</span>
                     </div>
-                    <h3 class="font-black text-lg mb-4 uppercase">${p.title}</h3>
+                    <h3 class="font-black text-lg mb-4 uppercase leading-none">${p.title}</h3>
                     <div class="flex justify-between items-center">
                         <span class="text-2xl font-black text-white">$${p.price}</span>
-                        <button onclick="openBuy('${p.id}', '${p.title}')" class="bg-cyan-500 text-black px-6 py-2 rounded-xl font-black text-xs uppercase">Купити</button>
+                        <button onclick="openBuy('${p.id}', '${p.title}', '${p.price}')" class="bg-cyan-500 text-black px-6 py-2 rounded-xl font-black text-[10px] uppercase shadow-lg shadow-cyan-500/20">Купити</button>
                     </div>
                 </div>
             `).join('');
         }
 
-        let currentOrder = {};
-        function openBuy(id, name) {
-            currentOrder = { id, name };
-            document.getElementById('form-id').value = id;
-            document.getElementById('form-name').value = name;
+        function openAdminView() { document.getElementById('admin-view').classList.remove('hidden'); }
+        function closeAdminView() { document.getElementById('admin-view').classList.add('hidden'); }
+
+        function openBuy(id, name, price) {
+            document.getElementById('form-info').value = `ID: ${id} | Назва: ${name} | Ціна: $${price}`;
             document.getElementById('buy-modal').classList.remove('hidden');
         }
 
