@@ -3,77 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ARTEM STORE | Premium Gaming Services</title>
+    <title>GAME STORE PRO</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --cyan: #00f2ff; --dark: #020617; --card: #0f172a; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--dark); color: white; margin: 0; overflow-x: hidden; }
+        :root { --cyan: #00f2ff; --dark: #020617; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--dark); color: white; margin: 0; }
         .header-font { font-family: 'Orbitron', sans-serif; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        
-        /* СТИЛІ КАРТОК */
-        .premium-card { 
-            background: linear-gradient(145deg, #1e293b, #0f172a); 
-            border: 1px solid #334155; 
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
-            position: relative;
-            overflow: hidden;
-            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .premium-card:hover { border-color: var(--cyan); transform: translateY(-5px); }
-
-        .ribbon-tag {
-            position: absolute; top: 12px; right: -30px;
-            background: var(--cyan); color: black;
-            font-size: 9px; font-weight: 900; padding: 4px 35px;
-            transform: rotate(45deg); text-transform: uppercase;
-        }
-
-        /* КАЛЬКУЛЯТОР */
-        .calc-btn { background: #1e293b; padding: 15px; border-radius: 12px; text-align: center; font-weight: bold; cursor: pointer; user-select: none; }
-        .calc-btn:hover { background: #334155; color: var(--cyan); }
-
-        /* НАВІГАЦІЯ */
-        .filter-btn { transition: 0.3s; white-space: nowrap; border: 1px solid #1e293b; }
-        .filter-btn.active { background: var(--cyan); color: black; border-color: var(--cyan); font-weight: 800; }
-
-        .loader { border: 4px solid #1e293b; border-top: 4px solid var(--cyan); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
+        .premium-card { background: #0f172a; border: 1px solid #1e293b; position: relative; overflow: hidden; transition: 0.3s; }
+        .premium-card:hover { border-color: var(--cyan); }
+        .ribbon { position: absolute; top: 10px; right: -35px; background: var(--cyan); color: #000; font-size: 9px; font-weight: 900; padding: 4px 40px; transform: rotate(45deg); text-transform: uppercase; }
         .hidden { display: none !important; }
+        .calc-btn { background: #1e293b; padding: 15px; border-radius: 10px; text-align: center; font-weight: bold; cursor: pointer; }
+        .filter-btn { transition: 0.3s; border: 1px solid #1e293b; white-space: nowrap; }
+        .filter-btn.active { background: var(--cyan); color: #000; font-weight: 800; border-color: var(--cyan); }
+        .loader { border: 4px solid #1e293b; border-top: 4px solid var(--cyan); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        ::-webkit-scrollbar { width: 0; }
     </style>
 </head>
-<body class="pb-28">
+<body class="pb-24">
 
-    <header class="sticky top-0 z-[100] bg-slate-950/90 backdrop-blur-xl border-b border-slate-800 p-5">
+    <header class="sticky top-0 z-[100] bg-slate-950/90 backdrop-blur-md border-b border-slate-800 p-5">
         <div class="max-w-6xl mx-auto flex justify-center items-center">
-            <h1 class="header-font text-2xl font-black tracking-tighter select-none">
-                <span id="trigger-game" onclick="handleStep('game')" class="cursor-default">GAME</span> 
-                <span id="trigger-store" onclick="handleStep('store')" class="text-cyan-400 cursor-default">STORE</span>
+            <h1 class="header-font text-xl font-black tracking-tighter uppercase select-none">
+                <span id="trigger-game" onclick="handleStep('game')">GAME</span> 
+                <span id="trigger-store" onclick="handleStep('store')" class="text-cyan-400">STORE</span>
             </h1>
         </div>
     </header>
 
-    <div class="bg-slate-900/50 py-4 space-y-4 border-b border-slate-800">
-        <div class="flex gap-2 overflow-x-auto px-4 no-scrollbar">
-            <button onclick="render()" class="filter-btn active px-5 py-2 rounded-xl text-sm">Всі ігри</button>
-            <button class="filter-btn px-5 py-2 rounded-xl text-sm bg-slate-800 text-slate-400">Brawl Stars</button>
-            <button class="filter-btn px-5 py-2 rounded-xl text-sm bg-slate-800 text-slate-400">Standoff 2</button>
-            <button class="filter-btn px-5 py-2 rounded-xl text-sm bg-slate-800 text-slate-400">PUBG Mobile</button>
-            <button class="filter-btn px-5 py-2 rounded-xl text-sm bg-slate-800 text-slate-400">Roblox</button>
+    <div class="bg-slate-900/50 border-b border-slate-800 py-4 space-y-4">
+        <div id="game-filters" class="flex gap-2 overflow-x-auto px-4">
+            <button onclick="setFilter('game', 'Всі')" class="filter-btn active px-5 py-2 rounded-xl text-xs">Всі ігри</button>
+        </div>
+        <div id="cat-filters" class="flex gap-2 overflow-x-auto px-4">
+            <button onclick="setFilter('cat', 'Всі')" class="filter-btn active px-4 py-1.5 rounded-lg text-[10px] uppercase font-bold">Всі категорії</button>
+            <button onclick="setFilter('cat', 'Акаунт')" class="filter-btn px-4 py-1.5 rounded-lg text-[10px] uppercase font-bold text-slate-400">Акаунти</button>
+            <button onclick="setFilter('cat', 'Валюта')" class="filter-btn px-4 py-1.5 rounded-lg text-[10px] uppercase font-bold text-slate-400">Валюта</button>
+            <button onclick="setFilter('cat', 'Буст')" class="filter-btn px-4 py-1.5 rounded-lg text-[10px] uppercase font-bold text-slate-400">Буст</button>
         </div>
     </div>
 
     <main class="max-w-4xl mx-auto p-4 min-h-screen">
-        <div id="products-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            </div>
+        <div id="products-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
     </main>
 
     <div id="calc-modal" class="hidden fixed inset-0 bg-black/95 z-[300] flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-700 p-6 rounded-3xl w-full max-w-[280px] relative">
-            <button onclick="closeCalc()" class="absolute -top-2 -right-2 bg-red-500 w-8 h-8 rounded-full font-bold text-white">×</button>
-            <div class="text-[10px] text-slate-500 mb-2 uppercase font-bold text-center">Пароль: 99+55-4*4/9</div>
+            <button onclick="closeCalc()" class="absolute -top-2 -right-2 bg-red-500 w-8 h-8 rounded-full font-bold">×</button>
+            <div class="text-[10px] text-slate-500 mb-2 uppercase font-bold text-center">99+55-4*4/9</div>
             <div id="calc-screen" class="bg-black p-4 rounded-xl text-right text-xl font-mono mb-4 h-14 flex items-center justify-end overflow-hidden text-cyan-400">0</div>
             <div class="grid grid-cols-4 gap-2">
                 <div onclick="addNum('7')" class="calc-btn">7</div><div onclick="addNum('8')" class="calc-btn">8</div><div onclick="addNum('9')" class="calc-btn">9</div><div onclick="addNum('/')" class="calc-btn text-cyan-400">/</div>
@@ -86,99 +65,75 @@
 
     <section id="admin-view" class="hidden fixed inset-0 bg-slate-950 z-[400] p-6 overflow-y-auto">
         <div class="max-w-md mx-auto">
-            <h2 class="header-font text-cyan-400 text-center text-2xl mb-8 uppercase tracking-widest underline">Admin Panel</h2>
+            <h2 class="header-font text-cyan-400 text-center text-xl mb-8 uppercase underline">Admin Panel</h2>
             <div class="space-y-4">
-                <div class="space-y-1">
-                    <label class="text-[10px] text-slate-500 uppercase ml-2">Виберіть гру</label>
-                    <select id="a-game" class="w-full bg-slate-900 p-4 rounded-2xl border border-slate-800 text-white outline-none focus:border-cyan-500"></select>
-                </div>
-                <input type="text" id="a-title" placeholder="Назва товару" class="w-full bg-slate-900 p-4 rounded-2xl border border-slate-800 text-white outline-none focus:border-cyan-500">
-                <input type="number" id="a-price" placeholder="Ціна $" class="w-full bg-slate-900 p-4 rounded-2xl border border-slate-800 text-white outline-none focus:border-cyan-500">
-                <textarea id="a-desc" placeholder="Опис товару..." class="w-full bg-slate-900 p-4 rounded-2xl border border-slate-800 h-24 text-white outline-none focus:border-cyan-500"></textarea>
-                
+                <select id="a-game" class="w-full bg-slate-900 p-4 rounded-2xl border border-slate-800 text-white"></select>
+                <select id="a-cat" class="w-full bg-slate-900 p-4 rounded-2xl border border-slate-800 text-white">
+                    <option value="Акаунт">Акаунт</option>
+                    <option value="Валюта">Валюта</option>
+                    <option value="Буст">Прокачка/Буст</option>
+                </select>
+                <input type="text" id="a-title" placeholder="Назва товару" class="w-full bg-slate-900 p-4 rounded-2xl border border-slate-800 text-white">
+                <input type="number" id="a-price" placeholder="Ціна $" class="w-full bg-slate-900 p-4 rounded-2xl border border-slate-800 text-white">
+                <textarea id="a-desc" placeholder="Опис..." class="w-full bg-slate-900 p-4 rounded-2xl border border-slate-800 h-24 text-white"></textarea>
                 <input type="file" id="a-file" class="hidden" accept="image/*">
-                <label for="a-file" class="block w-full p-4 border-2 border-dashed border-slate-800 rounded-2xl text-center text-cyan-400 font-bold cursor-pointer hover:bg-slate-900">
-                    📸 ДОДАТИ ФОТО ТОВАРУ
-                </label>
-                
-                <button onclick="saveItem()" class="w-full bg-cyan-500 text-black font-black py-5 rounded-2xl uppercase shadow-lg shadow-cyan-500/20 active:scale-95 transition">ОПУБЛІКУВАТИ</button>
-                <button onclick="closeAdmin()" class="w-full text-slate-500 text-xs py-2 uppercase tracking-widest">Повернутись</button>
+                <label for="a-file" class="block w-full p-4 border-2 border-dashed border-slate-800 rounded-2xl text-center text-cyan-400 font-bold cursor-pointer">ДОДАТИ ФОТО</label>
+                <button onclick="saveItem()" class="w-full bg-cyan-500 text-black font-black py-5 rounded-2xl uppercase">Опублікувати</button>
+                <button onclick="closeAdmin()" class="w-full text-slate-500 text-[10px] py-2 uppercase">Назад</button>
             </div>
         </div>
     </section>
 
-    <div id="buy-modal" class="hidden fixed inset-0 bg-black/90 z-[200] flex items-center justify-center p-4">
+    <div id="buy-modal" class="hidden fixed inset-0 bg-black/95 z-[200] flex items-center justify-center p-4">
         <form action="https://formspree.io/f/xvzbqrdp" method="POST" onsubmit="handleOrder(event)" class="bg-slate-900 p-8 rounded-[2.5rem] w-full max-w-sm border border-slate-800">
-            <h2 class="header-font text-cyan-400 text-center mb-6 text-xl uppercase italic">Оформлення</h2>
-            <input type="hidden" name="order_details" id="form-info">
-            <input type="text" name="pib" placeholder="Ваше ПІБ" required class="w-full bg-slate-800 p-4 rounded-xl mb-4 outline-none border border-transparent focus:border-cyan-500 text-white">
-            <input type="text" name="telegram" placeholder="Telegram @нік" required class="w-full bg-slate-800 p-4 rounded-xl mb-6 outline-none border border-transparent focus:border-cyan-500 text-white">
-            <button type="submit" class="w-full bg-cyan-500 text-black font-black py-4 rounded-xl uppercase shadow-[0_0_15px_rgba(0,242,255,0.3)] hover:bg-white transition">Підтвердити</button>
-            <button type="button" onclick="closeBuy()" class="w-full text-slate-500 text-xs mt-4 uppercase">Скасувати</button>
+            <h2 class="header-font text-cyan-400 text-center mb-6 uppercase italic">Оформлення</h2>
+            <input type="hidden" name="details" id="form-info">
+            <input type="text" name="pib" placeholder="Ваше ПІБ" required class="w-full bg-slate-800 p-4 rounded-xl mb-4 text-white outline-none">
+            <input type="text" name="telegram" placeholder="Telegram @нік" required class="w-full bg-slate-800 p-4 rounded-xl mb-6 text-white outline-none">
+            <button type="submit" class="w-full bg-cyan-500 text-black font-black py-4 rounded-xl uppercase">Купити зараз</button>
+            <button type="button" onclick="closeBuy()" class="w-full text-slate-500 text-[10px] mt-4 uppercase">Закрити</button>
         </form>
     </div>
 
     <div id="wait-screen" class="hidden fixed inset-0 bg-slate-950 z-[500] flex items-center justify-center p-10 text-center">
-        <div class="fade-in">
+        <div>
             <div class="loader mx-auto mb-8"></div>
-            <h2 class="header-font text-cyan-400 text-xl mb-4 italic">ЗАМОВЛЕННЯ ПРИЙНЯТО!</h2>
-            <p class="text-slate-400 text-sm">Адмін перевірить оплату та зв'яжеться з вами.<br>Зазвичай це займає до <span class="text-white font-bold underline">24 годин</span>.</p>
-            <button onclick="location.reload()" class="mt-10 bg-slate-800 px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest">Зрозуміло</button>
+            <h2 class="header-font text-cyan-400 text-xl mb-4 italic">ОБРОБКА...</h2>
+            <p class="text-slate-400 text-xs">Адмін зв'яжеться з вами протягом 24 годин.</p>
+            <button onclick="location.reload()" class="mt-10 bg-slate-800 px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest text-white">На головну</button>
         </div>
     </div>
 
     <nav class="fixed bottom-0 left-0 right-0 bg-slate-950/80 backdrop-blur-md border-t border-slate-800 p-4 flex justify-around z-50">
         <button onclick="handleStep('nav-shop')" class="flex flex-col items-center">
-            <div class="text-cyan-400 text-lg mb-1">🏪</div>
             <span class="text-cyan-400 text-[10px] font-black uppercase tracking-widest">Магазин</span>
         </button>
-        
-        <button id="nav-admin-btn" onclick="openAdmin()" class="hidden flex flex-col items-center group">
-            <div class="text-red-500 text-lg mb-1 animate-pulse">⚡</div>
-            <span class="text-red-500 text-[10px] font-black uppercase tracking-widest">Адмін</span>
+        <button id="nav-admin-btn" onclick="openAdmin()" class="hidden flex flex-col items-center">
+            <span class="text-red-500 text-[10px] font-black uppercase tracking-widest animate-pulse">Адмін</span>
         </button>
     </nav>
 
     <script>
-        /**
-         * СЕКРЕТНИЙ ВХІД (МАНІПУЛЯЦІЇ)
-         */
         let steps = { navShop: 0, store: 0, game: 0, calcDone: false, finalGame: 0 };
-        let adminUnlocked = localStorage.getItem('artem_admin_v3') === 'true';
+        let activeFilters = { game: 'Всі', cat: 'Всі' };
+        let adminUnlocked = localStorage.getItem('artem_admin_v4') === 'true';
 
-        // Якщо вже заходили раніше - показуємо кнопку
         if(adminUnlocked) document.getElementById('nav-admin-btn').classList.remove('hidden');
 
-        function handleStep(type) {
-            // 1. Кліки на Магазин
-            if(type === 'nav-shop') steps.navShop++;
-            
-            // 2. Якщо магазин клікнули 2 рази, рахуємо STORE
+        function handleStep(t) {
+            if(t === 'nav-shop') steps.navShop++;
             if(steps.navShop >= 2) {
-                if(type === 'store' && steps.game === 0) steps.store++;
-                
-                // 3. Якщо STORE клікнули 8 разів, рахуємо GAME
-                if(steps.store >= 8) {
-                    if(type === 'game' && !steps.calcDone) steps.game++;
-                }
+                if(t === 'store' && steps.game === 0) steps.store++;
+                if(steps.store >= 8) { if(t === 'game' && !steps.calcDone) steps.game++; }
             }
-
-            // 4. На 5-й клік GAME відкриваємо калькулятор
-            if(steps.game === 5 && !steps.calcDone) {
-                document.getElementById('calc-modal').classList.remove('hidden');
-            }
-
-            // 5. Після калькулятора рахуємо ще 10 кліків на GAME
+            if(steps.game === 5 && !steps.calcDone) document.getElementById('calc-modal').classList.remove('hidden');
             if(steps.calcDone) {
-                if(type === 'game') steps.finalGame++;
-                
-                // 6. Останній клік на STORE відкриває фінальний запит
-                if(steps.finalGame >= 10 && type === 'store') {
-                    let answer = prompt("Введіть результат з калькулятора:");
-                    // Результат 99+55-(16/9) = 152.22
-                    if(answer && (answer.includes("152.2") || answer.includes("152,2"))) {
+                if(t === 'game') steps.finalGame++;
+                if(steps.finalGame >= 10 && t === 'store') {
+                    let p = prompt("Результат?");
+                    if(p && (p.includes("152.2") || p.includes("152,2"))) {
                         adminUnlocked = true;
-                        localStorage.setItem('artem_admin_v3', 'true');
+                        localStorage.setItem('artem_admin_v4', 'true');
                         document.getElementById('nav-admin-btn').classList.remove('hidden');
                         openAdmin();
                     }
@@ -186,192 +141,90 @@
             }
         }
 
-        /**
-         * РОБОТА КАЛЬКУЛЯТОРА
-         */
         let calcVal = "";
-        function addNum(n) { 
-            calcVal += n; 
-            document.getElementById('calc-screen').innerText = calcVal; 
-        }
-        function clearCalc() { 
-            calcVal = ""; 
-            document.getElementById('calc-screen').innerText = "0"; 
-        }
-        function evalCalc() { 
-            try { 
-                calcVal = eval(calcVal).toFixed(2).toString(); 
-                document.getElementById('calc-screen').innerText = calcVal; 
-            } catch { 
-                clearCalc(); 
-            } 
-        }
-        function closeCalc() { 
-            document.getElementById('calc-modal').classList.add('hidden'); 
-            steps.calcDone = true; 
-        }
+        function addNum(n) { calcVal += n; document.getElementById('calc-screen').innerText = calcVal; }
+        function clearCalc() { calcVal = ""; document.getElementById('calc-screen').innerText = "0"; }
+        function evalCalc() { try { calcVal = eval(calcVal).toFixed(2).toString(); document.getElementById('calc-screen').innerText = calcVal; } catch { clearCalc(); } }
+        function closeCalc() { document.getElementById('calc-modal').classList.add('hidden'); steps.calcDone = true; }
 
-        /**
-         * БАЗА ДАНИХ ТА АДМІНКА
-         */
-        let db = JSON.parse(localStorage.getItem('artem_db_final')) || [];
+        let db = JSON.parse(localStorage.getItem('artem_db_v4')) || [];
         let curImg = "";
-
-        // Список ігор в адмінці
-        const gamesList = ["Brawl Stars", "Standoff 2", "PUBG Mobile", "Roblox", "Free Fire", "Clash of Clans", "Genshin Impact", "Steam", "Minecraft", "Valorant"];
-        const sel = document.getElementById('a-game');
-        gamesList.forEach(g => sel.innerHTML += `<option value="${g}">${g}</option>`);
-
-        // Завантаження фото
-        document.getElementById('a-file').onchange = (e) => {
-            const reader = new FileReader();
-            reader.onload = () => {
-                curImg = reader.result;
-                alert("Фото завантажено!");
-            };
-            reader.readAsDataURL(e.target.files[0]);
-        };
-
-        function saveItem() {
-            const title = document.getElementById('a-title').value;
-            const price = document.getElementById('a-price').value;
-            const game = document.getElementById('a-game').value;
-            const desc = document.getElementById('a-desc').value;
-
-            if(!title || !price) return alert("Заповніть основні поля!");
-
-            const newItem = {
-                id: Math.floor(1000 + Math.random() * 8999),
-                game, title, price, desc, img: curImg
-            };
-
-            db.unshift(newItem);
-            localStorage.setItem('artem_db_final', JSON.stringify(db));
-            location.reload();
-        }
-
-        /**
-         * РЕНДЕР ТОВАРІВ
-         */
-        function render() {
-            const grid = document.getElementById('products-grid');
-            if(db.length === 0) {
-                grid.innerHTML = '<div class="col-span-full text-center text-slate-600 py-10 italic">Товарів поки немає...</div>';
-                return;
-            }
-
-            grid.innerHTML = db.map(p => `
-                <div class="premium-card rounded-[2rem] p-6 fade-in">
-                    <div class="ribbon-tag">Актив</div>
-                    <img src="${p.img || ''}" class="w-full h-48 object-cover rounded-2xl mb-4 bg-slate-800 border border-slate-700">
-                    <div class="flex justify-between items-start mb-2">
-                        <div>
-                            <p class="text-[10px] font-black text-cyan-400 uppercase tracking-widest">${p.game}</p>
-                            <h3 class="text-xl font-extrabold text-white leading-tight uppercase">${p.title}</h3>
-                        </div>
-                        <span class="text-slate-600 font-mono text-[9px]">#ID-${p.id}</span>
-                    </div>
-                    <p class="text-slate-400 text-xs mb-6 line-clamp-2 h-8">${p.desc || 'Без опису'}</p>
-                    <div class="flex justify-between items-center">
-                        <span class="text-3xl font-black text-white">$${p.price}</span>
-                        <button onclick="openBuy('${p.id}', '${p.title}', '${p.price}')" class="bg-cyan-500 text-black px-8 py-3 rounded-xl font-black text-xs uppercase hover:bg-white transition">Купити</button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        /**
-         * КЕРУВАННЯ ВІКНАМИ
-         */
-        function openAdmin() { document.getElementById('admin-view').classList.remove('hidden'); }
-        function closeAdmin() { document.getElementById('admin-view').classList.add('hidden'); }
-
-        function openBuy(id, title, price) {
-            document.getElementById('form-info').value = `ID: ${id} | Товар: ${title} | Ціна: $${price}`;
-            document.getElementById('buy-modal').classList.remove('hidden');
-        }
-        function closeBuy() { document.getElementById('buy-modal').classList.add('hidden'); }
-
-        function handleOrder(e) {
-            e.preventDefault();
-            const form = e.target;
-            fetch(form.action, {
-                method: form.method,
-                body: new FormData(form),
-                headers: { 'Accept': 'application/json' }
-            }).then(() => {
-                document.getElementById('buy-modal').classList.add('hidden');
-                document.getElementById('wait-screen').classList.remove('hidden');
-            });
-        }
-
-        // Запуск
-        render();
-
-        /* КОМЕНТАР ДЛЯ ОБ'ЄМУ КОДУ
-           Цей магазин розроблено спеціально для Artem Store. 
-           Всі дані зберігаються локально. 
-           Для безпеки використовується дворівнева система входу.
-           Число для входу після калькулятора: 152.22
-        */
-    </script>
-</body>
-</html>
-Valorant"].forEach(g => sel.innerHTML += `<option>${g}</option>`);
+        const games = ["Brawl Stars", "Standoff 2", "PUBG Mobile", "Roblox", "Free Fire", "Clash of Clans", "Genshin Impact", "Steam", "Minecraft", "Valorant", "Mobile Legends"];
+        
+        const gFilterWrap = document.getElementById('game-filters');
+        const aGameSel = document.getElementById('a-game');
+        games.forEach(g => {
+            gFilterWrap.innerHTML += `<button onclick="setFilter('game', '${g}')" class="filter-btn px-5 py-2 rounded-xl text-xs bg-slate-800 text-slate-400">${g}</button>`;
+            aGameSel.innerHTML += `<option value="${g}">${g}</option>`;
+        });
 
         document.getElementById('a-file').onchange = (e) => {
             const r = new FileReader();
-            r.onload = () => { curImg = r.result; alert("Фото успішно додано!"); };
+            r.onload = () => { curImg = r.result; alert("Фото ок"); };
             r.readAsDataURL(e.target.files[0]);
         };
 
         function saveItem() {
             const t = document.getElementById('a-title').value;
             const p = document.getElementById('a-price').value;
-            if(!t || !p) return alert("Вкажіть назву та ціну!");
-            db.unshift({ id: Math.floor(1000+Math.random()*8999), game: sel.value, title: t, price: p, img: curImg, desc: document.getElementById('a-desc').value });
-            localStorage.setItem('artem_db_v3', JSON.stringify(db));
+            const g = document.getElementById('a-game').value;
+            const c = document.getElementById('a-cat').value;
+            const d = document.getElementById('a-desc').value;
+            if(!t || !p) return;
+            db.unshift({ id: Math.floor(1000+Math.random()*8999), game: g, cat: c, title: t, price: p, desc: d, img: curImg });
+            localStorage.setItem('artem_db_v4', JSON.stringify(db));
             location.reload();
         }
 
+        function setFilter(type, val) {
+            activeFilters[type] = val;
+            const btns = document.querySelectorAll(`#${type}-filters button`);
+            btns.forEach(b => {
+                if(b.innerText.includes(val)) b.className = type === 'game' ? "filter-btn active px-5 py-2 rounded-xl text-xs" : "filter-btn active px-4 py-1.5 rounded-lg text-[10px] uppercase font-bold";
+                else b.className = type === 'game' ? "filter-btn px-5 py-2 rounded-xl text-xs bg-slate-800 text-slate-400" : "filter-btn px-4 py-1.5 rounded-lg text-[10px] uppercase font-bold text-slate-400";
+            });
+            render();
+        }
+
         function render() {
-            document.getElementById('products-grid').innerHTML = db.map(p => `
+            const grid = document.getElementById('products-grid');
+            const filtered = db.filter(item => {
+                const gM = activeFilters.game === 'Всі' || item.game === activeFilters.game;
+                const cM = activeFilters.cat === 'Всі' || item.cat === activeFilters.cat;
+                return gM && cM;
+            });
+            grid.innerHTML = filtered.map(p => `
                 <div class="premium-card rounded-3xl p-5">
-                    <div class="ribbon">Актив</div>
+                    <div class="ribbon">${p.cat}</div>
                     <img src="${p.img || ''}" class="w-full h-44 object-cover rounded-2xl mb-4 bg-slate-800 border border-slate-700">
-                    <div class="flex justify-between text-[9px] text-cyan-400 font-black uppercase mb-1 tracking-widest">
-                        <span>${p.game}</span><span>#ID-${p.id}</span>
+                    <div class="flex justify-between text-[9px] text-cyan-400 font-black uppercase mb-1">
+                        <span>${p.game}</span><span>#${p.id}</span>
                     </div>
-                    <h3 class="font-black text-lg mb-4 uppercase leading-none">${p.title}</h3>
+                    <h3 class="font-black text-lg mb-4 uppercase leading-none text-white">${p.title}</h3>
                     <div class="flex justify-between items-center">
                         <span class="text-2xl font-black text-white">$${p.price}</span>
-                        <button onclick="openBuy('${p.id}', '${p.title}', '${p.price}')" class="bg-cyan-500 text-black px-6 py-2 rounded-xl font-black text-[10px] uppercase shadow-lg shadow-cyan-500/20">Купити</button>
+                        <button onclick="openBuy('${p.id}', '${p.title}', '${p.price}')" class="bg-cyan-500 text-black px-6 py-2 rounded-xl font-black text-[10px] uppercase">Купити</button>
                     </div>
                 </div>
             `).join('');
         }
 
-        function openAdminView() { document.getElementById('admin-view').classList.remove('hidden'); }
-        function closeAdminView() { document.getElementById('admin-view').classList.add('hidden'); }
-
-        function openBuy(id, name, price) {
-            document.getElementById('form-info').value = `ID: ${id} | Назва: ${name} | Ціна: $${price}`;
+        function openAdmin() { document.getElementById('admin-view').classList.remove('hidden'); }
+        function closeAdmin() { document.getElementById('admin-view').classList.add('hidden'); }
+        function openBuy(id, t, p) {
+            document.getElementById('form-info').value = `ID: ${id} | ${t} | $${p}`;
             document.getElementById('buy-modal').classList.remove('hidden');
         }
-
+        function closeBuy() { document.getElementById('buy-modal').classList.add('hidden'); }
         function handleOrder(e) {
             e.preventDefault();
-            const form = e.target;
-            fetch(form.action, {
-                method: form.method,
-                body: new FormData(form),
-                headers: { 'Accept': 'application/json' }
-            }).then(() => {
+            const f = e.target;
+            fetch(f.action, { method: f.method, body: new FormData(f), headers: { 'Accept': 'application/json' } })
+            .then(() => {
                 document.getElementById('buy-modal').classList.add('hidden');
                 document.getElementById('wait-screen').classList.remove('hidden');
             });
         }
-
         render();
     </script>
 </body>
