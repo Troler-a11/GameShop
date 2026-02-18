@@ -3,533 +3,244 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ARTEM STORE | PROFESSIONAL GAMING HUB</title>
+    <title>ARTEM STORE | GLOBAL</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@400;600;900&display=swap" rel="stylesheet">
     <style>
-        :root { --cyan: #00f2ff; --dark: #020617; --card: #0f172a; --accent: #3b82f6; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--dark); color: white; margin: 0; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
+        :root { --cyan: #00f2ff; --dark: #020617; }
+        body { font-family: 'Inter', sans-serif; background: var(--dark); color: white; margin: 0; }
         .header-font { font-family: 'Orbitron', sans-serif; }
-        
-        /* Скролбар */
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        
-        /* Картки та неонові ефекти */
-        .premium-card { 
-            background: linear-gradient(165deg, #111827, #020617);
-            border: 1px solid #1f2937;
-            box-shadow: 0 10px 30px -15px rgba(0,0,0,0.7);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .premium-card:hover { border-color: var(--cyan); box-shadow: 0 0 25px rgba(0, 242, 255, 0.15); transform: translateY(-8px); }
-        
-        /* Анімація коду */
-        .code-input { letter-spacing: 0.5em; text-align: center; font-family: monospace; }
-        
-        /* Система рейтингу */
-        .star { cursor: pointer; transition: 0.2s; color: #1e293b; }
-        .star.filled { color: #fbbf24; text-shadow: 0 0 10px rgba(251, 191, 36, 0.4); }
-        
-        /* Чат */
-        .msg-bubble { max-width: 85%; padding: 12px 16px; border-radius: 20px; font-size: 14px; position: relative; }
-        .msg-mine { background: var(--cyan); color: black; border-bottom-right-radius: 4px; }
-        .msg-theirs { background: #1f2937; color: white; border-bottom-left-radius: 4px; }
-        
-        /* Статуси */
-        .badge-admin { background: linear-gradient(90deg, #ff4d4d, #f9ca24); color: black; font-weight: 900; }
-        .badge-verified { background: var(--cyan); color: black; font-weight: 900; }
-        
+        .premium-card { background: linear-gradient(165deg, #111827, #020617); border: 1px solid #1f2937; transition: 0.3s; }
+        .premium-card:hover { border-color: var(--cyan); transform: translateY(-5px); }
+        .filter-btn.active { background: var(--cyan); color: black; box-shadow: 0 0 15px var(--cyan); }
+        .msg-bubble { max-width: 80%; padding: 12px; border-radius: 15px; font-size: 14px; }
+        .msg-mine { background: var(--cyan); color: black; align-self: flex-end; }
+        .msg-theirs { background: #1f2937; align-self: flex-start; }
         .hidden { display: none !important; }
-        .loader { width: 40px; height: 40px; border: 3px solid #1e293b; border-top-color: var(--cyan); border-radius: 50%; animation: spin 0.8s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        .glass { background: rgba(2, 6, 23, 0.95); backdrop-blur: 10px; }
     </style>
 </head>
-<body class="pb-24">
-
+<body class="pb-20">
     <div id="auth-layer" class="fixed inset-0 z-[2000] bg-slate-950 flex items-center justify-center p-6">
-        <div class="w-full max-w-md space-y-8 bg-slate-900/50 p-8 rounded-[3rem] border border-slate-800 backdrop-blur-xl">
-            <div class="text-center">
-                <h2 class="header-font text-3xl font-black text-cyan-400">IDENTITY</h2>
-                <p class="text-slate-500 text-xs mt-2 uppercase tracking-widest">Global Access Portal</p>
-            </div>
-
-            <div id="auth-step-1" class="space-y-5">
+        <div class="w-full max-w-md space-y-6 bg-slate-900 p-8 rounded-[2.5rem] border border-slate-800">
+            <div id="auth-step-1" class="space-y-4">
+                <div class="text-center"><h2 class="header-font text-2xl text-cyan-400">IDENTITY</h2></div>
                 <div class="flex justify-center">
-                    <div class="relative group">
-                        <input type="file" id="reg-avatar-input" class="hidden" accept="image/*">
-                        <label for="reg-avatar-input" class="cursor-pointer block">
-                            <div id="avatar-circle" class="w-28 h-28 rounded-full border-2 border-dashed border-slate-700 flex items-center justify-center overflow-hidden bg-slate-950">
-                                <span class="text-[10px] text-slate-500 font-bold uppercase">Add Photo</span>
-                            </div>
-                        </label>
-                    </div>
+                    <input type="file" id="reg-avatar-input" class="hidden" accept="image/*">
+                    <label for="reg-avatar-input" class="cursor-pointer">
+                        <div id="avatar-circle" class="w-24 h-24 rounded-full border-2 border-dashed border-slate-700 flex items-center justify-center overflow-hidden bg-black">
+                            <span class="text-[8px] text-slate-500 uppercase font-black">Add Photo</span>
+                        </div>
+                    </label>
                 </div>
-                <div class="space-y-3">
-                    <input type="text" id="reg-name" placeholder="Legal Name" class="w-full bg-slate-950 border border-slate-800 p-4 rounded-2xl outline-none focus:border-cyan-500 transition-all">
-                    <input type="text" id="reg-nick" placeholder="@unique_handle (Max 12 chars)" class="w-full bg-slate-950 border border-slate-800 p-4 rounded-2xl outline-none focus:border-cyan-500 transition-all">
-                    <input type="email" id="reg-email" placeholder="active-email@provider.com" class="w-full bg-slate-950 border border-slate-800 p-4 rounded-2xl outline-none focus:border-cyan-500 transition-all">
-                </div>
-                <button onclick="handleAuthNext()" class="w-full bg-cyan-500 text-black font-black py-5 rounded-2xl hover:bg-white transition-all shadow-xl shadow-cyan-500/20">REQUEST VERIFICATION</button>
+                <input type="text" id="reg-name" placeholder="Full Name" class="w-full bg-black border border-slate-800 p-4 rounded-xl outline-none">
+                <input type="text" id="reg-nick" placeholder="@username" class="w-full bg-black border border-slate-800 p-4 rounded-xl outline-none">
+                <input type="email" id="reg-email" placeholder="Email" class="w-full bg-black border border-slate-800 p-4 rounded-xl outline-none">
+                <button onclick="handleAuthNext()" class="w-full bg-cyan-500 text-black font-black py-4 rounded-xl uppercase">Request Code</button>
             </div>
-
-            <div id="auth-step-2" class="hidden space-y-6">
-                <div class="text-center">
-                    <p class="text-sm text-slate-400">Security code sent to your email.</p>
-                    <p class="text-[10px] text-red-500 mt-1 uppercase font-bold">Attempts left: <span id="auth-limit">12</span></p>
-                </div>
-                <input type="text" id="auth-code-input" maxlength="6" class="w-full bg-slate-950 border-2 border-cyan-500 p-5 rounded-2xl code-input text-2xl font-black text-cyan-400">
-                <button onclick="verifyAndLogin()" class="w-full bg-cyan-500 text-black font-black py-5 rounded-2xl uppercase tracking-widest">Access Account</button>
+            <div id="auth-step-2" class="hidden space-y-4">
+                <p class="text-center text-xs text-slate-400">Attempts: <span id="auth-limit">12</span></p>
+                <input type="text" id="auth-code-input" placeholder="000000" class="w-full bg-black border-2 border-cyan-500 p-4 rounded-xl text-center text-2xl font-black text-cyan-400 tracking-widest">
+                <button onclick="verifyAndLogin()" class="w-full bg-cyan-500 text-black font-black py-4 rounded-xl">VERIFY</button>
             </div>
         </div>
     </div>
 
-    <header class="sticky top-0 z-[1000] bg-slate-950/80 backdrop-blur-lg border-b border-slate-800 px-6 py-4 flex justify-between items-center">
+    <header class="sticky top-0 z-[1000] glass border-b border-slate-800 p-4 flex justify-between items-center">
         <div class="flex items-center gap-3" onclick="navigateTo('profile')">
-            <div id="top-avatar-container" class="w-10 h-10 rounded-full border border-cyan-500 overflow-hidden bg-slate-800">
-                <img id="top-avatar-img" src="" class="w-full h-full object-cover">
-            </div>
-            <h1 class="header-font text-lg font-black tracking-tighter italic">ARTEM<span class="text-cyan-400">STORE</span></h1>
+            <img id="top-avatar-img" src="" class="w-10 h-10 rounded-full border border-cyan-500 hidden object-cover">
+            <h1 class="header-font text-lg font-black italic">ARTEM<span class="text-cyan-400">STORE</span></h1>
         </div>
-        
-        <div class="flex items-center gap-5">
-            <div class="relative" onclick="openInbox()">
-                <span class="text-2xl">🔔</span>
-                <div id="inbox-alert" class="hidden absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-slate-950 animate-pulse"></div>
-            </div>
+        <div class="relative" onclick="openInbox()">
+            <span class="text-2xl">🔔</span>
+            <div id="inbox-alert" class="hidden absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
         </div>
     </header>
 
-    <main id="main-content" class="max-w-4xl mx-auto">
-        
-        <section id="view-shop" class="p-4 space-y-6">
-            <div class="flex gap-3 overflow-x-auto no-scrollbar py-2" id="filter-games">
-                </div>
-            
-            <div class="flex gap-2 overflow-x-auto no-scrollbar" id="filter-cats">
-                </div>
-
-            <div id="products-list" class="grid grid-cols-1 md:grid-cols-2 gap-6 pb-20">
-                </div>
+    <main id="main-content">
+        <section id="view-shop" class="p-4 space-y-4">
+            <div class="flex gap-2 overflow-x-auto no-scrollbar" id="filter-games"></div>
+            <div class="flex gap-2" id="filter-cats"></div>
+            <div id="products-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
         </section>
 
-        <section id="view-admin" class="hidden p-6 space-y-6">
-            <h2 class="header-font text-2xl text-cyan-400">CREATE LISTING</h2>
-            <div class="space-y-4 bg-slate-900/50 p-6 rounded-[2rem] border border-slate-800">
-                <div class="grid grid-cols-2 gap-3">
-                    <select id="new-game" class="bg-slate-950 p-4 rounded-2xl border border-slate-800 outline-none text-sm"></select>
-                    <select id="new-cat" class="bg-slate-950 p-4 rounded-2xl border border-slate-800 outline-none text-sm">
-                        <option>Accounts</option>
-                        <option>Currency</option>
-                        <option>Boost</option>
-                    </select>
-                </div>
-                <input type="text" id="new-title" placeholder="Listing Title" class="w-full bg-slate-950 p-4 rounded-2xl border border-slate-800 outline-none">
-                <input type="number" id="new-price" placeholder="Price ($)" class="w-full bg-slate-950 p-4 rounded-2xl border border-slate-800 outline-none">
-                <textarea id="new-desc" placeholder="Describe the product details..." class="w-full bg-slate-950 p-4 rounded-2xl border border-slate-800 outline-none h-28 resize-none"></textarea>
-                
-                <div class="relative">
-                    <input type="file" id="new-img" class="hidden" accept="image/*">
-                    <label for="new-img" class="flex flex-col items-center justify-center p-8 border-2 border-dashed border-slate-800 rounded-2xl bg-slate-950 cursor-pointer hover:border-cyan-500 transition-all">
-                        <span class="text-2xl mb-2">📸</span>
-                        <span class="text-[10px] text-slate-500 font-black uppercase">Attach Media</span>
-                        <span id="img-status" class="text-[9px] text-cyan-400 mt-1 uppercase"></span>
-                    </label>
-                </div>
-
-                <button onclick="commitNewProduct()" class="w-full bg-cyan-500 text-black font-black py-5 rounded-2xl shadow-xl shadow-cyan-500/20 uppercase tracking-tighter">Confirm & Publish</button>
+        <section id="view-admin" class="hidden p-6 space-y-4">
+            <h2 class="header-font text-cyan-400">NEW LISTING</h2>
+            <div class="space-y-3 bg-slate-900 p-5 rounded-3xl">
+                <select id="new-game" class="w-full bg-black p-4 rounded-xl border border-slate-800"></select>
+                <select id="new-cat" class="w-full bg-black p-4 rounded-xl border border-slate-800">
+                    <option>Accounts</option><option>Currency</option><option>Boost</option>
+                </select>
+                <input type="text" id="new-title" placeholder="Title" class="w-full bg-black p-4 rounded-xl">
+                <input type="number" id="new-price" placeholder="Price ($)" class="w-full bg-black p-4 rounded-xl">
+                <textarea id="new-desc" placeholder="Description" class="w-full bg-black p-4 rounded-xl h-24"></textarea>
+                <input type="file" id="new-img" class="hidden" accept="image/*">
+                <label for="new-img" class="block p-4 border-2 border-dashed border-slate-800 rounded-xl text-center text-xs text-slate-500">UPLOAD IMAGE</label>
+                <button onclick="commitNewProduct()" class="w-full bg-cyan-500 text-black font-black py-4 rounded-xl">PUBLISH</button>
             </div>
         </section>
 
-        <section id="view-profile" class="hidden p-8 space-y-8 text-center">
-            <div class="relative inline-block">
-                <img id="p-avatar" class="w-32 h-32 rounded-full border-4 border-cyan-500 p-1 bg-slate-900 object-cover">
-                <div id="p-status-badge" class="absolute -bottom-2 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-[10px] font-black uppercase shadow-lg"></div>
-            </div>
-            
-            <div>
-                <h2 id="p-name" class="header-font text-3xl font-black"></h2>
-                <p id="p-nick" class="text-cyan-400 font-mono text-sm mt-1"></p>
-            </div>
-
+        <section id="view-profile" class="hidden p-8 text-center space-y-6">
+            <img id="p-avatar" class="w-32 h-32 rounded-full border-4 border-cyan-500 mx-auto object-cover">
+            <h2 id="p-name" class="header-font text-2xl"></h2>
+            <p id="p-nick" class="text-cyan-400 font-mono"></p>
             <div class="grid grid-cols-2 gap-4">
-                <div class="bg-slate-900 border border-slate-800 p-5 rounded-3xl">
-                    <p class="text-[9px] text-slate-500 uppercase font-black mb-1">Total Sales</p>
-                    <p class="text-2xl font-black" id="p-sales">0</p>
-                </div>
-                <div class="bg-slate-900 border border-slate-800 p-5 rounded-3xl">
-                    <p class="text-[9px] text-slate-500 uppercase font-black mb-1">Purchases</p>
-                    <p class="text-2xl font-black" id="p-bought">0</p>
-                </div>
+                <div class="bg-slate-900 p-4 rounded-2xl"><p class="text-[8px] text-slate-500">SALES</p><p id="p-sales" class="text-xl font-black">0</p></div>
+                <div class="bg-slate-900 p-4 rounded-2xl"><p class="text-[8px] text-slate-500">BOUGHT</p><p id="p-bought" class="text-xl font-black">0</p></div>
             </div>
-
-            <div class="bg-slate-900 border border-slate-800 p-6 rounded-[2.5rem] space-y-4">
-                <p class="text-xs text-slate-500 uppercase font-black tracking-widest">Public Reputation</p>
-                <div class="flex justify-center gap-2 text-2xl" id="p-rating-stars">
-                    </div>
-                <p class="text-[9px] text-slate-600 italic">This rating is verified by Artem Store Security Team.</p>
+            <div class="bg-slate-900 p-6 rounded-3xl">
+                <div class="flex justify-center gap-1 text-yellow-500 text-xl" id="p-stars">⭐⭐⭐⭐⭐</div>
+                <p class="text-[8px] text-slate-600 mt-2 uppercase">Verified by Artem Store Security</p>
             </div>
-
-            <button onclick="userLogout()" class="text-red-500 text-[10px] font-black uppercase tracking-[0.3em]">Terminate Session</button>
+            <button onclick="userLogout()" class="text-red-500 text-[10px] font-black uppercase">Logout</button>
         </section>
     </main>
-
     <section id="chat-window" class="hidden fixed inset-0 z-[1500] bg-slate-950 flex flex-col">
-        <div class="p-5 border-b border-slate-800 bg-slate-900/50 flex justify-between items-center">
-            <div class="flex items-center gap-4">
-                <img id="c-partner-img" class="w-10 h-10 rounded-full object-cover border border-slate-700">
-                <div>
-                    <p id="c-partner-name" class="font-bold text-sm leading-none"></p>
-                    <p id="c-partner-nick" class="text-[10px] text-cyan-500 mt-1"></p>
-                </div>
+        <div class="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-900">
+            <div class="flex items-center gap-3">
+                <img id="c-partner-img" class="w-10 h-10 rounded-full object-cover">
+                <div><p id="c-partner-name" class="font-bold text-sm"></p><p id="c-partner-nick" class="text-[10px] text-cyan-500"></p></div>
             </div>
-            <button onclick="exitChat()" class="w-10 h-10 flex items-center justify-center bg-slate-800 rounded-full">&times;</button>
+            <button onclick="exitChat()" class="text-2xl">&times;</button>
         </div>
-        
-        <div id="c-messages-area" class="flex-1 overflow-y-auto p-6 space-y-4 no-scrollbar">
-            </div>
-
-        <div class="p-5 bg-slate-900/80 border-t border-slate-800 flex gap-3">
-            <label class="w-12 h-12 flex items-center justify-center bg-slate-800 rounded-2xl cursor-pointer">
-                📎 <input type="file" id="chat-media" class="hidden" accept="image/*">
-            </label>
-            <input type="text" id="chat-input" placeholder="Enter message..." class="flex-1 bg-slate-950 border border-slate-800 px-5 rounded-2xl outline-none focus:border-cyan-500 transition-all">
-            <button onclick="dispatchMessage()" class="bg-cyan-500 text-black px-6 rounded-2xl font-black text-xs uppercase">Send</button>
+        <div id="c-messages-area" class="flex-1 overflow-y-auto p-4 flex flex-col gap-3"></div>
+        <div class="p-4 bg-slate-900 flex gap-2">
+            <input type="text" id="chat-input" placeholder="Message..." class="flex-1 bg-black p-3 rounded-xl outline-none">
+            <button onclick="dispatchMessage()" class="bg-cyan-500 text-black px-6 rounded-xl font-black text-xs">SEND</button>
         </div>
     </section>
 
-    <div id="inbox-layer" class="hidden fixed inset-0 z-[1100] bg-slate-950/90 backdrop-blur-md p-6">
-        <div class="max-w-md mx-auto bg-slate-900 border border-slate-800 rounded-[3rem] h-full flex flex-col overflow-hidden shadow-2xl">
-            <div class="p-6 border-b border-slate-800 flex justify-between items-center">
-                <h3 class="header-font text-cyan-400">INBOX</h3>
-                <button onclick="closeInbox()" class="text-slate-500">Close</button>
-            </div>
-            <div id="inbox-list" class="flex-1 overflow-y-auto p-4 space-y-3 no-scrollbar">
-                </div>
+    <div id="inbox-layer" class="hidden fixed inset-0 z-[1100] glass p-6">
+        <div class="max-w-md mx-auto bg-slate-900 rounded-[2rem] h-[80vh] flex flex-col">
+            <div class="p-5 border-b border-slate-800 flex justify-between"><span>INBOX</span><button onclick="closeInbox()">Close</button></div>
+            <div id="inbox-list" class="flex-1 overflow-y-auto p-4 space-y-2"></div>
         </div>
     </div>
 
     <div id="rate-layer" class="hidden fixed inset-0 z-[3000] glass flex items-center justify-center p-6">
-        <div class="bg-slate-900 border border-cyan-500 p-10 rounded-[3rem] text-center w-full max-w-sm shadow-[0_0_50px_rgba(0,242,255,0.2)]">
-            <div class="text-5xl mb-4">🏆</div>
-            <h2 class="header-font text-2xl text-cyan-400 mb-2">TRANSACTION COMPLETE</h2>
-            <p class="text-slate-400 text-xs mb-8 uppercase tracking-widest">Rate your experience</p>
-            
-            <div class="flex justify-center gap-3 mb-10" id="star-selector">
-                <span class="star text-4xl" data-v="1">★</span>
-                <span class="star text-4xl" data-v="2">★</span>
-                <span class="star text-4xl" data-v="3">★</span>
-                <span class="star text-4xl" data-v="4">★</span>
-                <span class="star text-4xl" data-v="5">★</span>
+        <div class="bg-slate-900 border border-cyan-500 p-10 rounded-[2rem] text-center w-full max-w-sm">
+            <h2 class="header-font text-cyan-400 mb-4">RATE SELLER</h2>
+            <div class="flex justify-center gap-2 text-3xl mb-8" id="star-selector">
+                <span onclick="setR(1)">★</span><span onclick="setR(2)">★</span><span onclick="setR(3)">★</span><span onclick="setR(4)">★</span><span onclick="setR(5)">★</span>
             </div>
-            
-            <button onclick="submitRatingAndFinish()" class="w-full bg-cyan-500 text-black font-black py-5 rounded-2xl shadow-lg uppercase">Finalize & Exit</button>
+            <button onclick="location.reload()" class="w-full bg-cyan-500 text-black font-black py-4 rounded-xl">FINALIZE</button>
         </div>
     </div>
 
-    <nav class="fixed bottom-0 left-0 right-0 bg-slate-950/90 backdrop-blur-xl border-t border-slate-800 px-4 py-4 flex justify-around items-center z-[1000]">
-        <button onclick="navigateTo('shop')" class="nav-btn flex flex-col items-center gap-1 text-cyan-400" id="btn-shop">
-            <span class="text-2xl">⚡</span>
-            <span class="text-[8px] font-black uppercase tracking-widest">Market</span>
-        </button>
-        <button onclick="navigateTo('admin')" class="nav-btn flex flex-col items-center gap-1 text-slate-500 hidden" id="btn-admin">
-            <span class="text-2xl">💎</span>
-            <span class="text-[8px] font-black uppercase tracking-widest">Create</span>
-        </button>
-        <button onclick="navigateTo('profile')" class="nav-btn flex flex-col items-center gap-1 text-slate-500" id="btn-profile">
-            <span class="text-2xl">🛡️</span>
-            <span class="text-[8px] font-black uppercase tracking-widest">Profile</span>
-        </button>
+    <nav class="fixed bottom-0 left-0 right-0 bg-slate-950 border-t border-slate-800 p-4 flex justify-around z-[1000]">
+        <button onclick="navigateTo('shop')" class="text-cyan-400 flex flex-col items-center" id="btn-shop"><span class="text-xl">🛒</span><span class="text-[7px]">MARKET</span></button>
+        <button onclick="navigateTo('admin')" class="text-slate-500 flex flex-col items-center hidden" id="btn-admin"><span class="text-xl">➕</span><span class="text-[7px]">CREATE</span></button>
+        <button onclick="navigateTo('profile')" class="text-slate-500 flex flex-col items-center" id="btn-profile"><span class="text-xl">👤</span><span class="text-[7px]">ME</span></button>
     </nav>
 
     <script>
-        // --- GLOBAL STATE & CONFIG ---
-        const ADMIN_GMAIL = "ilemberk3356@gmail.com";
-        const GAMES_LIST = ["Brawl Stars", "Standoff 2", "PUBG Mobile", "Free Fire", "Roblox", "Steam", "Valorant", "Genshin Impact", "Clash Royale", "Minecraft"];
-        
+        const ADMIN_G = "ilemberk3356@gmail.com";
+        const GAMES = ["Brawl Stars", "Standoff 2", "PUBG Mobile", "Roblox", "Valorant", "Genshin", "CS 2", "FIFA", "Minecraft", "Steam"];
         let state = {
             user: JSON.parse(localStorage.getItem('as_user')) || null,
             db: JSON.parse(localStorage.getItem('as_db')) || [],
             msgs: JSON.parse(localStorage.getItem('as_msgs')) || [],
-            ratings: JSON.parse(localStorage.getItem('as_ratings')) || {},
-            activeGame: "All Games",
-            activeCat: "Accounts",
-            verificationCode: null,
-            limit: 12,
-            tempAvatar: null,
-            currentPartner: null,
-            tempRating: 5
+            activeGame: "All Games", activeCat: "Accounts", vCode: null, limit: 12, tempAv: null, curP: null
         };
 
-        // --- AUTH ENGINE ---
         document.getElementById('reg-avatar-input').onchange = (e) => {
-            const file = e.target.files[0];
-            const reader = new FileReader();
-            reader.onload = () => {
-                state.tempAvatar = reader.result;
-                document.getElementById('avatar-circle').innerHTML = `<img src="${reader.result}" class="w-full h-full object-cover">`;
-            };
-            reader.readAsDataURL(file);
+            const r = new FileReader();
+            r.onload = () => { state.tempAv = r.result; document.getElementById('avatar-circle').innerHTML = `<img src="${r.result}" class="w-full h-full object-cover">`; };
+            r.readAsDataURL(e.target.files[0]);
         };
 
         function handleAuthNext() {
             const email = document.getElementById('reg-email').value;
-            const nick = document.getElementById('reg-nick').value;
-            if(!email.includes('@') || !nick.startsWith('@')) return alert("Invalid Email or Nick! Nick must start with @");
-            
-            state.verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
-            console.log("SECURE_CODE:", state.verificationCode); // For teacher to see logic
-            alert(`[DEBUG] Verification code sent to ${email}`);
-            
-            document.getElementById('auth-step-1').classList.add('hidden');
-            document.getElementById('auth-step-2').classList.remove('hidden');
+            if(!email.includes('@')) return alert("Invalid Email");
+            state.vCode = Math.floor(100000 + Math.random() * 900000).toString();
+            emailjs.send('service_dbkrnz9', 'template_n90xvc9', {to_email: email, user_name: document.getElementById('reg-name').value, otp_code: state.vCode}, 'KErbU8_xE37eaf0qi')
+                .then(() => { alert("Code sent to " + email); document.getElementById('auth-step-1').classList.add('hidden'); document.getElementById('auth-step-2').classList.remove('hidden'); });
         }
 
         function verifyAndLogin() {
-            const code = document.getElementById('auth-code-input').value;
-            if(code === state.verificationCode) {
-                state.user = {
-                    name: document.getElementById('reg-name').value,
-                    nick: document.getElementById('reg-nick').value,
-                    email: document.getElementById('reg-email').value,
-                    avatar: state.tempAvatar || "https://api.dicebear.com/7.x/bottts/svg",
-                    isAdmin: document.getElementById('reg-email').value === ADMIN_GMAIL,
-                    stats: { sales: 0, bought: 0 }
-                };
-                localStorage.setItem('as_user', JSON.stringify(state.user));
-                location.reload();
-            } else {
-                state.limit--;
-                document.getElementById('auth-limit').innerText = state.limit;
-                if(state.limit <= 0) location.reload();
-            }
+            if(document.getElementById('auth-code-input').value === state.vCode) {
+                state.user = { name: document.getElementById('reg-name').value, nick: document.getElementById('reg-nick').value, email: document.getElementById('reg-email').value, avatar: state.tempAv || "", isAdmin: document.getElementById('reg-email').value === ADMIN_G, stats: { sales: 0, bought: 0 } };
+                localStorage.setItem('as_user', JSON.stringify(state.user)); location.reload();
+            } else { state.limit--; document.getElementById('auth-limit').innerText = state.limit; if(state.limit <= 0) location.reload(); }
         }
 
-        // --- NAVIGATION ENGINE ---
-        function navigateTo(view) {
+        function navigateTo(v) {
             document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
-            document.getElementById(`view-${view}`).classList.remove('hidden');
-            
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.replace('text-cyan-400', 'text-slate-500'));
-            const activeBtn = document.getElementById(`btn-${view}`);
-            if(activeBtn) activeBtn.classList.replace('text-slate-500', 'text-cyan-400');
-        }
-
-        // --- SHOP & LISTINGS ---
-        function initShopUI() {
-            const gameBox = document.getElementById('filter-games');
-            gameBox.innerHTML = `<button onclick="setFilterG('All Games')" class="filter-btn active bg-cyan-500 text-black px-6 py-2 rounded-xl text-[10px] font-black uppercase">All Games</button>`;
-            GAMES_LIST.forEach(g => {
-                gameBox.innerHTML += `<button onclick="setFilterG('${g}')" class="filter-btn bg-slate-900 border border-slate-800 text-slate-500 px-6 py-2 rounded-xl text-[10px] font-black uppercase whitespace-nowrap">${g}</button>`;
-            });
-
-            const catBox = document.getElementById('filter-cats');
-            ["Accounts", "Currency", "Boost"].forEach(c => {
-                catBox.innerHTML += `<button onclick="setFilterC('${c}')" class="cat-btn flex-1 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest ${state.activeCat === c ? 'bg-white text-black' : 'bg-slate-950 text-slate-600'}">${c}</button>`;
-            });
-
-            const select = document.getElementById('new-game');
-            GAMES_LIST.forEach(g => select.innerHTML += `<option>${g}</option>`);
+            document.getElementById(`view-${v}`).classList.remove('hidden');
+            document.querySelectorAll('nav button').forEach(b => b.classList.replace('text-cyan-400', 'text-slate-500'));
+            event.currentTarget.classList.replace('text-slate-500', 'text-cyan-400');
         }
 
         function renderProducts() {
-            const grid = document.getElementById('products-list');
-            grid.innerHTML = '';
-
-            const filtered = state.db.filter(p => {
-                const gMatch = state.activeGame === "All Games" || p.game === state.activeGame;
-                const cMatch = p.cat === state.activeCat;
-                return gMatch && cMatch;
-            });
-
-            filtered.forEach(p => {
-                grid.innerHTML += `
-                    <div class="premium-card rounded-[2.5rem] p-6 fade-in">
-                        <div class="flex justify-between items-start mb-4">
-                            <div class="flex items-center gap-3">
-                                <img src="${p.seller.avatar}" class="w-8 h-8 rounded-full border border-slate-700">
-                                <div>
-                                    <p class="text-[9px] font-black text-white leading-none">${p.seller.nick}</p>
-                                    <p class="text-[7px] text-cyan-500 uppercase">Verified Seller</p>
-                                </div>
-                            </div>
-                            <span class="text-[8px] font-mono text-slate-600">#${p.id}</span>
-                        </div>
-                        
-                        <img src="${p.img || 'https://via.placeholder.com/400x200/1e293b/00f2ff?text=No+Preview'}" class="w-full h-44 object-cover rounded-[2rem] mb-4 bg-slate-950">
-                        
-                        <h3 class="header-font text-lg font-black uppercase tracking-tight mb-1 truncate">${p.title}</h3>
-                        <p class="text-slate-500 text-[10px] mb-6 line-clamp-2 h-7">${p.desc}</p>
-                        
-                        <div class="flex justify-between items-center bg-slate-950/80 p-4 rounded-2xl border border-slate-800">
-                            <div>
-                                <p class="text-[7px] text-slate-500 uppercase font-black">Price</p>
-                                <span class="text-2xl font-black text-white">$${p.price}</span>
-                            </div>
-                            <div class="flex gap-2">
-                                <button onclick="startInquiry('${p.seller.nick}', '${p.seller.avatar}', '${p.seller.name}')" class="w-12 h-12 bg-slate-800 rounded-xl flex items-center justify-center text-lg">💬</button>
-                                <button onclick="processPurchase('${p.id}')" class="bg-cyan-500 text-black px-6 rounded-xl font-black text-[10px] uppercase">Buy</button>
-                            </div>
-                        </div>
-                    </div>
-                `;
+            const grid = document.getElementById('products-list'); grid.innerHTML = '';
+            state.db.filter(p => (state.activeGame === "All Games" || p.game === state.activeGame) && p.cat === state.activeCat).forEach(p => {
+                grid.innerHTML += `<div class="premium-card rounded-3xl p-5"><div class="flex justify-between mb-3 text-[10px] text-cyan-400"><span>${p.game}</span><span>${p.seller.nick}</span></div><img src="${p.img}" class="w-full h-40 object-cover rounded-2xl mb-3"><h3 class="font-black truncate">${p.title}</h3><div class="flex justify-between items-center mt-4"><span class="text-xl font-black">$${p.price}</span><div class="flex gap-2"><button onclick="startInquiry('${p.seller.nick}','${p.seller.avatar}','${p.seller.name}')" class="bg-slate-800 p-3 rounded-xl">💬</button><button onclick="buy()" class="bg-cyan-500 text-black px-4 py-2 rounded-xl font-black text-xs">BUY</button></div></div></div>`;
             });
         }
 
-        // --- CHAT ENGINE ---
-        function startInquiry(nick, avatar, name) {
-            if(nick === state.user.nick) return alert("System: You cannot initiate chat with yourself.");
-            state.currentPartner = { nick, avatar, name };
-            document.getElementById('c-partner-img').src = avatar;
+        function startInquiry(nick, av, name) {
+            if(nick === state.user.nick) return;
+            state.curP = { nick, av, name };
+            document.getElementById('c-partner-img').src = av;
             document.getElementById('c-partner-name').innerText = name;
             document.getElementById('c-partner-nick').innerText = nick;
-            document.getElementById('chat-window').classList.remove('hidden');
-            renderMessages();
+            document.getElementById('chat-window').classList.remove('hidden'); renderMsgs();
         }
 
         function dispatchMessage() {
-            const input = document.getElementById('chat-input');
-            if(!input.value.trim()) return;
-
-            const msg = {
-                sender: state.user.nick,
-                receiver: state.currentPartner.nick,
-                text: input.value,
-                timestamp: Date.now(),
-                meta: { name: state.user.name, avatar: state.user.avatar }
-            };
-
-            state.msgs.push(msg);
-            localStorage.setItem('as_msgs', JSON.stringify(state.msgs));
-            input.value = '';
-            renderMessages();
+            const inp = document.getElementById('chat-input'); if(!inp.value) return;
+            state.msgs.push({ sender: state.user.nick, receiver: state.curP.nick, text: inp.value, time: Date.now() });
+            localStorage.setItem('as_msgs', JSON.stringify(state.msgs)); inp.value = ''; renderMsgs();
         }
 
-        function renderMessages() {
-            const area = document.getElementById('c-messages-area');
-            area.innerHTML = '';
-            const thread = state.msgs.filter(m => 
-                (m.sender === state.user.nick && m.receiver === state.currentPartner.nick) || 
-                (m.sender === state.currentPartner.nick && m.receiver === state.user.nick)
-            );
-
-            thread.forEach(m => {
-                const isMine = m.sender === state.user.nick;
-                area.innerHTML += `
-                    <div class="flex ${isMine ? 'justify-end' : 'justify-start'} w-full">
-                        <div class="msg-bubble ${isMine ? 'msg-mine' : 'msg-theirs'}">
-                            ${m.text}
-                            <div class="text-[7px] opacity-40 text-right mt-1">${new Date(m.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
-                        </div>
-                    </div>
-                `;
+        function renderMsgs() {
+            const area = document.getElementById('c-messages-area'); area.innerHTML = '';
+            state.msgs.filter(m => (m.sender === state.user.nick && m.receiver === state.curP.nick) || (m.sender === state.curP.nick && m.receiver === state.user.nick)).forEach(m => {
+                area.innerHTML += `<div class="msg-bubble ${m.sender === state.user.nick ? 'msg-mine' : 'msg-theirs'}">${m.text}</div>`;
             });
             area.scrollTop = area.scrollHeight;
         }
 
         function openInbox() {
             document.getElementById('inbox-layer').classList.remove('hidden');
-            const list = document.getElementById('inbox-list');
-            list.innerHTML = '';
-            
-            // Logic to find unique conversations
-            const partners = [...new Set(state.msgs.filter(m => m.receiver === state.user.nick || m.sender === state.user.nick).map(m => m.sender === state.user.nick ? m.receiver : m.sender))];
-            
-            partners.forEach(pNick => {
-                const lastMsg = state.msgs.filter(m => m.sender === pNick || m.receiver === pNick).pop();
-                list.innerHTML += `
-                    <div onclick="startInquiry('${pNick}', 'https://api.dicebear.com/7.x/bottts/svg', 'User ${pNick}')" class="p-4 bg-slate-800/30 border border-slate-800 rounded-3xl flex items-center gap-4">
-                        <div class="w-12 h-12 bg-cyan-500/10 rounded-full flex items-center justify-center text-cyan-400 font-bold">@</div>
-                        <div class="flex-1 overflow-hidden">
-                            <p class="font-bold text-sm text-white">${pNick}</p>
-                            <p class="text-[10px] text-slate-500 truncate">${lastMsg.text}</p>
-                        </div>
-                        <div class="text-[8px] text-slate-700">${new Date(lastMsg.timestamp).getHours()}:${new Date(lastMsg.timestamp).getMinutes()}</div>
-                    </div>
-                `;
+            const list = document.getElementById('inbox-list'); list.innerHTML = '';
+            [...new Set(state.msgs.map(m => m.sender === state.user.nick ? m.receiver : m.sender))].forEach(p => {
+                list.innerHTML += `<div onclick="startInquiry('${p}','','User')" class="p-4 bg-black rounded-2xl border border-slate-800">@${p}</div>`;
             });
         }
 
-        // --- PURCHASE & RATING ---
-        function processPurchase(id) {
-            state.user.stats.bought++;
-            localStorage.setItem('as_user', JSON.stringify(state.user));
-            document.getElementById('rate-layer').classList.remove('hidden');
-        }
-
-        document.querySelectorAll('#star-selector .star').forEach(s => {
-            s.onclick = () => {
-                state.tempRating = s.getAttribute('data-v');
-                document.querySelectorAll('#star-selector .star').forEach((star, idx) => {
-                    star.classList.toggle('filled', idx < state.tempRating);
-                });
-            };
-        });
-
-        function submitRatingAndFinish() {
-            // In real app, we would push rating to the seller's profile
-            location.reload();
-        }
-
-        // --- ADMIN: SAVE PRODUCT ---
         function commitNewProduct() {
-            const file = document.getElementById('new-img').files[0];
-            const save = (imgData) => {
-                const p = {
-                    id: Math.floor(1000 + Math.random() * 9000),
-                    game: document.getElementById('new-game').value,
-                    cat: document.getElementById('new-cat').value,
-                    title: document.getElementById('new-title').value,
-                    price: document.getElementById('new-price').value,
-                    desc: document.getElementById('new-desc').value,
-                    img: imgData,
-                    seller: { name: state.user.name, nick: state.user.nick, avatar: state.user.avatar }
-                };
-                state.db.unshift(p);
-                localStorage.setItem('as_db', JSON.stringify(state.db));
-                location.reload();
+            const f = document.getElementById('new-img').files[0];
+            const r = new FileReader();
+            r.onload = () => {
+                state.db.unshift({ id: Date.now(), game: document.getElementById('new-game').value, cat: document.getElementById('new-cat').value, title: document.getElementById('new-title').value, price: document.getElementById('new-price').value, desc: document.getElementById('new-desc').value, img: r.result, seller: { name: state.user.name, nick: state.user.nick, avatar: state.user.avatar } });
+                localStorage.setItem('as_db', JSON.stringify(state.db)); location.reload();
             };
-
-            if(file) {
-                const r = new FileReader();
-                r.onload = () => save(r.result);
-                r.readAsDataURL(file);
-            } else save(null);
+            r.readAsDataURL(f);
         }
 
-        // --- FILTERS LOGIC ---
-        function setFilterG(g) { state.activeGame = g; initShopUI(); renderProducts(); }
-        function setFilterC(c) { state.activeCat = c; initShopUI(); renderProducts(); }
-
-        // --- UTILS ---
-        function closeInbox() { document.getElementById('inbox-layer').classList.add('hidden'); }
+        function buy() { state.user.stats.bought++; localStorage.setItem('as_user', JSON.stringify(state.user)); document.getElementById('rate-layer').classList.remove('hidden'); }
         function exitChat() { document.getElementById('chat-window').classList.add('hidden'); }
+        function closeInbox() { document.getElementById('inbox-layer').classList.add('hidden'); }
         function userLogout() { localStorage.clear(); location.reload(); }
+        function setFilterG(g) { state.activeGame = g; renderProducts(); }
+        function setFilterC(c) { state.activeCat = c; renderProducts(); }
 
-        // --- INITIALIZATION ---
         window.onload = () => {
             if(state.user) {
                 document.getElementById('auth-layer').classList.add('hidden');
-                document.getElementById('top-avatar-img').src = state.user.avatar;
-                document.getElementById('p-avatar').src = state.user.avatar;
-                document.getElementById('p-name').innerText = state.user.name;
-                document.getElementById('p-nick').innerText = state.user.nick;
-                document.getElementById('p-bought').innerText = state.user.stats.bought;
-                
-                const badge = document.getElementById('p-status-badge');
-                if(state.user.isAdmin) {
-                    badge.innerText = "Administrator";
-                    badge.className += " badge-admin";
-                    document.getElementById('btn-admin').classList.remove('hidden');
-                } else {
-                    badge.innerText = "Verified Buyer";
-                    badge.className += " badge-verified";
-                }
-
-                // Initial Rating Stars for profile
-                const rContainer = document.getElementById('p-rating-stars');
-                for(let i=0; i<5; i++) rContainer.innerHTML += `<span class="text-yellow-500">★</span>`;
+                document.getElementById('top-avatar-img').src = state.user.avatar; document.getElementById('top-avatar-img').classList.remove('hidden');
+                document.getElementById('p-avatar').src = state.user.avatar; document.getElementById('p-name').innerText = state.user.name;
+                document.getElementById('p-nick').innerText = state.user.nick; document.getElementById('p-bought').innerText = state.user.stats.bought;
+                if(state.user.isAdmin) document.getElementById('btn-admin').classList.remove('hidden');
             }
-            initShopUI();
+            const gBox = document.getElementById('filter-games');
+            GAMES.forEach(g => gBox.innerHTML += `<button onclick="setFilterG('${g}')" class="bg-slate-900 px-4 py-2 rounded-xl text-[10px] whitespace-nowrap">${g}</button>`);
+            const cBox = document.getElementById('filter-cats');
+            ["Accounts", "Currency", "Boost"].forEach(c => cBox.innerHTML += `<button onclick="setFilterC('${c}')" class="flex-1 bg-slate-900 py-3 rounded-xl text-[10px]">${c}</button>`);
+            GAMES.forEach(g => document.getElementById('new-game').innerHTML += `<option>${g}</option>`);
             renderProducts();
         };
     </script>
