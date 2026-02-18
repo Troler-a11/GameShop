@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artem Shop | Gaming Services</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: white; }
+        .neon-border { border: 1px solid #00f2ff; box-shadow: 0 0 10px #00f2ff; }
+        .game-card { transition: transform 0.3s; background: rgba(30, 41, 59, 0.7); border: 1px solid #334155; }
+        .game-card:hover { transform: translateY(-5px); border-color: #00f2ff; }
+        .header-font { font-family: 'Orbitron', sans-serif; }
+    </style>
+</head>
+<body class="pb-20">
+
+    <header class="p-6 text-center border-b border-slate-800 bg-slate-900/50 backdrop-blur-md sticky top-0 z-50">
+        <h1 class="header-font text-2xl font-bold tracking-widest text-cyan-400">ARTEM <span class="text-white">STORE</span></h1>
+    </header>
+
+    <div class="flex gap-3 overflow-x-auto p-4 no-scrollbar">
+        <button class="px-4 py-2 rounded-full bg-cyan-600 text-sm font-bold whitespace-nowrap">Всі ігри</button>
+        <button class="px-4 py-2 rounded-full bg-slate-800 text-sm whitespace-nowrap">Brawl Stars</button>
+        <button class="px-4 py-2 rounded-full bg-slate-800 text-sm whitespace-nowrap">Standoff 2</button>
+        <button class="px-4 py-2 rounded-full bg-slate-800 text-sm whitespace-nowrap">PUBG Mobile</button>
+        <button class="px-4 py-2 rounded-full bg-slate-800 text-sm whitespace-nowrap">Steam</button>
+    </div>
+
+    <main class="p-4 grid grid-cols-1 gap-6">
+        
+        <div class="game-card rounded-2xl overflow-hidden">
+            <div class="relative h-40 bg-gradient-to-br from-cyan-900 to-slate-900 flex items-center justify-center">
+                <span class="text-slate-500 font-bold text-4xl opacity-20 header-font">BS ACC</span>
+                <div class="absolute top-3 left-3 bg-cyan-500 text-[10px] font-black px-2 py-1 rounded uppercase">Продаж акаунту</div>
+            </div>
+            <div class="p-5">
+                <div class="flex justify-between items-center mb-1">
+                    <h3 class="font-bold text-lg">Account 70/70 Brawlers</h3>
+                    <span class="text-cyan-400 text-sm font-mono">#ID-0001</span>
+                </div>
+                <p class="text-slate-400 text-xs mb-4">Легендарки: Леон, Кроу, Спайк. Повна переприв'язка.</p>
+                
+                <div class="flex justify-between items-center">
+                    <span class="text-2xl font-black text-white">$45.00</span>
+                    <button onclick="openModal('Account BS #0001', 45)" class="bg-cyan-500 hover:bg-cyan-400 text-black px-6 py-2 rounded-lg font-bold transition">КУПИТИ</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="game-card rounded-2xl overflow-hidden">
+            <div class="relative h-40 bg-gradient-to-br from-purple-900 to-slate-900 flex items-center justify-center">
+                <span class="text-slate-500 font-bold text-4xl opacity-20 header-font">GOLD</span>
+                <div class="absolute top-3 left-3 bg-purple-500 text-[10px] font-black px-2 py-1 rounded uppercase">Ігрова валюта</div>
+            </div>
+            <div class="p-5">
+                <div class="flex justify-between items-center mb-1">
+                    <h3 class="font-bold text-lg">1000 Gold Standoff 2</h3>
+                    <span class="text-purple-400 text-sm font-mono">#ID-0002</span>
+                </div>
+                <p class="text-slate-400 text-xs mb-4">Швидка передача через ринок (комісія на мені).</p>
+                
+                <div class="flex justify-between items-center">
+                    <span class="text-2xl font-black text-white">$12.50</span>
+                    <button onclick="openModal('1000 Gold SO2', 12.5)" class="bg-purple-500 hover:bg-purple-400 text-black px-6 py-2 rounded-lg font-bold transition">КУПИТИ</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <div id="orderModal" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-[100] p-4">
+        <div class="bg-slate-900 border border-cyan-500/50 w-full max-w-sm rounded-3xl p-6">
+            <h2 class="header-font text-cyan-400 text-xl mb-4 text-center">ОФОРМЛЕННЯ</h2>
+            <div class="space-y-4">
+                <input type="text" placeholder="ПІБ" class="w-full bg-slate-800 border border-slate-700 p-3 rounded-xl focus:outline-none focus:border-cyan-500">
+                <input type="text" placeholder="@Username Telegram" class="w-full bg-slate-800 border border-slate-700 p-3 rounded-xl focus:outline-none focus:border-cyan-500">
+                <input type="tel" placeholder="+380..." class="w-full bg-slate-800 border border-slate-700 p-3 rounded-xl focus:outline-none focus:border-cyan-500">
+                
+                <div class="p-3 bg-slate-800/50 rounded-xl">
+                    <p class="text-xs text-slate-400">Товар: <span id="modalItem" class="text-white"></span></p>
+                    <p class="text-xs text-slate-400">До сплати: <span id="modalPrice" class="text-white"></span></p>
+                </div>
+
+                <button class="w-full bg-cyan-500 text-black font-black py-4 rounded-2xl shadow-[0_0_20px_rgba(6,182,212,0.5)]">ОПЛАТИТИ ПРЕЗ PAYPAL</button>
+                <button onclick="closeModal()" class="w-full text-slate-500 text-sm py-2">Скасувати</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openModal(name, price) {
+            document.getElementById('orderModal').classList.remove('hidden');
+            document.getElementById('modalItem').innerText = name;
+            document.getElementById('modalPrice').innerText = '$' + price;
+        }
+        function closeModal() {
+            document.getElementById('orderModal').classList.add('hidden');
+        }
+    </script>
+
+</body>
+</html>
