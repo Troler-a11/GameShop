@@ -3,129 +3,162 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ARTEM STORE | PREMIERE GLOBAL MARKET</title>
+    <title>ARTEM STORE | GLOBAL CYBER MARKET 2026</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
     <style>
         :root {
             --cyan: #00f2ff;
             --blue: #3b82f6;
-            --dark: #020617;
-            --card: #0f172a;
-            --border: #1e293b;
-            --accent: #10b981;
+            --purple: #8b5cf6;
+            --dark-bg: #020617;
+            --card-bg: #0f172a;
+            --border-color: #1e293b;
+            --success: #10b981;
+            --error: #ef4444;
+            --gold: #f59e0b;
         }
 
+        /* RESET & BASE STYLES */
         * {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
             -webkit-tap-highlight-color: transparent;
+            font-variant-numeric: tabular-nums;
         }
 
         body {
             font-family: 'Inter', sans-serif;
-            background-color: var(--dark);
-            color: #f8fafc;
-            margin: 0;
+            background-color: var(--dark-bg);
+            color: #e2e8f0;
             overflow-x: hidden;
-            line-height: 1.5;
+            min-height: 100vh;
+            line-height: 1.6;
         }
 
         .h-font { font-family: 'Orbitron', sans-serif; }
+        .mono-font { font-family: 'JetBrains Mono', monospace; }
 
-        /* Анімації */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+        /* ADVANCED ANIMATIONS */
+        @keyframes scanline {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+
+        @keyframes pulse-cyan {
+            0%, 100% { box-shadow: 0 0 10px rgba(0, 242, 255, 0.2); }
+            50% { box-shadow: 0 0 25px rgba(0, 242, 255, 0.5); }
+        }
+
+        @keyframes slide-up {
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .animate-fade { animation: fadeIn 0.4s ease forwards; }
+        .animate-slide-up { animation: slide-up 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
 
-        /* Стилі для преміум-карток */
-        .premium-card {
-            background: linear-gradient(165deg, #0f172a 0%, #020617 100%);
-            border: 1px solid var(--border);
-            border-radius: 28px;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
+        /* UI COMPONENTS */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--border-color);
         }
 
-        .premium-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(800px circle at var(--x) var(--y), rgba(0, 242, 255, 0.06), transparent 40%);
-            pointer-events: none;
+        .premium-card {
+            background: linear-gradient(165deg, #111827 0%, #020617 100%);
+            border: 1px solid var(--border-color);
+            border-radius: 32px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            z-index: 1;
         }
 
         .premium-card:hover {
+            transform: scale(1.02) translateY(-10px);
             border-color: var(--cyan);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(0, 242, 255, 0.1);
-            transform: translateY(-8px);
+            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 242, 255, 0.2);
         }
 
-        /* Кастомні інпути */
         .cyber-input {
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 16px 20px;
-            color: white;
-            transition: 0.3s;
-            outline: none;
+            background: #000000 !important;
+            border: 1px solid var(--border-color) !important;
+            border-radius: 18px !important;
+            padding: 18px 24px !important;
+            color: #ffffff !important;
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             width: 100%;
+            outline: none;
+            font-size: 15px;
         }
 
         .cyber-input:focus {
-            border-color: var(--cyan);
-            box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
-            background: rgba(0, 0, 0, 0.6);
+            border-color: var(--cyan) !important;
+            box-shadow: 0 0 0 4px rgba(0, 242, 255, 0.1);
+            background: #05070a !important;
         }
 
-        /* Кнопки */
-        .btn-glow {
+        /* BUTTONS */
+        .btn-neon {
             background: var(--cyan);
             color: #000;
             font-weight: 900;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            border-radius: 16px;
-            padding: 18px;
-            transition: 0.3s;
+            letter-spacing: 2px;
+            border-radius: 20px;
+            padding: 20px;
+            transition: 0.4s;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-        }
-
-        .btn-glow:active { transform: scale(0.96); }
-        .btn-glow:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        /* Чат */
-        .msg-bubble {
-            max-width: 85%;
-            padding: 14px 18px;
-            border-radius: 22px;
-            font-size: 14px;
-            margin-bottom: 12px;
+            gap: 12px;
             position: relative;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0, 242, 255, 0.3);
         }
 
-        .msg-mine {
-            background: var(--cyan);
+        .btn-neon::after {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%; width: 200%; height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.4), transparent);
+            transform: rotate(45deg);
+            transition: 0.5s;
+            opacity: 0;
+        }
+
+        .btn-neon:hover::after { opacity: 1; left: 100%; top: 100%; }
+        .btn-neon:active { transform: scale(0.95); }
+
+        /* CHAT BUBBLES */
+        .message-row { display: flex; flex-direction: column; margin-bottom: 20px; }
+        
+        .bubble {
+            max-width: 80%;
+            padding: 16px 20px;
+            border-radius: 24px;
+            font-size: 14px;
+            font-weight: 500;
+            position: relative;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .bubble-me {
+            background: linear-gradient(135deg, var(--cyan), var(--blue));
             color: #000;
             align-self: flex-end;
             border-bottom-right-radius: 4px;
-            font-weight: 500;
         }
 
-        .msg-theirs {
+        .bubble-them {
             background: #1e293b;
             color: #fff;
             align-self: flex-start;
@@ -133,418 +166,429 @@
         }
 
         .hidden { display: none !important; }
-        .glass { background: rgba(2, 6, 23, 0.85); backdrop-blur: 20px; }
-        
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
-
-        /* Іконки */
-        .svg-icon { width: 24px; height: 24px; fill: currentColor; }
     </style>
 </head>
-<body>
+<body class="pb-32">
 
-    <div id="auth-layer" class="fixed inset-0 z-[9999] bg-slate-950 flex items-center justify-center p-6">
-        <div class="w-full max-w-md bg-slate-900 border border-slate-800 p-10 rounded-[3rem] shadow-2xl space-y-8 animate-fade">
+    <div id="auth-system" class="fixed inset-0 z-[99999] bg-slate-950 flex items-center justify-center p-4">
+        <div class="w-full max-w-lg bg-slate-900 border border-slate-800 p-8 md:p-12 rounded-[3.5rem] shadow-[0_0_100px_rgba(0,0,0,0.8)] animate-slide-up">
             
-            <div id="auth-step-1" class="space-y-8">
+            <div id="reg-step-1" class="space-y-10">
                 <div class="text-center">
-                    <h2 class="h-font text-3xl text-cyan-400">IDENTITY</h2>
-                    <p class="text-[10px] text-slate-500 uppercase tracking-[0.3em] mt-3">Secure Login Portal</p>
+                    <div class="inline-block px-4 py-1 rounded-full bg-cyan-500/10 text-cyan-400 text-[10px] font-black tracking-[0.4em] mb-4">ACCESS REQUEST</div>
+                    <h2 class="h-font text-4xl text-white font-black italic">ARTEM<span class="text-cyan-400">STORE</span></h2>
+                    <p class="text-slate-500 text-xs mt-3">Створіть свій унікальний профіль у системі</p>
                 </div>
 
-                <div class="flex flex-col items-center gap-4">
-                    <input type="file" id="reg-avatar-input" class="hidden" accept="image/*">
-                    <label for="reg-avatar-input" class="group cursor-pointer relative">
-                        <div id="avatar-preview" class="w-28 h-28 rounded-full border-2 border-dashed border-slate-700 flex items-center justify-center bg-black overflow-hidden transition-all group-hover:border-cyan-500">
-                            <span class="text-[10px] text-slate-500 font-black group-hover:text-cyan-400">UPLOAD</span>
-                        </div>
-                        <div class="absolute bottom-0 right-0 bg-cyan-500 p-2 rounded-full shadow-lg">
-                            <svg class="w-4 h-4 text-black" fill="currentColor" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
-                        </div>
-                    </label>
-                </div>
-
-                <div class="space-y-4">
-                    <div>
-                        <label class="text-[10px] text-slate-500 ml-2 uppercase font-bold tracking-wider">Повне ім'я (Тільки букви)</label>
-                        <input type="text" id="reg-name" placeholder="Artem" class="cyber-input mt-1">
-                    </div>
-                    <div>
-                        <label class="text-[10px] text-slate-500 ml-2 uppercase font-bold tracking-wider">Нікнейм (Тільки англ)</label>
-                        <input type="text" id="reg-nick" placeholder="artem_store" class="cyber-input mt-1">
-                    </div>
-                    <div>
-                        <label class="text-[10px] text-slate-500 ml-2 uppercase font-bold tracking-wider">Електронна пошта</label>
-                        <input type="email" id="reg-email" placeholder="example@mail.com" class="cyber-input mt-1">
+                <div class="flex flex-col items-center gap-6">
+                    <div class="relative group">
+                        <input type="file" id="reg-p-file" class="hidden" accept="image/*">
+                        <label for="reg-p-file" class="cursor-pointer block">
+                            <div id="reg-p-preview" class="w-32 h-32 rounded-[2.5rem] border-2 border-dashed border-slate-700 flex items-center justify-center bg-black overflow-hidden group-hover:border-cyan-500 transition-all duration-500">
+                                <div class="text-center">
+                                    <svg class="w-8 h-8 mx-auto text-slate-600 group-hover:text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"/></svg>
+                                    <span class="text-[8px] text-slate-600 font-black mt-2 block group-hover:text-cyan-400">PHOTO</span>
+                                </div>
+                            </div>
+                        </label>
                     </div>
                 </div>
 
-                <button onclick="sendVerificationEmail()" class="w-full btn-glow">
-                    <span>Надіслати код</span>
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                <div class="space-y-5">
+                    <div class="relative">
+                        <span class="absolute left-5 top-5 text-slate-500">👤</span>
+                        <input type="text" id="reg-full-name" placeholder="Ваше ім'я (літери)" class="cyber-input pl-14">
+                    </div>
+                    <div class="relative">
+                        <span class="absolute left-5 top-5 text-slate-500">@</span>
+                        <input type="text" id="reg-user-nick" placeholder="username (англійською)" class="cyber-input pl-14">
+                    </div>
+                    <div class="relative">
+                        <span class="absolute left-5 top-5 text-slate-500">✉️</span>
+                        <input type="email" id="reg-user-email" placeholder="example@gmail.com" class="cyber-input pl-14">
+                    </div>
+                </div>
+
+                <button onclick="handleVerificationProcess()" class="w-full btn-neon">
+                    <span>Перевірити дані</span>
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                 </button>
             </div>
 
-            <div id="auth-step-2" class="hidden space-y-8 animate-fade">
-                <div class="text-center">
-                    <h2 class="h-font text-3xl text-white">VERIFY</h2>
-                    <p class="text-slate-400 text-xs mt-3">Введіть 6-значний код з вашої пошти</p>
+            <div id="reg-step-2" class="hidden space-y-10 animate-slide-up text-center">
+                <div>
+                    <h2 class="h-font text-3xl text-white">CONFIRMATION</h2>
+                    <p class="text-slate-400 text-xs mt-3">Код підтвердження надіслано на пошту</p>
                 </div>
 
-                <div class="relative">
-                    <input type="text" id="auth-code-input" placeholder="000000" maxlength="6" class="w-full bg-black border-2 border-cyan-500 p-6 rounded-2xl text-center text-4xl font-black text-cyan-400 tracking-[0.4em] outline-none shadow-[0_0_20px_rgba(0,242,255,0.1)]">
+                <div class="flex justify-center gap-3">
+                    <input type="text" id="v-otp" maxlength="6" class="w-full bg-black border-2 border-cyan-500 p-6 rounded-3xl text-center text-5xl font-black text-cyan-400 tracking-[0.5em] outline-none">
                 </div>
                 
-                <div class="flex justify-between items-center px-2">
-                    <span class="text-[10px] text-slate-500 uppercase font-bold">Спроб залишилось:</span>
-                    <span id="retry-count" class="text-red-500 font-black">12</span>
+                <div class="bg-red-500/10 p-4 rounded-2xl border border-red-500/20">
+                    <p class="text-[10px] text-red-500 font-black uppercase">Система самознищення активна через: <span id="otp-timer">12</span> спроб</p>
                 </div>
 
-                <button onclick="checkAuthCode()" class="w-full bg-white text-black font-black py-5 rounded-2xl uppercase tracking-[0.2em] hover:bg-cyan-50 transition-all">
-                    Підтвердити доступ
+                <button onclick="finalizeRegistration()" class="w-full btn-neon" style="background: #fff; color: #000;">
+                    Завершити реєстрацію
                 </button>
             </div>
         </div>
     </div>
 
-    <header class="sticky top-0 z-[100] glass border-b border-slate-800 px-6 py-4 flex justify-between items-center">
-        <div class="flex items-center gap-4" onclick="showSection('profile')">
+    <header class="sticky top-0 z-[1000] glass-panel px-6 py-5 flex justify-between items-center border-b border-slate-800">
+        <div class="flex items-center gap-5" onclick="navigate('profile')">
             <div class="relative">
-                <img id="head-avatar" class="w-11 h-11 rounded-full border-2 border-cyan-500 hidden object-cover shadow-lg">
-                <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-slate-900"></div>
+                <img id="user-p-avatar" class="w-12 h-12 rounded-2xl hidden object-cover border-2 border-cyan-500 p-0.5">
+                <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-cyan-500 rounded-lg border-2 border-slate-900"></div>
             </div>
             <div>
-                <h1 class="h-font text-lg font-black italic tracking-tighter leading-none">ARTEM<span class="text-cyan-400">STORE</span></h1>
-                <p class="text-[9px] text-slate-500 uppercase font-black tracking-widest mt-1">Online Market</p>
+                <h1 class="h-font text-xl font-black italic text-white leading-none">ARTEM<span class="text-cyan-400">STORE</span></h1>
+                <p class="text-[8px] text-slate-500 uppercase font-black tracking-widest mt-1.5">Marketplace v4.0.2</p>
             </div>
         </div>
         
-        <div class="flex items-center gap-2">
-            <button onclick="openInbox()" class="p-3 bg-slate-900/50 rounded-2xl border border-slate-800 relative transition-all active:scale-90">
-                <svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-                <div id="msg-dot" class="hidden absolute top-2 right-2 w-3 h-3 bg-red-500 rounded-full border-2 border-slate-950"></div>
+        <div class="flex items-center gap-4">
+            <button onclick="openInboxSystem()" class="p-4 bg-slate-900/80 rounded-2xl border border-slate-800 relative group transition-all">
+                <svg class="w-6 h-6 text-slate-400 group-hover:text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                <div id="inbox-dot" class="hidden absolute top-3 right-3 w-3 h-3 bg-red-500 rounded-full border-2 border-slate-950"></div>
             </button>
         </div>
     </header>
 
-    <main class="p-5 max-w-5xl mx-auto min-h-screen">
+    <main class="max-w-6xl mx-auto p-5 md:p-8">
         
-        <section id="sec-shop" class="space-y-8 animate-fade">
-            <div id="filters" class="flex gap-3 overflow-x-auto no-scrollbar py-2">
+        <section id="page-shop" class="space-y-10 animate-slide-up">
+            <div id="categories" class="flex gap-4 overflow-x-auto no-scrollbar py-2">
                 </div>
             
-            <div id="products-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 </div>
         </section>
 
-        <section id="sec-admin" class="hidden space-y-8 animate-fade">
+        <section id="page-admin" class="hidden max-w-2xl mx-auto animate-slide-up space-y-10">
             <div class="text-center">
-                <h2 class="h-font text-2xl text-cyan-400">NEW PRODUCT</h2>
-                <p class="text-[10px] text-slate-500 mt-2 uppercase">Створіть оголошення для всіх користувачів</p>
+                <h2 class="h-font text-3xl text-cyan-400">CREATE LISTING</h2>
+                <p class="text-slate-500 text-xs mt-2 uppercase tracking-widest">Виставте свій товар на глобальний ринок</p>
             </div>
-            
-            <div class="bg-slate-900/50 p-8 rounded-[2.5rem] border border-slate-800 space-y-5">
-                <div class="space-y-2">
-                    <label class="text-[10px] text-slate-500 ml-2 uppercase font-black">Оберіть гру</label>
-                    <select id="new-g" class="cyber-input"></select>
-                </div>
-                
-                <div class="space-y-2">
-                    <label class="text-[10px] text-slate-500 ml-2 uppercase font-black">Заголовок</label>
-                    <input type="text" id="new-t" placeholder="Наприклад: 5000 Gems + Full Access" class="cyber-input">
+
+            <div class="bg-slate-900/50 p-10 rounded-[3rem] border border-slate-800 space-y-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label class="text-[10px] text-slate-500 font-black uppercase ml-2">Game Title</label>
+                        <select id="p-new-game" class="cyber-input"></select>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[10px] text-slate-500 font-black uppercase ml-2">Price (USD)</label>
+                        <input type="number" id="p-new-price" placeholder="0.00" class="cyber-input">
+                    </div>
                 </div>
 
                 <div class="space-y-2">
-                    <label class="text-[10px] text-slate-500 ml-2 uppercase font-black">Ціна (USD)</label>
-                    <input type="number" id="new-p" placeholder="15.00" class="cyber-input">
+                    <label class="text-[10px] text-slate-500 font-black uppercase ml-2">Item Header</label>
+                    <input type="text" id="p-new-title" placeholder="Назва вашої пропозиції..." class="cyber-input">
                 </div>
 
                 <div class="space-y-2">
-                    <label class="text-[10px] text-slate-500 ml-2 uppercase font-black">Опис товару</label>
-                    <textarea id="new-d" placeholder="Опишіть деталі вашого аккаунту..." class="cyber-input h-32"></textarea>
+                    <label class="text-[10px] text-slate-500 font-black uppercase ml-2">Full Description</label>
+                    <textarea id="p-new-desc" placeholder="Детально опишіть переваги товару..." class="cyber-input h-40 resize-none"></textarea>
                 </div>
 
-                <div class="pt-4">
-                    <input type="file" id="new-img-input" class="hidden" accept="image/*">
-                    <label for="new-img-input" class="block p-10 border-2 border-dashed border-slate-800 rounded-3xl text-center cursor-pointer hover:border-cyan-500 transition-all">
-                        <div class="flex flex-col items-center gap-3">
-                            <svg class="w-8 h-8 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                            <span class="text-xs text-slate-500 font-bold uppercase tracking-widest">Завантажити фото товару</span>
-                        </div>
+                <div class="relative">
+                    <input type="file" id="p-new-img" class="hidden" accept="image/*">
+                    <label for="p-new-img" class="flex flex-col items-center justify-center p-12 border-2 border-dashed border-slate-800 rounded-[2rem] hover:border-cyan-500 transition-all group">
+                        <svg class="w-10 h-10 text-slate-700 group-hover:text-cyan-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        <span class="text-[10px] text-slate-500 font-black uppercase tracking-widest">UPLOAD ITEM PREVIEW</span>
                     </label>
                 </div>
 
-                <button onclick="createNewProduct()" class="w-full btn-glow mt-6">
-                    <span>Опублікувати товар</span>
+                <button onclick="submitProductToFirebase()" class="w-full btn-neon">
+                    <span>Опублікувати в магазині</span>
                 </button>
             </div>
         </section>
 
-        <section id="sec-profile" class="hidden space-y-10 animate-fade">
-            <div class="bg-gradient-to-b from-slate-900 to-transparent p-10 rounded-[3rem] text-center border border-slate-800 shadow-2xl">
-                <div class="relative inline-block group">
-                    <img id="p-av" class="w-36 h-36 rounded-full border-4 border-cyan-500 mx-auto object-cover shadow-[0_0_30px_rgba(0,242,255,0.2)]">
-                    <div class="absolute bottom-1 right-1 bg-cyan-500 text-black w-10 h-10 rounded-full border-4 border-slate-900 flex items-center justify-center font-black text-xs">✓</div>
-                </div>
-                <div class="mt-6">
-                    <h2 id="p-name" class="h-font text-3xl font-black text-white"></h2>
-                    <p id="p-nick" class="text-cyan-400 font-mono text-sm mt-1 tracking-widest"></p>
-                </div>
+        <section id="page-profile" class="hidden space-y-12 animate-slide-up">
+            <div class="relative bg-gradient-to-br from-slate-900 to-black p-12 rounded-[4rem] border border-slate-800 text-center shadow-2xl overflow-hidden">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-cyan-500/5 blur-[100px] rounded-full"></div>
                 
-                <div class="grid grid-cols-2 gap-4 mt-10">
-                    <div class="bg-black/40 p-6 rounded-[2rem] border border-slate-800">
-                        <p class="text-[10px] text-slate-500 uppercase font-black tracking-widest">Продано</p>
-                        <p id="st-s" class="text-3xl font-black mt-2 text-white">0</p>
+                <div class="relative z-10">
+                    <div class="relative inline-block">
+                        <img id="p-view-avatar" class="w-44 h-44 rounded-[3.5rem] border-4 border-cyan-500 mx-auto object-cover shadow-[0_0_50px_rgba(0,242,255,0.2)]">
+                        <div class="absolute -bottom-3 -right-3 bg-cyan-500 text-black p-3 rounded-2xl font-black text-xs shadow-xl">LVL 1</div>
                     </div>
-                    <div class="bg-black/40 p-6 rounded-[2rem] border border-slate-800">
-                        <p class="text-[10px] text-slate-500 uppercase font-black tracking-widest">Куплено</p>
-                        <p id="st-b" class="text-3xl font-black mt-2 text-white">0</p>
+                    
+                    <div class="mt-10 space-y-2">
+                        <h2 id="p-view-name" class="h-font text-4xl font-black text-white italic tracking-tighter"></h2>
+                        <p id="p-view-nick" class="text-cyan-400 font-mono tracking-[0.3em] uppercase text-xs"></p>
+                    </div>
+
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12">
+                        <div class="bg-black/40 p-6 rounded-[2rem] border border-slate-800">
+                            <p class="text-[9px] text-slate-600 font-black uppercase">Продано</p>
+                            <span class="text-2xl font-black text-white">0</span>
+                        </div>
+                        <div class="bg-black/40 p-6 rounded-[2rem] border border-slate-800">
+                            <p class="text-[9px] text-slate-600 font-black uppercase">Куплено</p>
+                            <span class="text-2xl font-black text-white">0</span>
+                        </div>
+                        <div class="bg-black/40 p-6 rounded-[2rem] border border-slate-800">
+                            <p class="text-[9px] text-slate-600 font-black uppercase">Лайки</p>
+                            <span class="text-2xl font-black text-cyan-400">0</span>
+                        </div>
+                        <div class="bg-black/40 p-6 rounded-[2rem] border border-slate-800">
+                            <p class="text-[9px] text-slate-600 font-black uppercase">Рейтинг</p>
+                            <span class="text-2xl font-black text-gold">5.0</span>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="space-y-4 px-4">
-                <button class="w-full flex items-center justify-between p-6 bg-slate-900/40 rounded-3xl border border-slate-800 hover:bg-slate-800 transition-all">
-                    <span class="font-bold text-sm uppercase tracking-wider">Мої оголошення</span>
-                    <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
+            <div class="max-w-xl mx-auto space-y-4">
+                <button class="w-full flex items-center justify-between p-7 bg-slate-900/50 rounded-[2.5rem] border border-slate-800 hover:border-cyan-500/50 transition-all group">
+                    <div class="flex items-center gap-5">
+                        <span class="text-2xl">📦</span>
+                        <span class="font-black text-sm uppercase tracking-widest">Мої активні лоти</span>
+                    </div>
+                    <svg class="w-6 h-6 text-slate-600 group-hover:text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
                 </button>
-                <button class="w-full flex items-center justify-between p-6 bg-slate-900/40 rounded-3xl border border-slate-800 hover:bg-slate-800 transition-all">
-                    <span class="font-bold text-sm uppercase tracking-wider">Налаштування</span>
-                    <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
-                </button>
-                <button onclick="logout()" class="w-full p-6 text-red-500 font-black text-xs tracking-[0.3em] uppercase opacity-70 hover:opacity-100 transition-all">
-                    Log out of system
+                <button onclick="systemSignOut()" class="w-full p-8 text-red-500 font-black text-[10px] uppercase tracking-[0.5em] opacity-50 hover:opacity-100 transition-all">
+                    Sign Out from Neural Network
                 </button>
             </div>
         </section>
 
     </main>
 
-    <div id="buy-modal" class="hidden fixed inset-0 z-[10000] glass flex items-center justify-center p-6">
-        <div class="bg-slate-900 w-full max-w-sm p-10 rounded-[3rem] border border-slate-700 text-center shadow-2xl animate-fade">
-            <div class="w-20 h-20 bg-cyan-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                <svg class="w-10 h-10 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+    <div id="modal-purchase" class="hidden fixed inset-0 z-[10000] glass-panel flex items-center justify-center p-6">
+        <div class="bg-slate-950 w-full max-w-sm p-12 rounded-[4rem] border border-slate-800 text-center shadow-2xl animate-slide-up">
+            <div class="w-24 h-24 bg-cyan-500/10 rounded-full flex items-center justify-center mx-auto mb-8 border border-cyan-500/20">
+                <svg class="w-12 h-12 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
             </div>
-            <h3 class="h-font text-white text-xl">ПІДТВЕРДЖЕННЯ</h3>
-            <p id="buy-info-text" class="text-slate-400 text-sm mt-4 mb-8 leading-relaxed"></p>
+            <h3 class="h-font text-2xl text-white">CONFIRM</h3>
+            <div id="purchase-details" class="text-slate-400 text-sm mt-4 mb-10 space-y-2"></div>
             
-            <div class="flex flex-col gap-3">
-                <button id="final-confirm-buy" class="btn-glow w-full">Підтвердити покупку</button>
-                <button onclick="closeBuyModal()" class="py-4 text-slate-500 font-bold text-xs uppercase tracking-widest hover:text-white transition-all">Скасувати</button>
+            <div class="space-y-4">
+                <button id="btn-final-buy" class="btn-neon w-full">Підтвердити оплату</button>
+                <button onclick="closeModal('modal-purchase')" class="w-full py-4 text-slate-600 font-black text-[10px] uppercase tracking-widest">Скасувати</button>
             </div>
         </div>
     </div>
 
-    <div id="chat-box" class="hidden fixed inset-0 z-[5000] bg-slate-950 flex flex-col animate-fade">
-        <div class="p-5 border-b border-slate-800 flex justify-between items-center glass">
-            <div class="flex items-center gap-4">
-                <button onclick="closeChat()" class="p-2 text-cyan-400 active:scale-90">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>
+    <div id="system-chat" class="hidden fixed inset-0 z-[10000] bg-black flex flex-col">
+        <header class="p-6 border-b border-slate-900 glass-panel flex justify-between items-center">
+            <div class="flex items-center gap-5">
+                <button onclick="closeModal('system-chat')" class="text-cyan-400 p-2">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>
                 </button>
-                <div class="flex items-center gap-3">
-                    <img id="chat-av" class="w-10 h-10 rounded-full object-cover border border-slate-700">
+                <div class="flex items-center gap-4">
+                    <img id="chat-partner-av" class="w-12 h-12 rounded-2xl object-cover border border-slate-800">
                     <div>
-                        <span id="chat-nick" class="font-black text-sm block"></span>
-                        <span class="text-[9px] text-green-500 uppercase font-black">Online Now</span>
+                        <span id="chat-partner-nick" class="font-black text-white block text-sm"></span>
+                        <span class="text-[9px] text-cyan-500 font-black uppercase animate-pulse">Encryption: Active</span>
                     </div>
                 </div>
             </div>
-            <button class="p-2 text-slate-500">
-                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
-            </button>
-        </div>
-        <div id="chat-msgs" class="flex-1 overflow-y-auto p-6 flex flex-col space-y-1 no-scrollbar"></div>
-        <div class="p-5 bg-slate-900/80 border-t border-slate-800 flex gap-3 items-center">
-            <button class="p-2 text-slate-500"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg></button>
-            <input type="text" id="m-input" placeholder="Написати повідомлення..." class="flex-1 bg-black/50 p-4 rounded-2xl outline-none text-sm border border-slate-800 focus:border-cyan-500 transition-all">
-            <button onclick="sendChatMessage()" class="bg-cyan-500 text-black p-4 rounded-2xl font-black active:scale-90 transition-all shadow-[0_0_15px_rgba(0,242,255,0.3)]">
-                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-            </button>
-        </div>
+        </header>
+
+        <div id="chat-messages-container" class="flex-1 overflow-y-auto p-8 flex flex-col no-scrollbar"></div>
+
+        <footer class="p-6 bg-slate-950 border-t border-slate-900">
+            <div class="flex gap-4 items-center max-w-4xl mx-auto">
+                <input type="text" id="chat-input-field" placeholder="Почніть писати..." class="flex-1 cyber-input">
+                <button onclick="processMessageSend()" class="p-5 bg-cyan-500 text-black rounded-2xl shadow-lg shadow-cyan-500/20 active:scale-90 transition-all">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                </button>
+            </div>
+        </footer>
     </div>
 
-    <div id="inbox-box" class="hidden fixed inset-0 z-[4000] glass flex items-center justify-center p-6">
-        <div class="w-full max-w-md bg-slate-900 rounded-[3rem] h-[80vh] flex flex-col border border-slate-800 shadow-2xl animate-fade">
-            <div class="p-8 border-b border-slate-800 flex justify-between items-center">
-                <span class="h-font text-cyan-400 text-lg">MESSAGES</span>
-                <button onclick="closeInbox()" class="text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-white transition-all">Закрити</button>
+    <div id="system-inbox" class="hidden fixed inset-0 z-[9000] glass-panel flex items-center justify-center p-6">
+        <div class="w-full max-w-xl bg-slate-950 rounded-[4rem] h-[85vh] flex flex-col border border-slate-800 shadow-[0_0_150px_rgba(0,0,0,0.9)] animate-slide-up">
+            <div class="p-10 border-b border-slate-900 flex justify-between items-center">
+                <h2 class="h-font text-2xl text-cyan-400">NETWORK INBOX</h2>
+                <button onclick="closeModal('system-inbox')" class="text-slate-600 font-black text-[10px] uppercase tracking-widest">Close</button>
             </div>
             
-            <div class="p-6">
+            <div class="p-8">
                 <div class="relative">
-                    <input type="text" id="user-search-input" placeholder="Пошук за @нікнеймом..." class="cyber-input pl-12">
-                    <svg class="w-5 h-5 text-slate-500 absolute left-4 top-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    <input type="text" id="system-user-search" placeholder="Шукати @username у базі..." class="cyber-input pl-14">
+                    <span class="absolute left-6 top-5 text-slate-500">🔍</span>
                 </div>
             </div>
 
-            <div id="inbox-list" class="flex-1 overflow-y-auto px-6 pb-6 space-y-3 no-scrollbar">
+            <div id="system-chats-list" class="flex-1 overflow-y-auto px-8 pb-8 space-y-4 no-scrollbar">
                 </div>
         </div>
     </div>
 
-    <nav class="fixed bottom-0 inset-x-0 h-24 glass border-t border-slate-800 flex justify-around items-center z-[500] px-4">
-        <button onclick="showSection('shop')" id="btn-shop" class="group flex flex-col items-center gap-1 transition-all">
-            <div class="p-3 rounded-2xl group-active:scale-90 transition-all" id="icon-shop-bg">
-                <svg class="w-7 h-7 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+    <nav class="fixed bottom-0 inset-x-0 h-28 glass-panel border-t border-slate-800 flex justify-around items-center z-[5000] px-8">
+        <button onclick="navigate('shop')" id="nav-btn-shop" class="group flex flex-col items-center gap-2 transition-all">
+            <div class="p-4 rounded-3xl transition-all" id="nav-shop-icon">
+                <svg class="w-8 h-8 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
             </div>
-            <span class="text-[8px] font-black uppercase tracking-widest text-cyan-400">Market</span>
+            <span class="text-[9px] font-black uppercase tracking-[0.2em] text-cyan-400">Market</span>
         </button>
         
-        <button onclick="showSection('admin')" id="btn-admin" class="group flex flex-col items-center gap-1 hidden transition-all">
-            <div class="p-3 rounded-2xl bg-slate-800/50 group-active:scale-90 transition-all">
-                <svg class="w-7 h-7 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"/></svg>
+        <button onclick="navigate('admin')" id="nav-btn-admin" class="group flex flex-col items-center gap-2 hidden transition-all">
+            <div class="p-4 rounded-3xl bg-slate-900/50 transition-all">
+                <svg class="w-8 h-8 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"/></svg>
             </div>
-            <span class="text-[8px] font-black uppercase tracking-widest text-slate-500">Create</span>
+            <span class="text-[9px] font-black uppercase tracking-[0.2em] text-slate-600">Create</span>
         </button>
         
-        <button onclick="showSection('profile')" id="btn-profile" class="group flex flex-col items-center gap-1 transition-all">
-            <div class="p-3 rounded-2xl bg-slate-800/50 group-active:scale-90 transition-all">
-                <svg class="w-7 h-7 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+        <button onclick="navigate('profile')" id="nav-btn-profile" class="group flex flex-col items-center gap-2 transition-all">
+            <div class="p-4 rounded-3xl bg-slate-900/50 transition-all">
+                <svg class="w-8 h-8 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
             </div>
-            <span class="text-[8px] font-black uppercase tracking-widest text-slate-500">Profile</span>
+            <span class="text-[9px] font-black uppercase tracking-[0.2em] text-slate-600">Secure</span>
         </button>
     </nav>
 
     <script>
-        // FIREBASE INITIALIZATION
-        const firebaseConfig = { databaseURL: "https://gameshop-ff113-default-rtdb.firebaseio.com/" };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
-
-        // EMAILJS INITIALIZATION
+        // CORE CONFIGURATION & STATE
+        const FIRE_CONFIG = { databaseURL: "https://gameshop-ff113-default-rtdb.firebaseio.com/" };
+        firebase.initializeApp(FIRE_CONFIG);
+        const DB_LAYER = firebase.database();
         emailjs.init("KErbU8_xE37eaf0qi");
 
-        const GAMES = ["Brawl Stars", "Standoff 2", "PUBG Mobile", "Roblox", "Steam", "Genshin Impact", "Minecraft", "Free Fire", "Other"];
-        const ADMIN_EMAIL = "ilemberk3356@gmail.com";
+        const CATEGORIES_MASTER = ["Brawl Stars", "Standoff 2", "PUBG Mobile", "Roblox", "Steam", "Genshin Impact", "Minecraft", "Valorant", "Fortnite", "Clash Royale"];
+        const SUPER_ADMIN = "ilemberk3356@gmail.com";
 
-        let state = {
-            user: JSON.parse(localStorage.getItem('as_user')) || null,
-            vCode: null,
-            retries: 12,
-            tempAv: null,
-            chatPartner: null,
-            allUsers: []
+        let app_state = {
+            current_user: JSON.parse(localStorage.getItem('artem_user_v4')) || null,
+            otp_code: null,
+            otp_tries: 12,
+            temp_avatar_buffer: null,
+            active_chat_partner: null,
+            is_loading: false
         };
 
-        // 1. AUTH LOGIC
-        document.getElementById('reg-avatar-input').onchange = (e) => {
-            const r = new FileReader();
-            r.onload = () => {
-                state.tempAv = r.result;
-                document.getElementById('avatar-preview').innerHTML = `<img src="${r.result}" class="w-full h-full object-cover">`;
+        // 1. ADVANCED AUTH SYSTEM
+        document.getElementById('reg-p-file').onchange = (event) => {
+            const file_reader = new FileReader();
+            file_reader.onload = () => {
+                app_state.temp_avatar_buffer = file_reader.result;
+                document.getElementById('reg-p-preview').innerHTML = `<img src="${file_reader.result}" class="w-full h-full object-cover">`;
             };
-            r.readAsDataURL(e.target.files[0]);
+            file_reader.readAsDataURL(event.target.files[0]);
         };
 
-        async function sendVerificationEmail() {
-            const email = document.getElementById('reg-email').value;
-            const name = document.getElementById('reg-name').value;
-            const nick = document.getElementById('reg-nick').value.trim().replace('@', '');
+        async function handleVerificationProcess() {
+            const email_val = document.getElementById('reg-user-email').value;
+            const name_val = document.getElementById('reg-full-name').value;
+            const nick_val = document.getElementById('reg-user-nick').value.trim().replace('@', '');
 
-            if(!/^[a-zA-Zа-яА-ЯёЁіІїЇєЄ\s]+$/.test(name)) return alert("Ім'я не може містити цифри!");
-            if(!/^[a-zA-Z0-9_]+$/.test(nick)) return alert("Нікнейм тільки англійською (A-Z, 0-9)!");
-            if(!email.includes('@')) return alert("Введіть коректну пошту!");
+            // VALIDATION LAYER
+            if(!/^[a-zA-Zа-яА-ЯёЁіІїЇєЄ\s]+$/.test(name_val)) return alert("ERROR: Name must contain only characters!");
+            if(!/^[a-zA-Z0-9_]+$/.test(nick_val)) return alert("ERROR: Username must be English Alphanumeric!");
+            if(!email_val.includes('@')) return alert("ERROR: Invalid Email Matrix!");
 
-            // Check if nickname is taken in Firebase
-            const userSnap = await db.ref('users/' + nick).get();
-            if(userSnap.exists()) return alert("Цей нікнейм вже зайнятий!");
+            // FIREBASE UNIQUENESS CHECK
+            const user_existence_snap = await DB_LAYER.ref('users/' + nick_val).get();
+            if(user_existence_snap.exists()) return alert("DENIED: Username already registered in Neural Link!");
 
-            state.vCode = Math.floor(100000 + Math.random() * 900000).toString();
+            app_state.otp_code = Math.floor(100000 + Math.random() * 900000).toString();
 
             emailjs.send('service_dbkrnz9', 'template_n90xvc9', {
-                to_email: email,
-                user_name: name,
-                otp_code: state.vCode
+                to_email: email_val,
+                user_name: name_val,
+                otp_code: app_state.otp_code
             }).then(() => {
-                document.getElementById('auth-step-1').classList.add('hidden');
-                document.getElementById('auth-step-2').classList.remove('hidden');
-            }).catch(err => alert("Помилка відправки: " + JSON.stringify(err)));
+                document.getElementById('reg-step-1').classList.add('hidden');
+                document.getElementById('reg-step-2').classList.remove('hidden');
+            }).catch(error_log => alert("PROTOCOL ERROR: " + JSON.stringify(error_log)));
         }
 
-        function checkAuthCode() {
-            const input = document.getElementById('auth-code-input').value;
-            if(input === state.vCode) {
-                const userData = {
-                    name: document.getElementById('reg-name').value,
-                    nick: document.getElementById('reg-nick').value.replace('@', ''),
-                    email: document.getElementById('reg-email').value,
-                    avatar: state.tempAv || "https://api.dicebear.com/7.x/avataaars/svg?seed=" + Math.random(),
-                    isAdmin: document.getElementById('reg-email').value === ADMIN_EMAIL,
-                    stats: { s: 0, b: 0 }
+        function finalizeRegistration() {
+            const otp_input_val = document.getElementById('v-otp').value;
+            if(otp_input_val === app_state.otp_code) {
+                const final_user_payload = {
+                    name: document.getElementById('reg-full-name').value,
+                    nick: document.getElementById('reg-user-nick').value.replace('@', ''),
+                    email: document.getElementById('reg-user-email').value,
+                    avatar: app_state.temp_avatar_buffer || "https://api.dicebear.com/7.x/bottts/svg?seed=" + Math.random(),
+                    is_admin: document.getElementById('reg-user-email').value === SUPER_ADMIN,
+                    created_timestamp: Date.now()
                 };
-                // Save to Firebase & Local
-                db.ref('users/' + userData.nick).set(userData);
-                localStorage.setItem('as_user', JSON.stringify(userData));
+                
+                DB_LAYER.ref('users/' + final_user_payload.nick).set(final_user_payload);
+                localStorage.setItem('artem_user_v4', JSON.stringify(final_user_payload));
                 location.reload();
             } else {
-                state.retries--;
-                document.getElementById('retry-count').innerText = state.retries;
-                if(state.retries <= 0) location.reload();
-            }
-        }
-
-        // 2. NAVIGATION
-        function showSection(id) {
-            document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
-            document.getElementById(`sec-${id}`).classList.remove('hidden');
-            
-            // Update Nav Icons
-            const icons = { shop: 'btn-shop', admin: 'btn-admin', profile: 'btn-profile' };
-            for(let key in icons) {
-                const btn = document.getElementById(icons[key]);
-                const bg = btn.querySelector('div');
-                const span = btn.querySelector('span');
-                const svg = btn.querySelector('svg');
-                
-                if(key === id) {
-                    bg.classList.replace('bg-slate-800/50', 'bg-transparent');
-                    span.classList.replace('text-slate-500', 'text-cyan-400');
-                    svg.classList.replace('text-slate-500', 'text-cyan-400');
-                } else {
-                    bg.classList.add('bg-slate-800/50');
-                    span.classList.replace('text-cyan-400', 'text-slate-500');
-                    svg.classList.replace('text-cyan-400', 'text-slate-500');
+                app_state.otp_tries--;
+                document.getElementById('otp-timer').innerText = app_state.otp_tries;
+                if(app_state.otp_tries <= 0) {
+                    alert("SECURITY BREACH: System Lockdown.");
+                    location.reload();
                 }
             }
         }
 
-        // 3. PRODUCT LOGIC (GLOBAL FIREBASE)
-        function listenProducts() {
-            db.ref('products').on('value', (snap) => {
-                const list = document.getElementById('products-list');
-                list.innerHTML = '';
-                const data = snap.val();
-                if(!data) return;
+        // 2. NAVIGATION INTERFACE
+        function navigate(target_id) {
+            document.querySelectorAll('main > section').forEach(section_element => section_element.classList.add('hidden'));
+            document.getElementById(`page-${target_id}`).classList.remove('hidden');
+            
+            const nav_map = { shop: 'nav-btn-shop', admin: 'nav-btn-admin', profile: 'nav-btn-profile' };
+            for(let key in nav_map) {
+                const button_ref = document.getElementById(nav_map[key]);
+                const icon_container = button_ref.querySelector('div');
+                const label_text = button_ref.querySelector('span');
+                const svg_element = button_ref.querySelector('svg');
+                
+                if(key === target_id) {
+                    icon_container.classList.replace('bg-slate-900/50', 'bg-transparent');
+                    label_text.classList.replace('text-slate-600', 'text-cyan-400');
+                    svg_element.classList.replace('text-slate-600', 'text-cyan-400');
+                } else {
+                    icon_container.classList.add('bg-slate-900/50');
+                    label_text.classList.replace('text-cyan-400', 'text-slate-600');
+                    svg_element.classList.replace('text-cyan-400', 'text-slate-600');
+                }
+            }
+        }
 
-                Object.keys(data).reverse().forEach(id => {
-                    const p = data[id];
-                    list.innerHTML += `
-                        <div class="premium-card p-6 animate-fade" onmousemove="handleCardMove(event, this)">
-                            <div class="flex justify-between items-center mb-5">
-                                <span class="text-[9px] bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 px-3 py-1.5 rounded-full font-black uppercase tracking-widest">${p.game}</span>
+        // 3. PRODUCT CORE ENGINE
+        function initializeGlobalMarketListener() {
+            DB_LAYER.ref('products').on('value', (snapshot_data) => {
+                const grid_container = document.getElementById('product-grid');
+                grid_container.innerHTML = '';
+                const items_collection = snapshot_data.val();
+                
+                if(!items_collection) {
+                    grid_container.innerHTML = `<div class="col-span-full py-20 text-center text-slate-700 h-font uppercase tracking-widest">No signals found in this sector...</div>`;
+                    return;
+                }
+
+                Object.keys(items_collection).reverse().forEach(product_id => {
+                    const item = items_collection[product_id];
+                    grid_container.innerHTML += `
+                        <div class="premium-card p-8 animate-slide-up">
+                            <div class="flex justify-between items-center mb-6">
+                                <span class="text-[9px] bg-cyan-500/5 text-cyan-400 border border-cyan-500/20 px-4 py-2 rounded-xl font-black uppercase tracking-[0.2em]">${item.game}</span>
                                 <div class="flex items-center gap-2">
-                                    <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                                    <span class="text-[10px] text-slate-500 font-bold">LIVE</span>
+                                    <div class="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                                    <span class="text-[9px] text-slate-600 font-black uppercase">Online</span>
                                 </div>
                             </div>
-                            <img src="${p.img}" class="w-full h-48 object-cover rounded-[1.5rem] mb-5 bg-black/40 border border-white/5">
-                            <h3 class="font-black text-xl text-white mb-2 leading-tight">${p.title}</h3>
-                            <div class="flex items-center gap-2 mb-6">
-                                <img src="${p.seller_avatar}" class="w-5 h-5 rounded-full object-cover">
-                                <span class="text-[10px] text-slate-500 font-medium">@${p.seller_nick}</span>
+                            <img src="${item.img}" class="w-full h-56 object-cover rounded-[2.5rem] mb-6 shadow-2xl bg-black">
+                            <h3 class="font-black text-xl text-white mb-3 leading-snug truncate">${item.title}</h3>
+                            <div class="flex items-center gap-3 mb-8">
+                                <img src="${item.seller_avatar}" class="w-6 h-6 rounded-lg object-cover">
+                                <span class="text-[10px] text-slate-500 font-bold tracking-wider">@${item.seller_nick}</span>
                             </div>
-                            <div class="flex justify-between items-center">
+                            <div class="flex justify-between items-center pt-6 border-t border-slate-900">
                                 <div>
-                                    <p class="text-[10px] text-slate-500 font-black uppercase">Price</p>
-                                    <span class="text-2xl font-black text-white">$${p.price}</span>
+                                    <p class="text-[8px] text-slate-600 font-black uppercase tracking-widest">Price Point</p>
+                                    <span class="text-3xl font-black text-white">$${item.price}</span>
                                 </div>
-                                <div class="flex gap-2">
-                                    <button onclick="openChat('${p.seller_nick}','${p.seller_avatar}')" class="bg-slate-800/80 p-4 rounded-2xl border border-slate-700 active:scale-90 transition-all">
-                                        <svg class="w-5 h-5 text-cyan-400" fill="currentColor" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+                                <div class="flex gap-3">
+                                    <button onclick="executeChatInitiation('${item.seller_nick}','${item.seller_avatar}')" class="bg-slate-900 p-5 rounded-2xl border border-slate-800 hover:border-cyan-500 transition-all">
+                                        <svg class="w-6 h-6 text-cyan-400" fill="currentColor" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
                                     </button>
-                                    <button onclick="openBuyModal('${id}', '${p.title}', ${p.price}, '${p.seller_email}', '${p.seller_nick}')" class="bg-cyan-500 text-black px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-tighter shadow-lg shadow-cyan-500/20 active:scale-95 transition-all">Buy</button>
+                                    <button onclick="triggerPurchaseSequence('${product_id}', '${item.title}', ${item.price}, '${item.seller_email}', '${item.seller_nick}')" class="btn-neon px-8 py-5 text-xs">Buy</button>
                                 </div>
                             </div>
                         </div>
@@ -553,141 +597,165 @@
             });
         }
 
-        function handleCardMove(e, card) {
-            const rect = card.getBoundingClientRect();
-            card.style.setProperty('--x', `${e.clientX - rect.left}px`);
-            card.style.setProperty('--y', `${e.clientY - rect.top}px`);
-        }
-
-        // 4. BUYING SYSTEM (WITH EMAIL NOTIFICATION)
-        function openBuyModal(id, title, price, sEmail, sNick) {
-            document.getElementById('buy-info-text').innerHTML = `Ви впевнені, що хочете придбати <span class="text-white font-bold">${title}</span> за <span class="text-cyan-400 font-black">$${price}</span>? <br><br> Продавець @${sNick} отримає сповіщення негайно.`;
-            document.getElementById('buy-modal').classList.remove('hidden');
+        // 4. TRANSACTION PROTOCOL (EMAILJS)
+        function triggerPurchaseSequence(id, title, price, seller_email, seller_nick) {
+            const info_area = document.getElementById('purchase-details');
+            info_area.innerHTML = `
+                <div class="bg-black/50 p-6 rounded-3xl border border-slate-900 space-y-2">
+                    <p class="text-white font-black">${title}</p>
+                    <p class="text-cyan-400 text-2xl font-black">$${price}</p>
+                    <div class="pt-4 border-t border-slate-800 mt-4 text-[10px] uppercase tracking-widest">Seller: @${seller_nick}</div>
+                </div>
+            `;
+            document.getElementById('modal-purchase').classList.remove('hidden');
             
-            document.getElementById('final-confirm-buy').onclick = () => {
-                // EmailJS Notification to Seller
+            document.getElementById('btn-final-buy').onclick = () => {
                 emailjs.send('service_dbkrnz9', 'template_5k3vvb8', {
-                    seller_email: sEmail,
+                    seller_email: seller_email,
                     product_id: id,
                     product_title: title,
                     product_price: price,
-                    buyer_name: state.user.name,
-                    buyer_nick: state.user.nick,
-                    buyer_email: state.user.email
+                    buyer_name: app_state.current_user.name,
+                    buyer_nick: app_state.current_user.nick,
+                    buyer_email: app_state.current_user.email
                 }).then(() => {
-                    alert("Успішно! Продавець вже отримав ваш запит.");
-                    closeBuyModal();
+                    alert("TRANSACTION REQUEST SENT: Check your Secure Inbox.");
+                    closeModal('modal-purchase');
                 });
             };
         }
 
-        function closeBuyModal() { document.getElementById('buy-modal').classList.add('hidden'); }
-
-        // 5. CHAT SYSTEM
-        async function openInbox() {
-            document.getElementById('inbox-box').classList.remove('hidden');
-            const list = document.getElementById('inbox-list');
-            list.innerHTML = '<p class="text-[10px] text-slate-500 uppercase font-black tracking-widest mb-4">Останні діалоги</p>';
+        // 5. CHAT ENGINE (FIREBASE NODES)
+        async function openInboxSystem() {
+            document.getElementById('system-inbox').classList.remove('hidden');
+            const list_view = document.getElementById('system-chats-list');
+            list_view.innerHTML = '<div class="flex justify-center py-10"><div class="animate-spin w-8 h-8 border-4 border-cyan-500 border-t-transparent rounded-full"></div></div>';
             
-            const usersSnap = await db.ref('users').get();
-            const users = usersSnap.val();
+            const users_registry_snap = await DB_LAYER.ref('users').get();
+            const users_map = users_registry_snap.val();
+            list_view.innerHTML = '';
             
-            for(let nick in users) {
-                if(nick === state.user.nick) continue;
-                const u = users[nick];
-                list.innerHTML += `
-                    <div onclick="openChat('${u.nick}', '${u.avatar}')" class="flex items-center gap-4 p-5 bg-black/40 border border-slate-800 rounded-[1.8rem] hover:border-cyan-500/50 cursor-pointer transition-all active:scale-95">
-                        <img src="${u.avatar}" class="w-12 h-12 rounded-full object-cover">
+            for(let nick in users_map) {
+                if(nick === app_state.current_user.nick) continue;
+                const user_data = users_map[nick];
+                list_view.innerHTML += `
+                    <div onclick="executeChatInitiation('${user_data.nick}', '${user_data.avatar}')" class="flex items-center gap-5 p-6 bg-slate-900/30 border border-slate-900 rounded-[2.5rem] hover:border-cyan-500/40 cursor-pointer transition-all active:scale-95">
+                        <img src="${user_data.avatar}" class="w-16 h-16 rounded-[1.5rem] object-cover border border-slate-800">
                         <div class="flex-1">
-                            <span class="text-sm font-black block">${u.name}</span>
-                            <span class="text-[10px] text-cyan-400 font-mono">@${u.nick}</span>
+                            <span class="text-white font-black block text-base">${user_data.name}</span>
+                            <span class="text-[10px] text-cyan-400 mono-font tracking-widest uppercase">@${user_data.nick}</span>
                         </div>
-                        <div class="w-2 h-2 bg-cyan-500 rounded-full"></div>
+                        <div class="flex flex-col items-end gap-2">
+                            <div class="w-2 h-2 bg-cyan-500 rounded-full shadow-[0_0_10px_var(--cyan)]"></div>
+                            <span class="text-[8px] text-slate-700 font-black uppercase">Secure</span>
+                        </div>
                     </div>
                 `;
             }
         }
 
-        function openChat(nick, av) {
-            state.chatPartner = { nick, av };
-            document.getElementById('chat-av').src = av;
-            document.getElementById('chat-nick').innerText = "@" + nick;
-            document.getElementById('chat-box').classList.remove('hidden');
-            listenMessages();
+        function executeChatInitiation(nick, avatar) {
+            app_state.active_chat_partner = { nick, avatar };
+            document.getElementById('chat-partner-av').src = avatar;
+            document.getElementById('chat-partner-nick').innerText = "@" + nick;
+            document.getElementById('system-chat').classList.remove('hidden');
+            closeModal('system-inbox');
+            startMessageStreaming();
         }
 
-        function listenMessages() {
-            const chatId = [state.user.nick, state.chatPartner.nick].sort().join('_');
-            db.ref('chats/' + chatId).on('value', (snap) => {
-                const area = document.getElementById('chat-msgs');
-                area.innerHTML = '';
-                const msgs = snap.val();
-                if(msgs) {
-                    Object.values(msgs).forEach(m => {
-                        area.innerHTML += `<div class="msg-bubble ${m.sender === state.user.nick ? 'msg-mine' : 'msg-theirs'} animate-fade">${m.text}</div>`;
+        function startMessageStreaming() {
+            const conversation_id = [app_state.current_user.nick, app_state.active_chat_partner.nick].sort().join('_');
+            DB_LAYER.ref('chats/' + conversation_id).on('value', (messages_snapshot) => {
+                const message_container = document.getElementById('chat-messages-container');
+                message_container.innerHTML = '';
+                const messages_data = messages_snapshot.val();
+                
+                if(messages_data) {
+                    Object.values(messages_data).forEach(msg_obj => {
+                        const is_me = msg_obj.sender === app_state.current_user.nick;
+                        message_container.innerHTML += `
+                            <div class="message-row">
+                                <div class="bubble ${is_me ? 'bubble-me' : 'bubble-them'} animate-slide-up">
+                                    ${msg_obj.text}
+                                </div>
+                                <span class="text-[8px] text-slate-700 font-bold uppercase mt-1 ${is_me ? 'text-right mr-2' : 'text-left ml-2'}">
+                                    ${new Date(msg_obj.time).getHours()}:${new Date(msg_obj.time).getMinutes()}
+                                </span>
+                            </div>
+                        `;
                     });
                 }
-                area.scrollTop = area.scrollHeight;
+                message_container.scrollTop = message_container.scrollHeight;
             });
         }
 
-        function sendChatMessage() {
-            const inp = document.getElementById('m-input');
-            if(!inp.value.trim()) return;
-            const chatId = [state.user.nick, state.chatPartner.nick].sort().join('_');
-            db.ref('chats/' + chatId).push({
-                sender: state.user.nick,
-                text: inp.value,
+        function processMessageSend() {
+            const input_field = document.getElementById('chat-input-field');
+            const message_text = input_field.value.trim();
+            if(!message_text) return;
+            
+            const conversation_id = [app_state.current_user.nick, app_state.active_chat_partner.nick].sort().join('_');
+            DB_LAYER.ref('chats/' + conversation_id).push({
+                sender: app_state.current_user.nick,
+                text: message_text,
                 time: Date.now()
             });
-            inp.value = '';
+            input_field.value = '';
         }
 
-        // 6. ADMIN CREATE
-        function createNewProduct() {
-            const imgFile = document.getElementById('new-img-input').files[0];
-            if(!imgFile) return alert("Додайте фото товару!");
+        // 6. LISTING CREATION (DATABASE INJECTION)
+        function submitProductToFirebase() {
+            const raw_file = document.getElementById('p-new-img').files[0];
+            if(!raw_file) return alert("REQUIRED: Visual Preview missing.");
             
-            const r = new FileReader();
-            r.onload = () => {
-                const newRef = db.ref('products').push();
-                newRef.set({
-                    game: document.getElementById('new-g').value,
-                    title: document.getElementById('new-t').value,
-                    price: document.getElementById('new-p').value,
-                    desc: document.getElementById('new-d').value,
-                    img: r.result,
-                    seller_nick: state.user.nick,
-                    seller_avatar: state.user.avatar,
-                    seller_email: state.user.email,
-                    created_at: Date.now()
+            const file_encoder = new FileReader();
+            file_encoder.onload = () => {
+                const global_ref = DB_LAYER.ref('products').push();
+                global_ref.set({
+                    game: document.getElementById('p-new-game').value,
+                    title: document.getElementById('p-new-title').value,
+                    price: document.getElementById('p-new-price').value,
+                    desc: document.getElementById('p-new-desc').value,
+                    img: file_encoder.result,
+                    seller_nick: app_state.current_user.nick,
+                    seller_avatar: app_state.current_user.avatar,
+                    seller_email: app_state.current_user.email,
+                    node_id: global_ref.key,
+                    timestamp: Date.now()
+                }).then(() => {
+                    alert("LISTING DEPLOYED SUCCESSFULLY");
+                    navigate('shop');
                 });
-                alert("Товар опубліковано!");
-                showSection('shop');
             };
-            r.readAsDataURL(imgFile);
+            file_encoder.readAsDataURL(raw_file);
         }
 
-        function closeChat() { document.getElementById('chat-box').classList.add('hidden'); }
-        function closeInbox() { document.getElementById('inbox-box').classList.add('hidden'); }
-        function logout() { localStorage.clear(); location.reload(); }
+        // 7. GLOBAL UTILITIES
+        function closeModal(modal_id) { document.getElementById(modal_id).classList.add('hidden'); }
+        function systemSignOut() { localStorage.clear(); location.reload(); }
 
-        // INITIALIZE
+        // BOOTSTRAP INITIALIZATION
         window.onload = () => {
-            if(state.user) {
-                document.getElementById('auth-layer').classList.add('hidden');
-                document.getElementById('head-avatar').src = state.user.avatar;
-                document.getElementById('head-avatar').classList.remove('hidden');
-                document.getElementById('p-av').src = state.user.avatar;
-                document.getElementById('p-name').innerText = state.user.name;
-                document.getElementById('p-nick').innerText = "@" + state.user.nick;
-                if(state.user.isAdmin) document.getElementById('btn-admin').classList.remove('hidden');
-                listenProducts();
+            if(app_state.current_user) {
+                document.getElementById('auth-system').classList.add('hidden');
+                document.getElementById('user-p-avatar').src = app_state.current_user.avatar;
+                document.getElementById('user-p-avatar').classList.remove('hidden');
+                document.getElementById('p-view-avatar').src = app_state.current_user.avatar;
+                document.getElementById('p-view-name').innerText = app_state.current_user.name;
+                document.getElementById('p-view-nick').innerText = "@" + app_state.current_user.nick;
+                
+                if(app_state.current_user.is_admin) {
+                    document.getElementById('nav-btn-admin').classList.remove('hidden');
+                }
+                initializeGlobalMarketListener();
             }
 
-            GAMES.forEach(g => {
-                document.getElementById('filters').innerHTML += `<button class="bg-slate-900 border border-slate-800 px-6 py-3 rounded-2xl text-[10px] whitespace-nowrap font-black uppercase tracking-widest text-slate-400 hover:text-cyan-400 hover:border-cyan-500/30 transition-all">${g}</button>`;
-                document.getElementById('new-g').innerHTML += `<option value="${g}">${g}</option>`;
+            CATEGORIES_MASTER.forEach(game_name => {
+                document.getElementById('categories').innerHTML += `
+                    <button class="bg-slate-900 border border-slate-800 px-8 py-4 rounded-2xl text-[10px] whitespace-nowrap font-black uppercase tracking-widest text-slate-500 hover:text-cyan-400 hover:border-cyan-500/40 transition-all">
+                        ${game_name}
+                    </button>`;
+                document.getElementById('p-new-game').innerHTML += `<option value="${game_name}">${game_name}</option>`;
             });
         };
     </script>
