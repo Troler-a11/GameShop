@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEXUS PRO | GLOBAL MARKET</title>
+    <title>GAME STORE | NEXUS PRO</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Plus+Jakarta+Sans:wght@300;500;800&display=swap" rel="stylesheet">
@@ -15,7 +15,7 @@
         .filter-btn { transition: 0.3s; border: 1px solid #1e293b; cursor: pointer; }
         .filter-btn.active { border-color: var(--neon); color: var(--neon); background: rgba(0, 242, 255, 0.1); }
 
-        .item-card { background: #0b0f1a; border: 1px solid #161b2e; transition: 0.4s; }
+        .item-card { background: #0b0f1a; border: 1px solid #161b2e; transition: 0.4s; border-radius: 2rem; padding: 1.5rem; }
         .item-card:hover { border-color: var(--neon); transform: translateY(-5px); }
 
         .notif-badge { position: absolute; top: -2px; right: -2px; width: 12px; height: 12px; background: var(--danger); border-radius: 50%; border: 2px solid var(--bg); display: none; }
@@ -23,16 +23,13 @@
         
         .glass { background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(20px); }
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        
-        #chat-list-view div { transition: 0.2s; }
-        #chat-list-view div:hover { background: rgba(255,255,255,0.05); }
     </style>
 </head>
 <body class="pb-24">
 
     <header class="sticky top-0 z-[100] border-b border-slate-800 bg-black/80 backdrop-blur-md p-5">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <h1 class="header-font text-2xl font-black italic">NEXUS<span class="text-cyan-400">MARKET</span></h1>
+            <h1 class="header-font text-2xl font-black italic">ARTEM<span class="text-cyan-400"> STORE</span></h1>
             
             <div class="flex items-center gap-4">
                 <button onclick="toggleDialogs()" class="relative p-2.5 bg-slate-900 rounded-xl">
@@ -54,10 +51,9 @@
         <div class="max-w-7xl mx-auto px-6 space-y-4">
             <div id="g-scroll" class="flex gap-2 overflow-x-auto no-scrollbar pb-2"></div>
             <div id="c-scroll" class="flex gap-2 no-scrollbar">
-                <button onclick="setFilter('cat', 'All')" class="filter-btn active px-6 py-2 rounded-xl text-[9px] font-black uppercase">All</button>
-                <button onclick="setFilter('cat', 'Account')" class="filter-btn px-6 py-2 rounded-xl text-[9px] font-black uppercase">Accounts</button>
-                <button onclick="setFilter('cat', 'Currency')" class="filter-btn px-6 py-2 rounded-xl text-[9px] font-black uppercase">Currency</button>
-                <button onclick="setFilter('cat', 'Boosting')" class="filter-btn px-6 py-2 rounded-xl text-[9px] font-black uppercase">Boosting</button>
+                <button onclick="setFilter('cat', 'All')" class="filter-btn active px-6 py-2 rounded-xl text-[9px] font-black uppercase">Всі ігри</button>
+                <button onclick="setFilter('cat', 'Account')" class="filter-btn px-6 py-2 rounded-xl text-[9px] font-black uppercase">Акаунти</button>
+                <button onclick="setFilter('cat', 'Currency')" class="filter-btn px-6 py-2 rounded-xl text-[9px] font-black uppercase">Валюта</button>
             </div>
         </div>
     </div>
@@ -66,58 +62,60 @@
         <div id="main-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
     </main>
 
+    <div id="auth-modal" class="hidden fixed inset-0 z-[1000] glass flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-[3rem] p-10">
+            <div id="s1">
+                <h2 class="header-font text-2xl mb-2">РЕЄСТРАЦІЯ</h2>
+                <p class="text-slate-500 text-[10px] font-bold uppercase mb-8 tracking-widest">Nexus Elite Identity</p>
+                <div class="space-y-4">
+                    <input type="text" id="r-name" placeholder="Твоє ім'я" class="w-full bg-black border border-slate-800 p-4 rounded-2xl text-xs outline-none focus:border-cyan-500">
+                    <input type="text" id="r-nick" placeholder="@Nickname" class="w-full bg-black border border-slate-800 p-4 rounded-2xl text-xs outline-none focus:border-cyan-500">
+                    <input type="email" id="r-email" placeholder="Email" class="w-full bg-black border border-slate-800 p-4 rounded-2xl text-xs outline-none focus:border-cyan-500">
+                    <div class="py-2">
+                        <label for="f-input" class="w-full cursor-pointer bg-slate-800 border-2 border-dashed border-slate-700 p-5 rounded-2xl block text-center">
+                            <span id="f-label" class="text-[10px] font-black uppercase text-slate-400">Завантажити фото профілю</span>
+                            <input type="file" id="f-input" class="hidden" accept="image/*">
+                        </label>
+                    </div>
+                    <button onclick="sendOTP()" class="w-full bg-cyan-500 text-black font-black py-5 rounded-2xl uppercase text-[10px]">Отримати код</button>
+                </div>
+            </div>
+            <div id="s2" class="hidden text-center">
+                <h2 class="header-font text-xl mb-4 uppercase italic">Перевірка</h2>
+                <input type="text" id="otp-input" placeholder="000000X" class="w-full bg-black border border-slate-800 p-5 rounded-3xl text-center text-2xl font-mono tracking-widest mb-6">
+                <p id="auth-err" class="text-red-500 text-[9px] font-black uppercase mb-4"></p>
+                <button onclick="validate()" class="w-full bg-white text-black font-black py-4 rounded-2xl uppercase text-[10px]">Підтвердити</button>
+            </div>
+        </div>
+    </div>
+
     <div id="dialogs-modal" class="hidden fixed inset-0 z-[500] glass flex justify-end">
         <div class="w-full max-w-sm bg-slate-950 border-l border-slate-800 h-full p-6">
             <div class="flex justify-between items-center mb-8">
                 <h2 class="header-font text-xl uppercase italic">Messages</h2>
                 <button onclick="toggleDialogs()" class="text-slate-500 text-2xl">×</button>
             </div>
-            <div id="chat-list-view" class="space-y-2">
-                <p class="text-center text-slate-600 text-[10px] uppercase mt-20">No active conversations</p>
-            </div>
-        </div>
-    </div>
-
-    <div id="auth-modal" class="hidden fixed inset-0 z-[1000] glass flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-[3rem] p-10">
-            <div id="s1">
-                <h2 class="header-font text-2xl mb-2">ACCESS HUB</h2>
-                <p class="text-slate-500 text-[10px] font-bold uppercase mb-8 tracking-widest">Global Gaming Identity</p>
-                <div class="space-y-4">
-                    <input type="text" id="r-name" placeholder="Full Name" class="w-full bg-black border border-slate-800 p-4 rounded-2xl text-xs outline-none focus:border-cyan-500">
-                    <input type="text" id="r-nick" placeholder="@Unique_Nickname" class="w-full bg-black border border-slate-800 p-4 rounded-2xl text-xs outline-none focus:border-cyan-500">
-                    <input type="email" id="r-email" placeholder="Email Address" class="w-full bg-black border border-slate-800 p-4 rounded-2xl text-xs outline-none focus:border-cyan-500">
-                    
-                    <div class="py-2">
-                        <label for="f-input" class="w-full cursor-pointer bg-slate-800 border-2 border-dashed border-slate-700 p-5 rounded-2xl block text-center">
-                            <span id="f-label" class="text-[10px] font-black uppercase text-slate-400 tracking-widest">Upload Profile Photo</span>
-                            <input type="file" id="f-input" class="hidden" accept="image/*">
-                        </label>
-                    </div>
-                    <button onclick="sendOTP()" class="w-full bg-cyan-500 text-black font-black py-5 rounded-2xl uppercase text-[10px] tracking-widest">Request Security Code</button>
-                </div>
-            </div>
-            <div id="s2" class="hidden text-center">
-                <h2 class="header-font text-xl mb-4 uppercase italic">Verify</h2>
-                <input type="text" id="otp-input" placeholder="000000X" class="w-full bg-black border border-slate-800 p-5 rounded-3xl text-center text-2xl font-mono tracking-widest mb-6">
-                <p id="auth-err" class="text-red-500 text-[9px] font-black uppercase mb-4"></p>
-                <button onclick="validate()" class="w-full bg-white text-black font-black py-4 rounded-2xl uppercase text-[10px]">Confirm Identity</button>
-            </div>
+            <div id="chat-list-view" class="space-y-2 text-center text-slate-600 text-[10px] uppercase mt-20">Немає повідомлень</div>
         </div>
     </div>
 
     <script>
+        // ДАНІ
         const ADMIN_EMAIL = "ilemberk3356@gmail.com";
-        const GAMES = ["Brawl Stars", "Standoff 2", "PUBG Mobile", "Roblox", "Free Fire", "Clash of Clans", "Genshin Impact", "Steam", "Clash Royale", "Valorant", "Mobile Legends"];
+        const GAMES = ["Brawl Stars", "Standoff 2", "PUBG Mobile", "Roblox", "Clash of Clans"];
         
-        let db = JSON.parse(localStorage.getItem('nexus_db_v8')) || [];
+        let db = JSON.parse(localStorage.getItem('nexus_db_v9')) || [
+            { id: 1, game: "Brawl Stars", title: "70/70 Brawlers", price: 45, cat: "Account", img: "https://images.unsplash.com/photo-1614680376593-902f74cf0d41?auto=format&fit=crop&w=400", sellerNick: "@Admin", sellerImg: "https://ui-avatars.com/api/?name=A" },
+            { id: 2, game: "Standoff 2", title: "1000 Gold", price: 12, cat: "Currency", img: "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=400", sellerNick: "@Gold_Master", sellerImg: "https://ui-avatars.com/api/?name=G" }
+        ];
+
         let user = JSON.parse(localStorage.getItem('nexus_user')) || null;
-        let authLogs = JSON.parse(localStorage.getItem('nexus_auth_v8')) || { c: 0, t: 0 };
-        let activeF = { g: 'All', c: 'All' };
+        let authLogs = JSON.parse(localStorage.getItem('nexus_auth')) || { c: 0, t: 0 };
         let currentOTP = "";
         let b64 = "";
+        let activeF = { g: 'All', c: 'All' };
 
-        // INIT
+        // INITIALIZE
         (function(){
             emailjs.init("KErbU8_xE37eaf0qi"); // Твій Public Key
             const gb = document.getElementById('g-scroll');
@@ -129,36 +127,35 @@
             render();
         })();
 
-        // FILE HANDLER
+        // GALLERY UPLOAD
         document.getElementById('f-input').onchange = (e) => {
             const fr = new FileReader();
             fr.onload = () => { 
                 b64 = fr.result; 
                 document.getElementById('f-label').innerText = "PHOTO LOADED ✓";
-                document.getElementById('f-label').classList.replace('text-slate-400', 'text-cyan-400');
+                document.getElementById('f-label').style.color = "#00f2ff";
             };
             fr.readAsDataURL(e.target.files[0]);
         };
 
-        // AUTH
+        // EMAIL LOGIC
         function sendOTP() {
             const email = document.getElementById('r-email').value;
-            if(!email.includes('@')) return alert("Enter correct email!");
-            
-            if(authLogs.c >= 12 && (Date.now() - authLogs.t) < 7200000) return alert("Security Block: 2 hours.");
+            const name = document.getElementById('r-name').value;
+            if(!email.includes('@')) return alert("Enter valid email!");
 
             currentOTP = Math.floor(100000 + Math.random()*900000) + "S";
             
-            emailjs.send("default_service", "YOUR_TEMPLATE_ID", { // Заміни YOUR_TEMPLATE_ID на свій з кабінету
+            emailjs.send("default_service", "template_n90xvc9", {
                 to_email: email,
-                otp_code: currentOTP,
-                user_name: document.getElementById('r-name').value
+                user_name: name,
+                otp_code: currentOTP
             }).then(() => {
-                alert("Security code sent to " + email);
+                alert("Код надіслано на " + email);
                 document.getElementById('s1').classList.add('hidden');
                 document.getElementById('s2').classList.remove('hidden');
             }).catch(() => {
-                console.log("TESTING CODE (EmailJS not linked):", currentOTP);
+                alert("Помилка сервісу. Режим тесту: " + currentOTP);
                 document.getElementById('s1').classList.add('hidden');
                 document.getElementById('s2').classList.remove('hidden');
             });
@@ -171,25 +168,22 @@
                     name: document.getElementById('r-name').value,
                     nick: document.getElementById('r-nick').value,
                     email: document.getElementById('r-email').value,
-                    img: b64 || `https://ui-avatars.com/api/?name=${document.getElementById('r-nick').value}`,
-                    buys: 0,
+                    img: b64 || `https://ui-avatars.com/api/?name=${document.getElementById('r-name').value}`,
                     isAdmin: document.getElementById('r-email').value === ADMIN_EMAIL
                 };
                 localStorage.setItem('nexus_user', JSON.stringify(user));
                 location.reload();
             } else {
-                authLogs.c++; authLogs.t = Date.now();
-                localStorage.setItem('nexus_auth_v8', JSON.stringify(authLogs));
-                document.getElementById('auth-err').innerText = `Incorrect. ${12 - authLogs.c} tries left.`;
+                alert("Невірний код!");
             }
         }
 
-        // RENDER
+        // MARKET RENDER
         function render() {
             const grid = document.getElementById('main-grid');
             const data = db.filter(i => (activeF.g==='All' || i.game===activeF.g) && (activeF.c==='All' || i.cat===activeF.c));
             grid.innerHTML = data.map(i => `
-                <div class="item-card rounded-[2rem] p-5 relative">
+                <div class="item-card relative">
                     <div class="absolute top-4 left-4 z-10 bg-cyan-500 text-black text-[8px] font-black px-3 py-1 rounded-full uppercase italic">${i.cat}</div>
                     <div class="w-full h-44 bg-slate-900 rounded-2xl mb-4 overflow-hidden border border-slate-800">
                         <img src="${i.img}" class="w-full h-full object-cover">
@@ -201,36 +195,25 @@
                         </div>
                         <p class="text-xl font-black">$${i.price}</p>
                     </div>
-                    <div class="flex items-center gap-2 mb-4 p-2 bg-black/40 rounded-xl">
-                        <img src="${i.sellerImg}" class="w-5 h-5 rounded-full object-cover border border-slate-700">
-                        <p class="text-[8px] font-black uppercase text-slate-500">Seller: <span class="text-white">${i.sellerNick}</span></p>
-                    </div>
                     <div class="flex gap-2">
                         <button onclick="simulateMsg('${i.sellerNick}')" class="flex-1 bg-slate-900 py-3 rounded-xl text-[8px] font-black uppercase border border-slate-800">Contact</button>
-                        <button onclick="buyAction()" class="flex-[1.5] bg-white text-black py-3 rounded-xl text-[8px] font-black uppercase hover:bg-cyan-500">Purchase</button>
+                        <button onclick="alert('Успішно куплено!')" class="flex-[1.5] bg-white text-black py-3 rounded-xl text-[8px] font-black uppercase hover:bg-cyan-500 transition">КУПИТИ</button>
                     </div>
                 </div>
             `).join('');
         }
 
-        function buyAction() {
-            alert("Order success! Admin will contact you.");
-            document.getElementById('bell-dot').classList.add('active');
-        }
-
         function simulateMsg(nick) {
-            const list = document.getElementById('chat-list-view');
-            list.innerHTML = `
-                <div class="flex items-center gap-4 p-4 rounded-2xl bg-slate-900/50 border border-slate-800 cursor-pointer">
+            document.getElementById('chat-list-view').innerHTML = `
+                <div class="flex items-center gap-4 p-4 rounded-2xl bg-slate-900/50 border border-slate-800 text-left">
                     <div class="w-10 h-10 rounded-full bg-cyan-500 flex items-center justify-center font-black">${nick[1].toUpperCase()}</div>
                     <div>
-                        <p class="text-xs font-black uppercase tracking-widest">${nick.replace('@','')}</p>
-                        <p class="text-[9px] text-cyan-500 font-bold">${nick}</p>
+                        <p class="text-xs font-black uppercase">${nick}</p>
+                        <p class="text-[9px] text-cyan-400">Online</p>
                     </div>
-                </div>
-            ` + list.innerHTML;
-            alert("Dialog created with " + nick);
+                </div>`;
             document.getElementById('bell-dot').classList.add('active');
+            alert("Діалог створено з " + nick);
         }
 
         function sync() {
@@ -240,18 +223,14 @@
 
         function setFilter(t, v) {
             activeF[t==='game'?'g':'c'] = v;
-            document.querySelectorAll(`#${t==='game'?'g':'c'}-scroll button`).forEach(b => {
-                if(b.innerText.toLowerCase() === v.toLowerCase() || (v==='All' && b.innerText.includes('All'))) b.classList.add('active');
-                else b.classList.remove('active');
-            });
             render();
         }
 
-        function toggleProfile() { alert(`Profile for ${user.nick}\nID: #${user.id}\nStatus: ${user.isAdmin?'ADMIN':'MEMBER'}`); }
         function toggleDialogs() { 
             document.getElementById('dialogs-modal').classList.toggle('hidden'); 
             document.getElementById('bell-dot').classList.remove('active');
         }
+        function toggleProfile() { alert(`Profile: ${user.name}\nEmail: ${user.email}\nStatus: ${user.isAdmin?'ADMIN':'USER'}`); }
     </script>
 </body>
 </html>
