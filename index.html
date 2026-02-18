@@ -1,274 +1,436 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ELITE GAME STORE</title>
+    <title>NEXUS - GLOBAL GAME MARKET</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Plus+Jakarta+Sans:wght@300;500;800&display=swap" rel="stylesheet">
     <style>
-        :root { --neon: #00f2ff; --bg: #020617; --accent: #1e293b; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: white; overflow-x: hidden; }
+        :root { --neon: #00f2ff; --danger: #ff0055; --bg: #05070a; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: white; }
         .header-font { font-family: 'Orbitron', sans-serif; }
         
-        .filter-btn { 
-            position: relative; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid var(--accent); overflow: hidden;
-        }
-        .filter-btn::after {
-            content: ''; position: absolute; bottom: 0; left: 50%; width: 0; height: 2px;
-            background: var(--neon); transition: 0.3s; transform: translateX(-50%);
-        }
-        .filter-btn.active { border-color: var(--neon); color: var(--neon); background: rgba(0, 242, 255, 0.05); transform: translateY(-2px); }
-        .filter-btn.active::after { width: 80%; }
-        .filter-btn:active { transform: scale(0.95); }
+        /* Dynamic Animations */
+        .filter-btn { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid #1e293b; position: relative; }
+        .filter-btn.active { border-color: var(--neon); color: var(--neon); background: rgba(0, 242, 255, 0.1); box-shadow: 0 0 15px rgba(0, 242, 255, 0.1); }
+        .filter-btn.active::before { content: ''; position: absolute; left: 0; top: 20%; height: 60%; width: 3px; background: var(--neon); }
 
-        .premium-card { 
-            background: linear-gradient(145deg, #0f172a, #020617);
-            border: 1px solid #1e293b; transition: 0.4s;
-        }
-        .premium-card:hover { border-color: var(--neon); transform: translateY(-5px); box-shadow: 0 10px 30px -10px rgba(0, 242, 255, 0.2); }
+        .item-card { background: #0b0f1a; border: 1px solid #161b2e; transition: 0.4s; position: relative; }
+        .item-card:hover { border-color: var(--neon); transform: translateY(-5px); }
+
+        .star-rating { color: #334155; cursor: pointer; transition: 0.2s; }
+        .star-rating.active { color: #facc15; }
+
+        .chat-dot { position: absolute; top: -2px; right: -2px; width: 10px; height: 10px; background: var(--danger); border-radius: 50%; border: 2px solid var(--bg); display: none; }
+        .chat-dot.visible { display: block; }
         
-        .modal-blur { backdrop-filter: blur(12px); background: rgba(2, 6, 23, 0.8); }
-        .input-field { background: #0f172a; border: 1px solid #1e293b; transition: 0.3s; }
-        .input-field:focus { border-color: var(--neon); outline: none; box-shadow: 0 0 10px rgba(0, 242, 255, 0.1); }
-        
+        .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.05); }
         ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
     </style>
 </head>
-<body class="pb-20">
+<body class="pb-24">
 
-    <header class="sticky top-0 z-[100] border-b border-slate-800 bg-slate-950/80 backdrop-blur-md p-4">
-        <div class="max-w-6xl mx-auto flex justify-between items-center">
-            <h1 class="header-font text-xl font-black tracking-tighter">GAME<span class="text-cyan-400">STORE</span></h1>
-            <div id="user-nav" class="flex gap-4 items-center">
-                <button onclick="toggleProfile()" class="w-10 h-10 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center">
-                    <span class="text-[10px] font-bold">BY</span>
+    <header class="sticky top-0 z-[100] border-b border-slate-800 bg-black/60 backdrop-blur-xl p-5">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <h1 class="header-font text-2xl font-black tracking-widest text-white">NEXUS<span class="text-cyan-400">MARKET</span></h1>
+            
+            <div class="flex items-center gap-6">
+                <button onclick="toggleChatList()" class="relative p-2 hover:bg-slate-800 rounded-full transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                    </svg>
+                    <div id="notif-dot" class="chat-dot"></div>
+                </button>
+
+                <button onclick="toggleProfile()" class="flex items-center gap-3 bg-slate-900 border border-slate-800 p-1 pr-4 rounded-full hover:border-cyan-500 transition">
+                    <img id="header-avatar" src="https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff" class="w-8 h-8 rounded-full">
+                    <span class="text-xs font-bold uppercase tracking-tighter" id="header-nickname">Guest</span>
                 </button>
             </div>
         </div>
     </header>
 
-    <div class="bg-slate-900/30 border-b border-slate-800 py-6 overflow-x-auto">
-        <div id="game-filters" class="flex gap-3 px-6 mb-4 no-scrollbar">
+    <div class="border-b border-slate-900 bg-slate-950/50 py-6">
+        <div class="max-w-7xl mx-auto px-6 space-y-4">
+            <div id="game-filters" class="flex gap-2 overflow-x-auto no-scrollbar pb-2">
+                <button onclick="setFilter('game', 'All')" class="filter-btn active px-6 py-2 rounded-xl text-[10px] font-black uppercase">All Games</button>
             </div>
-        <div id="cat-filters" class="flex gap-3 px-6 no-scrollbar">
-            <button onclick="setFilter('cat', 'Всі')" class="filter-btn active px-6 py-2 rounded-full text-[10px] uppercase font-bold tracking-widest">Всі категорії</button>
-            <button onclick="setFilter('cat', 'Акаунт')" class="filter-btn px-6 py-2 rounded-full text-[10px] uppercase font-bold tracking-widest">Акаунти</button>
-            <button onclick="setFilter('cat', 'Валюта')" class="filter-btn px-6 py-2 rounded-full text-[10px] uppercase font-bold tracking-widest">Валюта</button>
-            <button onclick="setFilter('cat', 'Буст')" class="filter-btn px-6 py-2 rounded-full text-[10px] uppercase font-bold tracking-widest">Прокачка</button>
+            <div id="cat-filters" class="flex gap-2 overflow-x-auto no-scrollbar">
+                <button onclick="setFilter('cat', 'All')" class="filter-btn active px-5 py-2 rounded-lg text-[9px] font-black uppercase">All Categories</button>
+                <button onclick="setFilter('cat', 'Account')" class="filter-btn px-5 py-2 rounded-lg text-[9px] font-black uppercase">Accounts</button>
+                <button onclick="setFilter('cat', 'Currency')" class="filter-btn px-5 py-2 rounded-lg text-[9px] font-black uppercase">Currency</button>
+                <button onclick="setFilter('cat', 'Boosting')" class="filter-btn px-5 py-2 rounded-lg text-[9px] font-black uppercase">Boosting</button>
+            </div>
         </div>
     </div>
 
-    <main class="max-w-6xl mx-auto p-6 min-h-screen">
-        <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+    <main class="max-w-7xl mx-auto p-6 min-h-screen">
+        <div id="products-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
     </main>
 
-    <div id="auth-modal" class="hidden fixed inset-0 z-[500] modal-blur flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-[2rem] p-8 shadow-2xl">
+    <div id="auth-modal" class="hidden fixed inset-0 z-[1000] glass flex items-center justify-center p-4">
+        <div class="bg-[#0b0f1a] border border-slate-800 w-full max-w-md rounded-[2.5rem] p-10">
             <div id="auth-step-1">
-                <h2 class="header-font text-xl text-center mb-2 uppercase">Реєстрація</h2>
-                <p class="text-slate-500 text-[10px] text-center mb-8 uppercase tracking-widest">Введіть дані для створення ID</p>
+                <h2 class="header-font text-2xl mb-2">JOIN NEXUS</h2>
+                <p class="text-slate-500 text-[10px] uppercase font-bold tracking-[0.2em] mb-8">Create your global identity</p>
                 <div class="space-y-4">
-                    <input type="text" id="reg-name" placeholder="ПІБ" class="input-field w-full p-4 rounded-2xl text-sm">
-                    <input type="text" id="reg-tg" placeholder="Telegram @нік" class="input-field w-full p-4 rounded-2xl text-sm">
-                    <input type="email" id="reg-email" placeholder="Email" class="input-field w-full p-4 rounded-2xl text-sm">
-                    <button onclick="sendCode()" class="w-full bg-cyan-500 text-black font-black py-4 rounded-2xl uppercase text-xs tracking-widest hover:bg-cyan-400 transition">Отримати код</button>
-                </div>
-            </div>
-            <div id="auth-step-2" class="hidden text-center">
-                <h2 class="header-font text-xl mb-2 uppercase text-cyan-400">Підтвердження</h2>
-                <p class="text-slate-400 text-xs mb-6">Код відправлено на вашу пошту. <br>Введіть 6 цифр + 1 велика літера.</p>
-                <input type="text" id="verify-code" placeholder="Код (напр. 123456A)" class="input-field w-full p-4 rounded-2xl text-center tracking-[0.5em] font-bold mb-4">
-                <p id="auth-error" class="text-red-500 text-[10px] mb-4 uppercase"></p>
-                <button onclick="verifyCode()" class="w-full bg-white text-black font-black py-4 rounded-2xl uppercase text-xs">Увійти</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="profile-view" class="hidden fixed inset-0 z-[450] bg-slate-950 p-6 overflow-y-auto">
-        <div class="max-w-md mx-auto pt-10">
-            <div class="text-center mb-10">
-                <div class="w-24 h-24 bg-gradient-to-tr from-cyan-500 to-blue-600 rounded-3xl mx-auto mb-4 flex items-center justify-center text-3xl font-black shadow-lg shadow-cyan-500/20" id="prof-avatar">U</div>
-                <h2 class="header-font text-2xl uppercase" id="prof-name">Користувач</h2>
-                <p class="text-cyan-400 text-[10px] font-bold tracking-widest uppercase mb-2" id="prof-id">ID: 000000</p>
-                <span class="px-4 py-1 bg-slate-800 rounded-full text-[9px] text-slate-400 uppercase font-black" id="prof-status">Клієнт</span>
-            </div>
-            
-            <div class="grid grid-cols-2 gap-4 mb-8">
-                <div class="bg-slate-900/50 p-4 rounded-2xl border border-slate-800">
-                    <p class="text-[9px] text-slate-500 uppercase font-bold mb-1">Куплено</p>
-                    <p class="text-xl font-black" id="prof-buys">0</p>
-                </div>
-                <div class="bg-slate-900/50 p-4 rounded-2xl border border-slate-800">
-                    <p class="text-[9px] text-slate-500 uppercase font-bold mb-1">Продажі</p>
-                    <p class="text-xl font-black text-slate-600">Soon</p>
-                </div>
-            </div>
-
-            <div class="space-y-3 mb-10">
-                <div class="flex justify-between p-4 bg-slate-900/30 rounded-xl border border-slate-800/50">
-                    <span class="text-xs text-slate-400">Telegram</span>
-                    <span class="text-xs font-bold" id="info-tg">@...</span>
-                </div>
-                <div class="flex justify-between p-4 bg-slate-900/30 rounded-xl border border-slate-800/50">
-                    <span class="text-xs text-slate-400">Email</span>
-                    <span class="text-xs font-bold" id="info-email">...</span>
-                </div>
-            </div>
-
-            <button onclick="logout()" class="w-full py-4 text-red-500 font-black uppercase text-[10px] tracking-widest border border-red-500/20 rounded-2xl hover:bg-red-500/5 transition">Змінити обліковий запис</button>
-            <button onclick="toggleProfile()" class="w-full py-4 text-slate-500 text-[9px] uppercase font-bold">Закрити профіль</button>
-        </div>
-    </div>
-<script>
-    // КОНФІГУРАЦІЯ
-    const MY_ADMIN_EMAIL = "твій_email@gmail.com"; // ЗАМІНИ НА СВІЙ
-    const games = ["Brawl Stars", "Standoff 2", "PUBG Mobile", "Roblox", "Free Fire", "Clash of Clans", "Genshin Impact", "Steam", "Clash Royale", "Valorant", "Mobile Legends"];
-    
-    let db = JSON.parse(localStorage.getItem('artem_db_v5')) || [];
-    let currentUser = JSON.parse(localStorage.getItem('active_user')) || null;
-    let authAttempts = JSON.parse(localStorage.getItem('auth_attempts')) || { count: 0, lastTime: 0 };
-    let activeFilters = { game: 'Всі', cat: 'Всі' };
-
-    // ІНІЦІАЛІЗАЦІЯ ФІЛТРІВ ТА ПАНЕЛІ
-    const gFilterWrap = document.getElementById('game-filters');
-    games.forEach(g => {
-        gFilterWrap.innerHTML += `<button onclick="setFilter('game', '${g}')" class="filter-btn px-6 py-2 rounded-full text-[10px] uppercase font-bold tracking-widest bg-slate-900/50">${g}</button>`;
-    });
-
-    // ЛОГІКА АВТОРИЗАЦІЇ (EMAIL + CODE)
-    function checkAuth() {
-        if (!currentUser) document.getElementById('auth-modal').classList.remove('hidden');
-        else updateProfileUI();
-    }
-
-    function sendCode() {
-        const email = document.getElementById('reg-email').value;
-        const name = document.getElementById('reg-name').value;
-        if (!email.includes('@') || name.length < 3) return alert("Заповніть дані коректно!");
-
-        // Імітація відправки. Код: 123456 + 'A' (як ти просив)
-        console.log("System: Code sent to " + email);
-        document.getElementById('auth-step-1').classList.add('hidden');
-        document.getElementById('auth-step-2').classList.remove('hidden');
-    }
-
-    function verifyCode() {
-        const now = Date.now();
-        // Перевірка бану на 2 години
-        if (authAttempts.count >= 12 && (now - authAttempts.lastTime) < 7200000) {
-            const waitMin = Math.ceil((7200000 - (now - authAttempts.lastTime)) / 60000);
-            document.getElementById('auth-error').innerText = `Забагато спроб! Зачекайте ${waitMin} хв.`;
-            return;
-        }
-
-        const code = document.getElementById('verify-code').value;
-        if (code === "123456A") {
-            // Успіх
-            currentUser = {
-                id: Math.floor(100000 + Math.random() * 899999),
-                name: document.getElementById('reg-name').value,
-                tg: document.getElementById('reg-tg').value,
-                email: document.getElementById('reg-email').value,
-                buys: 0,
-                isAdmin: document.getElementById('reg-email').value === MY_ADMIN_EMAIL
-            };
-            localStorage.setItem('active_user', JSON.stringify(currentUser));
-            authAttempts = { count: 0, lastTime: 0 };
-            localStorage.setItem('auth_attempts', JSON.stringify(authAttempts));
-            location.reload();
-        } else {
-            // Помилка
-            authAttempts.count++;
-            authAttempts.lastTime = now;
-            localStorage.setItem('auth_attempts', JSON.stringify(authAttempts));
-            document.getElementById('auth-error').innerText = `Невірний код! Спроб: ${authAttempts.count}/12`;
-        }
-    }
-
-    // КЕРУВАННЯ ТОВАРАМИ
-    function render() {
-        const grid = document.getElementById('products-grid');
-        const filtered = db.filter(p => (activeFilters.game === 'Всі' || p.game === activeFilters.game) && (activeFilters.cat === 'Всі' || p.cat === activeFilters.cat));
-        
-        grid.innerHTML = filtered.map(p => `
-            <div class="premium-card rounded-[2rem] p-6 relative">
-                <div class="absolute top-4 left-4 z-10 bg-cyan-500 text-black text-[8px] font-black px-3 py-1 rounded-full uppercase">${p.cat}</div>
-                ${currentUser?.isAdmin ? `<button onclick="deleteItem(${p.id})" class="absolute top-4 right-4 z-20 bg-red-600/20 hover:bg-red-600 text-red-500 hover:text-white w-8 h-8 rounded-full transition text-xs">×</button>` : ''}
-                <div class="w-full h-48 bg-slate-800 rounded-2xl mb-5 overflow-hidden border border-slate-700">
-                    <img src="${p.img || ''}" class="w-full h-full object-cover">
-                </div>
-                <div class="flex justify-between items-start mb-2">
-                    <div>
-                        <p class="text-[9px] text-cyan-400 font-bold uppercase tracking-tighter">${p.game}</p>
-                        <h3 class="font-black text-xl leading-tight uppercase">${p.title}</h3>
+                    <input type="text" id="reg-name" placeholder="Full Name" class="w-full bg-slate-900/50 border border-slate-800 p-4 rounded-2xl text-sm focus:border-cyan-500 outline-none transition">
+                    <input type="text" id="reg-nick" placeholder="@Unique_Nickname" class="w-full bg-slate-900/50 border border-slate-800 p-4 rounded-2xl text-sm focus:border-cyan-500 outline-none transition">
+                    <input type="text" id="reg-tg" placeholder="Telegram Contact" class="w-full bg-slate-900/50 border border-slate-800 p-4 rounded-2xl text-sm focus:border-cyan-500 outline-none transition">
+                    <input type="email" id="reg-email" placeholder="Email Address" class="w-full bg-slate-900/50 border border-slate-800 p-4 rounded-2xl text-sm focus:border-cyan-500 outline-none transition">
+                    
+                    <div class="py-2">
+                        <label class="text-[9px] text-slate-500 uppercase font-black block mb-2">Profile Image URL</label>
+                        <input type="text" id="reg-avatar" placeholder="https://..." class="w-full bg-slate-900/50 border border-slate-800 p-3 rounded-xl text-xs">
                     </div>
-                    <p class="text-2xl font-black text-white">$${p.price}</p>
+
+                    <button onclick="initiateEmailAuth()" class="w-full bg-cyan-500 text-black font-black py-5 rounded-2xl uppercase text-xs tracking-widest shadow-lg shadow-cyan-500/20">Send Access Code</button>
                 </div>
-                <p class="text-slate-500 text-xs mb-6 line-clamp-2">${p.desc}</p>
-                <button onclick="buyAction(${p.id})" class="w-full bg-slate-800 hover:bg-cyan-500 hover:text-black py-4 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all">Придбати</button>
             </div>
-        `).join('');
-    }
 
-    function deleteItem(id) {
-        if (!confirm("Видалити цей товар?")) return;
-        db = db.filter(item => item.id !== id);
-        localStorage.setItem('artem_db_v5', JSON.stringify(db));
-        render();
-    }
+            <div id="auth-step-2" class="hidden">
+                <h2 class="header-font text-xl text-center mb-6 uppercase">Verify Email</h2>
+                <div id="otp-container" class="flex justify-between gap-2 mb-6">
+                    <input type="text" id="otp-code" placeholder="6 DIGITS + 1 LETTER" class="w-full bg-black border border-slate-800 p-4 rounded-2xl text-center font-mono text-xl tracking-widest">
+                </div>
+                <p id="auth-error" class="text-red-500 text-[10px] text-center mb-4 uppercase font-bold"></p>
+                <button onclick="finalVerify()" class="w-full bg-white text-black font-black py-4 rounded-2xl uppercase text-xs">Authorize</button>
+            </div>
+        </div>
+    </div>
 
-    function buyAction(id) {
-        // Логіка "Успішної покупки"
-        if (!currentUser) return checkAuth();
-        currentUser.buys++;
-        localStorage.setItem('active_user', JSON.stringify(currentUser));
-        updateProfileUI();
-        alert("Замовлення надіслано! Перевірте профіль.");
-    }
+    <div id="profile-view" class="hidden fixed inset-0 z-[900] bg-slate-950 p-6 overflow-y-auto">
+        <div class="max-w-2xl mx-auto py-12">
+            <div class="flex items-center gap-8 mb-12">
+                <img id="prof-img" src="" class="w-32 h-32 rounded-[2.5rem] object-cover border-4 border-slate-900">
+                <div>
+                    <h2 class="header-font text-3xl uppercase mb-1" id="prof-name">---</h2>
+                    <p class="text-cyan-400 font-bold mb-4" id="prof-nick">@---</p>
+                    <span id="prof-status" class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest">Client</span>
+                </div>
+            </div>
 
-    // ПРОФІЛЬ
-    function updateProfileUI() {
-        if (!currentUser) return;
-        document.getElementById('prof-name').innerText = currentUser.name;
-        document.getElementById('prof-id').innerText = `ID: ${currentUser.id}`;
-        document.getElementById('prof-buys').innerText = currentUser.buys;
-        document.getElementById('info-tg').innerText = currentUser.tg;
-        document.getElementById('info-email').innerText = currentUser.email;
-        document.getElementById('prof-avatar').innerText = currentUser.name[0].toUpperCase();
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                <div class="bg-slate-900 p-6 rounded-3xl border border-slate-800">
+                    <p class="text-[10px] text-slate-500 uppercase font-black mb-1">Purchases</p>
+                    <p class="text-3xl font-black" id="prof-buys">0</p>
+                </div>
+                <div class="bg-slate-900 p-6 rounded-3xl border border-slate-800">
+                    <p class="text-[10px] text-slate-500 uppercase font-black mb-1">Sales</p>
+                    <p class="text-3xl font-black text-slate-700">Locked</p>
+                </div>
+                <div class="bg-slate-900 p-6 rounded-3xl border border-slate-800">
+                    <p class="text-[10px] text-slate-500 uppercase font-black mb-1">Rating</p>
+                    <div class="flex gap-1 text-yellow-500" id="prof-rating-stars">
+                        </div>
+                </div>
+            </div>
+
+            <div class="bg-slate-900/30 rounded-[2rem] border border-slate-800 p-8 space-y-6">
+                <p class="text-[11px] text-slate-500 uppercase font-black">Sales Information:</p>
+                <p class="text-sm text-slate-400 italic font-medium">"Currently available only for admins. Coming soon for all users..."</p>
+                
+                <hr class="border-slate-800">
+                
+                <div class="flex justify-between text-sm">
+                    <span class="text-slate-500 uppercase text-[10px] font-bold tracking-widest">Account ID</span>
+                    <span class="font-mono text-cyan-500" id="prof-id">#000000</span>
+                </div>
+            </div>
+
+            <button onclick="logout()" class="w-full mt-12 py-5 text-red-500 font-black uppercase text-[10px] tracking-widest border border-red-500/30 rounded-2xl hover:bg-red-500 hover:text-white transition-all">Change Account Identity</button>
+            <button onclick="toggleProfile()" class="w-full py-5 text-slate-600 text-[9px] uppercase font-black">Back to Market</button>
+        </div>
+    </div>
+
+    <div id="rate-modal" class="hidden fixed inset-0 z-[1100] glass flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 p-10 rounded-[3rem] text-center max-w-sm w-full">
+            <h3 class="header-font text-xl mb-2 uppercase">Rate the Seller</h3>
+            <p class="text-slate-500 text-[10px] mb-8 uppercase font-bold">Your feedback helps the community</p>
+            <div class="flex justify-center gap-3 mb-10">
+                <span onclick="setStars(1)" class="star-rating text-4xl">★</span>
+                <span onclick="setStars(2)" class="star-rating text-4xl">★</span>
+                <span onclick="setStars(3)" class="star-rating text-4xl">★</span>
+                <span onclick="setStars(4)" class="star-rating text-4xl">★</span>
+                <span onclick="setStars(5)" class="star-rating text-4xl">★</span>
+            </div>
+            <button onclick="submitRating()" class="w-full bg-cyan-500 text-black font-black py-4 rounded-2xl uppercase text-xs">Submit Review</button>
+        </div>
+    </div>
+
+    <div id="chat-window" class="hidden fixed bottom-24 right-6 w-96 h-[500px] bg-slate-950 border border-slate-800 rounded-[2rem] shadow-2xl flex flex-col z-[800]">
+        <div class="p-5 border-b border-slate-800 flex justify-between items-center bg-slate-900/50 rounded-t-[2rem]">
+            <div class="flex items-center gap-3">
+                <img id="chat-target-img" src="" class="w-8 h-8 rounded-full border border-slate-700">
+                <div>
+                    <p id="chat-target-name" class="text-xs font-black uppercase tracking-widest">Seller Name</p>
+                    <p id="chat-target-nick" class="text-[9px] text-cyan-500">@nickname</p>
+                </div>
+            </div>
+            <button onclick="closeChat()" class="text-slate-500 hover:text-white text-xl">×</button>
+        </div>
+        <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4">
+            </div>
+        <div class="p-4 border-t border-slate-800 flex gap-2">
+            <input type="text" id="chat-input" placeholder="Type a message..." class="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-4 text-xs outline-none">
+            <button onclick="sendMessage()" class="bg-cyan-500 text-black p-3 rounded-xl">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <div id="admin-view" class="hidden fixed inset-0 z-[1200] bg-slate-950 p-6 overflow-y-auto">
+        <div class="max-w-2xl mx-auto">
+            <h2 class="header-font text-3xl text-cyan-400 text-center mb-10 uppercase italic">Control Hub</h2>
+            <div class="bg-slate-900 p-8 rounded-[2.5rem] border border-slate-800 space-y-5">
+                <div class="grid grid-cols-2 gap-4">
+                    <select id="a-game" class="bg-black border border-slate-800 p-4 rounded-xl text-xs uppercase font-bold text-white"></select>
+                    <select id="a-cat" class="bg-black border border-slate-800 p-4 rounded-xl text-xs uppercase font-bold text-white">
+                        <option value="Account">Account</option>
+                        <option value="Currency">Currency</option>
+                        <option value="Boosting">Boosting</option>
+                    </select>
+                </div>
+                <input type="text" id="a-title" placeholder="Product Title" class="w-full bg-black border border-slate-800 p-4 rounded-xl text-sm">
+                <input type="number" id="a-price" placeholder="Price in USD" class="w-full bg-black border border-slate-800 p-4 rounded-xl text-sm">
+                <textarea id="a-desc" placeholder="Full Description..." class="w-full bg-black border border-slate-800 p-4 rounded-xl text-sm h-32"></textarea>
+                <input type="text" id="a-img" placeholder="Main Image URL" class="w-full bg-black border border-slate-800 p-4 rounded-xl text-sm">
+                
+                <button onclick="saveProduct()" class="w-full bg-cyan-500 text-black font-black py-5 rounded-2xl uppercase text-xs tracking-[0.2em]">Deploy to Market</button>
+                <button onclick="toggleAdmin(false)" class="w-full text-slate-500 text-[9px] uppercase font-bold mt-4">Close Hub</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // -- CONFIG & STATE --
+        const ADMIN_EMAIL = "ilemberk3356@gmail.com";
+        const games = ["Brawl Stars", "Standoff 2", "PUBG Mobile", "Roblox", "Free Fire", "Clash of Clans", "Genshin Impact", "Steam", "Clash Royale", "Valorant", "Mobile Legends"];
         
-        if (currentUser.isAdmin) {
-            const status = document.getElementById('prof-status');
-            status.innerText = "ADMINISTRATOR";
-            status.className = "px-4 py-1 bg-red-500/10 rounded-full text-[9px] text-red-500 uppercase font-black border border-red-500/20";
+        let db = JSON.parse(localStorage.getItem('nexus_db_v6')) || [];
+        let currentUser = JSON.parse(localStorage.getItem('nexus_user')) || null;
+        let authState = JSON.parse(localStorage.getItem('nexus_auth')) || { attempts: 0, lastBlock: 0 };
+        let activeFilters = { game: 'All', cat: 'All' };
+        let currentRatingValue = 0;
+        let generatedOTP = "";
+
+        // -- INITIALIZATION --
+        (function init() {
+            emailjs.init("YOUR_PUBLIC_KEY"); // ТРЕБА ОТРИМАТИ НА emailjs.com
+            const gameContainer = document.getElementById('game-filters');
+            const adminGameSel = document.getElementById('a-game');
+            
+            games.forEach(g => {
+                gameContainer.innerHTML += `<button onclick="setFilter('game', '${g}')" class="filter-btn px-6 py-2 rounded-xl text-[10px] font-black uppercase">${g}</button>`;
+                adminGameSel.innerHTML += `<option value="${g}">${g}</option>`;
+            });
+
+            if (!currentUser) document.getElementById('auth-modal').classList.remove('hidden');
+            else syncUI();
+            
+            renderItems();
+        })();
+
+        // -- AUTH LOGIC --
+        function initiateEmailAuth() {
+            const email = document.getElementById('reg-email').value;
+            const nick = document.getElementById('reg-nick').value;
+            const name = document.getElementById('reg-name').value;
+
+            if (!email.includes('@') || !nick.startsWith('@')) return alert("Invalid details!");
+            
+            // Check Block
+            const now = Date.now();
+            if (authState.attempts >= 12 && (now - authState.lastBlock) < 7200000) {
+                return alert("Too many attempts. Blocked for 2 hours.");
+            }
+
+            // Generate OTP (6 digits + 1 Char)
+            const digits = Math.floor(100000 + Math.random() * 900000);
+            const char = "ABCDEFGHJKLMNPQRSTUVWXYZ"[Math.floor(Math.random() * 24)];
+            generatedOTP = digits + char;
+
+            console.log("REAL OTP SENT TO " + email + " : " + generatedOTP);
+            // Тут мав би бути emailjs.send(...)
+            
+            document.getElementById('auth-step-1').classList.add('hidden');
+            document.getElementById('auth-step-2').classList.remove('hidden');
         }
-    }
 
-    function toggleProfile() {
-        if (!currentUser) return checkAuth();
-        document.getElementById('profile-view').classList.toggle('hidden');
-    }
+        function finalVerify() {
+            const entered = document.getElementById('otp-code').value;
+            if (entered === generatedOTP) {
+                currentUser = {
+                    id: Math.floor(Math.random() * 900000) + 100000,
+                    name: document.getElementById('reg-name').value,
+                    nick: document.getElementById('reg-nick').value,
+                    email: document.getElementById('reg-email').value,
+                    tg: document.getElementById('reg-tg').value,
+                    avatar: document.getElementById('reg-avatar').value || `https://ui-avatars.com/api/?name=${document.getElementById('reg-nick').value}`,
+                    buys: 0,
+                    rating: 5.0,
+                    isAdmin: document.getElementById('reg-email').value === ADMIN_EMAIL
+                };
+                localStorage.setItem('nexus_user', JSON.stringify(currentUser));
+                location.reload();
+            } else {
+                authState.attempts++;
+                authState.lastBlock = Date.now();
+                localStorage.setItem('nexus_auth', JSON.stringify(authState));
+                document.getElementById('auth-error').innerText = `Wrong code! Attempt ${authState.attempts}/12`;
+            }
+        }
 
-    function logout() {
-        if (confirm("Вийти з акаунта?")) {
-            localStorage.removeItem('active_user');
+        // -- MARKET LOGIC --
+        function renderItems() {
+            const grid = document.getElementById('products-grid');
+            const filtered = db.filter(i => (activeFilters.game === 'All' || i.game === activeFilters.game) && (activeFilters.cat === 'All' || i.cat === activeFilters.cat));
+            
+            grid.innerHTML = filtered.map(i => `
+                <div class="item-card rounded-[2rem] p-5 overflow-hidden">
+                    <div class="absolute top-4 left-4 z-10 bg-cyan-500 text-black text-[8px] font-black px-3 py-1 rounded-full uppercase shadow-lg shadow-cyan-500/30">${i.cat}</div>
+                    
+                    ${currentUser?.isAdmin ? `<button onclick="deleteItem(${i.id})" class="absolute top-4 right-4 z-20 bg-red-600 w-8 h-8 rounded-full flex items-center justify-center text-white text-lg">×</button>` : ''}
+
+                    <div class="w-full h-44 bg-slate-900 rounded-2xl mb-4 overflow-hidden border border-slate-800">
+                        <img src="${i.img}" class="w-full h-full object-cover">
+                    </div>
+
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <p class="text-[9px] text-cyan-500 font-black uppercase tracking-widest">${i.game}</p>
+                            <h3 class="font-black text-lg uppercase leading-none">${i.title}</h3>
+                        </div>
+                        <p class="text-xl font-black">$${i.price}</p>
+                    </div>
+
+                    <div class="flex items-center gap-2 mb-5">
+                        <img src="${i.sellerImg}" class="w-4 h-4 rounded-full">
+                        <p class="text-[9px] text-slate-500 font-bold">Seller: <span class="text-slate-300">${i.sellerNick}</span></p>
+                    </div>
+
+                    <div class="flex gap-2">
+                        <button onclick="openChat('${i.sellerNick}', '${i.sellerImg}')" class="flex-1 bg-slate-900 text-slate-300 py-3 rounded-xl text-[9px] font-black uppercase border border-slate-800 hover:border-cyan-500 transition">Contact</button>
+                        <button onclick="purchaseItem(${i.id})" class="flex-[1.5] bg-white text-black py-3 rounded-xl text-[9px] font-black uppercase hover:bg-cyan-500 transition">Purchase</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function purchaseItem(id) {
+            if (!currentUser) return;
+            currentUser.buys++;
+            localStorage.setItem('nexus_user', JSON.stringify(currentUser));
+            syncUI();
+            
+            alert("Order processing. Please wait for admin contact.");
+            document.getElementById('rate-modal').classList.remove('hidden');
+        }
+
+        // -- PROFILE & ADMIN --
+        function syncUI() {
+            document.getElementById('header-nickname').innerText = currentUser.nick;
+            document.getElementById('header-avatar').src = currentUser.avatar;
+            document.getElementById('prof-img').src = currentUser.avatar;
+            document.getElementById('prof-name').innerText = currentUser.name;
+            document.getElementById('prof-nick').innerText = currentUser.nick;
+            document.getElementById('prof-buys').innerText = currentUser.buys;
+            document.getElementById('prof-id').innerText = `#${currentUser.id}`;
+            
+            if (currentUser.isAdmin) {
+                const s = document.getElementById('prof-status');
+                s.innerText = "System Admin";
+                s.className = "px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-red-600 text-white shadow-lg shadow-red-600/20";
+            }
+            
+            // Render Rating Stars
+            const rContainer = document.getElementById('prof-rating-stars');
+            rContainer.innerHTML = '';
+            for(let i=0; i<5; i++) {
+                rContainer.innerHTML += `<span class="text-lg ${i < Math.floor(currentUser.rating) ? 'text-yellow-500' : 'text-slate-800'}">★</span>`;
+            }
+        }
+
+        function setStars(val) {
+            currentRatingValue = val;
+            const stars = document.querySelectorAll('.star-rating');
+            stars.forEach((s, idx) => {
+                if(idx < val) s.classList.add('active');
+                else s.classList.remove('active');
+            });
+        }
+
+        function submitRating() {
+            document.getElementById('rate-modal').classList.add('hidden');
+            alert("Thanks! Review added to seller's profile.");
+        }
+
+        function saveProduct() {
+            const newItem = {
+                id: Date.now(),
+                game: document.getElementById('a-game').value,
+                cat: document.getElementById('a-cat').value,
+                title: document.getElementById('a-title').value,
+                price: document.getElementById('a-price').value,
+                desc: document.getElementById('a-desc').value,
+                img: document.getElementById('a-img').value,
+                sellerNick: currentUser.nick,
+                sellerImg: currentUser.avatar
+            };
+            db.unshift(newItem);
+            localStorage.setItem('nexus_db_v6', JSON.stringify(db));
             location.reload();
         }
-    }
 
-    function setFilter(type, val) {
-        activeFilters[type] = val;
-        const btns = document.querySelectorAll(`#${type}-filters button`);
-        btns.forEach(b => {
-            if (b.innerText === val || (val === 'Всі' && b.innerText.includes('Всі'))) b.classList.add('active');
-            else b.classList.remove('active');
-        });
-        render();
-    }
+        function deleteItem(id) {
+            db = db.filter(i => i.id !== id);
+            localStorage.setItem('nexus_db_v6', JSON.stringify(db));
+            renderItems();
+        }
 
-    // Стартуємо систему
-    checkAuth();
-    render();
-</script>
+        function toggleAdmin(show) { document.getElementById('admin-view').classList.toggle('hidden', !show); }
+        function toggleProfile() { document.getElementById('profile-view').classList.toggle('hidden'); }
+        function logout() { localStorage.removeItem('nexus_user'); location.reload(); }
+        
+        // -- FILTER SYSTEM --
+        function setFilter(type, val) {
+            activeFilters[type] = val;
+            const btns = document.querySelectorAll(`#${type}-filters button`);
+            btns.forEach(b => {
+                if(b.innerText.toLowerCase() === val.toLowerCase()) b.classList.add('active');
+                else b.classList.remove('active');
+            });
+            renderItems();
+        }
+
+        // -- CHAT LOGIC --
+        function openChat(nick, img) {
+            document.getElementById('chat-window').classList.remove('hidden');
+            document.getElementById('chat-target-name').innerText = nick.replace('@','');
+            document.getElementById('chat-target-nick').innerText = nick;
+            document.getElementById('chat-target-img').src = img;
+        }
+        function closeChat() { document.getElementById('chat-window').classList.add('hidden'); }
+        function sendMessage() {
+            const msg = document.getElementById('chat-input').value;
+            if(!msg) return;
+            const box = document.getElementById('chat-messages');
+            box.innerHTML += `
+                <div class="flex justify-end">
+                    <div class="bg-cyan-500 text-black px-4 py-2 rounded-2xl rounded-tr-none text-xs font-bold max-w-[80%]">
+                        ${msg}
+                    </div>
+                </div>
+            `;
+            document.getElementById('chat-input').value = '';
+            box.scrollTop = box.scrollHeight;
+        }
+
+    </script>
+</body>
+</html>
