@@ -32,6 +32,15 @@
         @keyframes slide-up { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes rotate-border { 0% { border-color: var(--border-color); } 50% { border-color: var(--cyan); } 100% { border-color: var(--border-color); } }
 
+        /* НОВА АНІМАЦІЯ ДЗВОНИКА */
+        @keyframes notify-ping {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 242, 255, 0.7); }
+            70% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(0, 242, 255, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 242, 255, 0); }
+        }
+
+        .notify-active { animation: notify-ping 1.5s infinite; border-color: var(--cyan) !important; }
+
         .animate-slide-up { animation: slide-up 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards; }
         .cyber-border-anim { animation: rotate-border 3s infinite linear; }
 
@@ -108,6 +117,18 @@
 
         .bubble-me { background: linear-gradient(135deg, var(--cyan), var(--blue)); color: #000; border-radius: 24px 24px 4px 24px; }
         .bubble-them { background: #1e293b; color: #fff; border-radius: 24px 24px 24px 4px; }
+
+        .unread-dot {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 14px;
+            height: 14px;
+            background: #ef4444;
+            border: 3px solid #020617;
+            border-radius: 50%;
+            z-index: 10;
+        }
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .hidden { display: none !important; }
@@ -191,8 +212,12 @@
                 <p class="text-[8px] text-slate-600 font-bold uppercase tracking-widest">Global Marketplace 2026</p>
             </div>
         </div>
-        <button onclick="openInboxSystem()" class="p-4 bg-slate-900/80 rounded-2xl border border-slate-800">
-            <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+        
+        <button id="inbox-btn" onclick="openInboxSystem()" class="relative p-4 bg-slate-900/80 rounded-2xl border border-slate-800 transition-all">
+            <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+            </svg>
+            <div id="notify-indicator" class="hidden unread-dot"></div>
         </button>
     </header>
 
@@ -247,6 +272,20 @@
         </section>
     </main>
 
+    <div id="system-inbox" class="hidden fixed inset-0 z-[9000] glass-panel flex items-center justify-center p-6">
+        <div class="w-full max-w-lg bg-slate-950 rounded-[4rem] h-[80vh] flex flex-col border border-slate-800 shadow-2xl overflow-hidden animate-slide-up">
+            <div class="p-10 border-b border-slate-900 flex justify-between items-center bg-slate-900/20">
+                <div>
+                    <h2 class="h-font text-2xl text-white">INBOX</h2>
+                    <p class="text-[9px] text-cyan-500 font-black uppercase tracking-widest mt-1">Active Neural Links</p>
+                </div>
+                <button onclick="closeModal('system-inbox')" class="w-12 h-12 flex items-center justify-center bg-slate-900 rounded-2xl text-slate-500">✕</button>
+            </div>
+            <div id="inbox-list" class="flex-1 overflow-y-auto p-6 space-y-4 no-scrollbar">
+                </div>
+        </div>
+    </div>
+
     <nav class="fixed bottom-0 inset-x-0 h-28 glass-panel border-t border-slate-800 flex justify-around items-center z-[5000] px-8">
         <button onclick="navigate('shop')" class="flex flex-col items-center gap-2"><svg class="w-8 h-8 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg><span class="text-[9px] font-black uppercase tracking-widest text-cyan-400">Shop</span></button>
         <button id="nav-btn-admin" onclick="navigate('admin')" class="hidden flex flex-col items-center gap-2"><svg class="w-8 h-8 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"/></svg><span class="text-[9px] font-black uppercase tracking-widest text-slate-600">Sell</span></button>
@@ -295,20 +334,15 @@
         async function processSystemLogin() {
             const email = document.getElementById('login-email').value.trim();
             const pass = document.getElementById('login-pass').value.trim();
-
             if(!email || !pass) return alert("Заповніть пошту та пароль!");
-
-            // Пошук користувача в базі по пошті
             const users_snap = await DB_LAYER.ref('users').get();
             const users_data = users_snap.val();
-            
             let found_user = null;
             if(users_data) {
                 Object.values(users_data).forEach(u => {
                     if(u.email === email && u.password === pass) found_user = u;
                 });
             }
-
             if(found_user) {
                 localStorage.setItem('artem_user_v4', JSON.stringify(found_user));
                 location.reload();
@@ -331,12 +365,9 @@
             const nick = document.getElementById('reg-user-nick').value.trim();
             const email = document.getElementById('reg-user-email').value;
             const pass = document.getElementById('reg-user-pass').value;
-
             if(!name || !nick || !email || !pass) return alert("Всі поля мають бути заповнені!");
-            
             const check_nick = await DB_LAYER.ref('users/' + nick).get();
             if(check_nick.exists()) return alert("Нікнейм вже зайнятий!");
-
             app_state.otp_code = Math.floor(100000 + Math.random() * 900000).toString();
             emailjs.send('service_dbkrnz9', 'template_n90xvc9', {
                 to_email: email,
@@ -375,6 +406,60 @@
 
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
         function systemSignOut() { localStorage.clear(); location.reload(); }
+
+        // --- INBOX SYSTEM (NEW) ---
+        async function openInboxSystem() {
+            document.getElementById('system-inbox').classList.remove('hidden');
+            const list = document.getElementById('inbox-list');
+            list.innerHTML = '<div class="text-center py-10 animate-pulse text-slate-500 font-black text-[10px] uppercase">Scanning Channels...</div>';
+            
+            DB_LAYER.ref('chats').once('value', async (snap) => {
+                const all_chats = snap.val();
+                list.innerHTML = '';
+                if(!all_chats) return list.innerHTML = '<div class="text-center py-10 text-slate-700 font-black text-[10px] uppercase">No active transmissions</div>';
+                
+                let found = false;
+                for(let chat_id in all_chats) {
+                    if(chat_id.includes(app_state.current_user.nick)) {
+                        found = true;
+                        const partner_nick = chat_id.replace(app_state.current_user.nick, '').replace('_', '');
+                        const p_snap = await DB_LAYER.ref('users/' + partner_nick).get();
+                        const p_data = p_snap.val();
+                        
+                        if(p_data) {
+                            list.innerHTML += `
+                                <div onclick="executeChatInitiation('${p_data.nick}', '${p_data.avatar}')" class="flex items-center gap-5 p-6 bg-slate-900/40 border border-slate-800 rounded-[2.5rem] hover:border-cyan-500/50 cursor-pointer transition-all active:scale-95">
+                                    <img src="${p_data.avatar}" class="w-14 h-14 rounded-2xl object-cover border border-slate-800">
+                                    <div class="flex-1">
+                                        <h4 class="text-white font-black text-sm uppercase tracking-tight">${p_data.name}</h4>
+                                        <p class="text-[9px] text-cyan-500 font-black tracking-widest uppercase">@${p_data.nick}</p>
+                                    </div>
+                                    <div class="w-2 h-2 bg-cyan-500 rounded-full shadow-[0_0_10px_var(--cyan)]"></div>
+                                </div>
+                            `;
+                        }
+                    }
+                }
+                if(!found) list.innerHTML = '<div class="text-center py-10 text-slate-700 font-black text-[10px] uppercase">No neural links found</div>';
+                document.getElementById('inbox-btn').classList.remove('notify-active');
+                document.getElementById('notify-indicator').classList.add('hidden');
+            });
+        }
+
+        function listenForNotifications() {
+            DB_LAYER.ref('chats').on('child_changed', (snap) => {
+                const chatID = snap.key;
+                if(chatID.includes(app_state.current_user.nick)) {
+                    const messages = snap.val();
+                    const msgsArray = Object.values(messages);
+                    const lastMsg = msgsArray[msgsArray.length - 1];
+                    if(lastMsg.sender !== app_state.current_user.nick) {
+                        document.getElementById('inbox-btn').classList.add('notify-active');
+                        document.getElementById('notify-indicator').classList.remove('hidden');
+                    }
+                }
+            });
+        }
 
         // --- MARKET ENGINE ---
         function renderProduct(id, item) {
@@ -434,7 +519,6 @@
         function submitProductToFirebase() {
             const file = document.getElementById('p-new-img').files[0];
             if(!file) return alert("Фото обов'язкове!");
-
             const reader = new FileReader();
             reader.onload = () => {
                 const new_ref = DB_LAYER.ref('products').push();
@@ -463,6 +547,7 @@
             document.getElementById('chat-partner-av').src = avatar;
             document.getElementById('chat-partner-nick').innerText = "@" + nick;
             document.getElementById('system-chat').classList.remove('hidden');
+            if(!document.getElementById('system-inbox').classList.contains('hidden')) closeModal('system-inbox');
             
             const chat_id = [app_state.current_user.nick, nick].sort().join('_');
             DB_LAYER.ref('chats/' + chat_id).on('value', (snap) => {
@@ -489,7 +574,6 @@
             const input = document.getElementById('chat-input-field');
             const text = input.value.trim();
             if(!text) return;
-
             const chat_id = [app_state.current_user.nick, app_state.active_chat_partner.nick].sort().join('_');
             DB_LAYER.ref('chats/' + chat_id).push({
                 sender: app_state.current_user.nick,
@@ -508,10 +592,7 @@
                 document.getElementById('p-view-avatar').src = app_state.current_user.avatar;
                 document.getElementById('p-view-name').innerText = app_state.current_user.name;
                 document.getElementById('p-view-nick').innerText = "@" + app_state.current_user.nick;
-                
                 if(app_state.current_user.is_admin) document.getElementById('nav-btn-admin').classList.remove('hidden');
-
-                // Оновлюємо лічильник моїх лотів
                 DB_LAYER.ref('products').on('value', (snap) => {
                     const data = snap.val();
                     let count = 0;
@@ -520,10 +601,9 @@
                     }
                     document.getElementById('my-lots-count').innerText = count;
                 });
-
                 initializeMarket();
+                listenForNotifications();
             }
-
             CATEGORIES_MASTER.forEach(name => {
                 document.getElementById('categories').innerHTML += `<button class="bg-slate-900 border border-slate-800 px-8 py-4 rounded-2xl text-[10px] font-black uppercase text-slate-500 hover:text-cyan-400 hover:border-cyan-500 transition-all whitespace-nowrap">${name}</button>`;
                 document.getElementById('p-new-game').innerHTML += `<option value="${name}">${name}</option>`;
